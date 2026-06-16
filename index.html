@@ -3,17 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>IA - Inteligência do Andrade</title>
-    <style>
+   <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #2e7d32; color: white; text-align: center; margin: 0; padding: 20px; }
-        /* Layout flexível para colocar o painel e o trevo lado a lado */
+        
+        /* Layout flexível padrão */
         .wrapper { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; margin-top: 20px; }
-        .painel-container { background: #2e7d32; padding: 30px; border-radius: 20px; border: 4px solid #1b5e20; max-width: 400px; }
-        .clover-side { max-width: 350px; }
+        
+        /* Ajustamos para width: 100% para que eles possam crescer na tela do celular */
+        .painel-container { background: #2e7d32; padding: 30px; border-radius: 20px; border: 4px solid #1b5e20; width: 100%; max-width: 400px; box-sizing: border-box; }
+        .clover-side { width: 100%; max-width: 350px; }
+        
         .clover-img { width: 100%; height: auto; border-radius: 20px; }
         .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; }
         
-        #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; }
-        .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; }
+        #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; width: 100%; max-width: 500px; box-sizing: border-box; margin-left: auto; margin-right: auto; }
+        .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 16px; }
+        .numero { color: #2e7d32; font-weight: bold; }
+
+        /* MÁGICA PARA O CELULAR ACONTECE AQUI */
+        @media (max-width: 768px) {
+            .wrapper { 
+                flex-direction: column-reverse; /* Coloca o trevo em cima e os botões embaixo no celular */
+                gap: 20px; 
+            }
+            .painel-container { 
+                padding: 15px; /* Diminui as bordas internas para ganhar mais espaço pros botões */
+            }
+            body { 
+                padding: 10px; 
+            }
+        }
     </style>
 </head>
 <body>
