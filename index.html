@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>IA - Inteligência do Andrade</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #2e7d32; color: white; text-align: center; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 20px; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 8px 0; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; }
+        #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; border: 2px solid #333; }
+        .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 16px; }
+        .numero { color: #2e7d32; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🍀 IA - Inteligência do Andrade</h1>
+        <div id="menu">
+            <button class="btn" style="background:#4a148c" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
+            <button class="btn" style="background:#2e7d32" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
+            <button class="btn" style="background:#311b92" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
+            <button class="btn" style="background:#ef6c00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
+            <button class="btn" style="background:#fbc02d; color:black" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
+            <button class="btn" style="background:#c62828" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
+            <button class="btn" style="background:#7b1fa2" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
+        </div>
+
+        <div id="tela-resultado">
+            <h2 id="titulo-res">Resultado</h2>
+            <div id="conteudo-res"></div>
+            <hr>
+            <h3>Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
+            <button onclick="voltar()" style="padding:10px 25px; cursor:pointer; font-weight:bold;">Voltar para Loterias</button>
+        </div>
+    </div>
+
+    <script>
+        const times = ["ABC/RN","ALTOS/PI","AMAZONAS/AM","AMERICA/MG","AMERICA/RN","APARECIDENSE/GO","ATHLETIC CLUB/MG","ATHLETICO/PR","ATLETICO/GO","ATLETICO/MG","AVAI/SC","BAHIA/BA","BAHIA DE FEIRA/BA","BOTAFOGO/PB","BOTAFOGO/RJ","BOTAFOGO/SP","BRAGANTINO/SP","BRASIL DE PELOTAS/RS","BRASILIENSE/DF","BRUSQUE/SC","CAMPINENSE/PB","CASCAVEL/PR","CAXIAS/RS","CEARA/CE","CEILANDIA ESPORTE/DF","CHAPECOENSE/SC","CONFIANCA/SE","CORINTHIANS/SP","CORITIBA/PR","CRB/AL","CRICIUMA/SC","CRUZEIRO/MG","CSA/AL","CUIABA/MT","FERROVIARIA/SP","FERROVIARIO/CE","FIGUEIRENSE/SC","FLAMENGO/RJ","FLORESTA/CE","FLUMINENSE/RJ","FORTALEZA/CE","GOIAS/GO","GREMIO/RS","GUARANI/SP","INTERNACIONAL/RS","ITUANO/SP","JACUIPENSE/BA","JUAZEIRENSE/BA","JUVENTUDE/RS","LONDRINA/PR","MANAUS/AM","MIRASSOL/SP","NAUTICO/PE","NOVA IGUACU/RJ","NOVORIZONTINO/SP","OESTE/SP","OPERARIO/PR","PALMEIRAS/SP","PARANA/PR","PAYSANDU/PA","PONTE PRETA/SP","PORTUGUESA/RJ","POUSO ALEGRE/MG","REMO/PA","RETRO BRASIL/PE","SAMP CORREA/MA","SANTA CRUZ/PE","SANTOS/SP","SAO BERNARDO/SP","SAO JOSE/RS","SAO PAULO/SP","SAORAIMUNDO/RR","SPORT/PE","TOCANTINOPOLIS/TO","TOMBENSE/MG","VASCO DA GAMA/RJ","VILA NOVA/GO","VITORIA/BA","VOLTA REDONDA/RJ","YPIRANGA/RS"];
+
+        const precos = {
+            'MegaSena': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00, 13: 10296.00, 14: 18018.00, 15: 30030.00, 16: 48048.00, 17: 74256.00, 18: 111384.00, 19: 162792.00, 20: 232560.00},
+            'Lotofacil': {15: 3.00, 16: 48.00, 17: 408.00, 18: 2448.00, 19: 11628.00, 20: 46512.00},
+            'Quina': {5: 3.00, 6: 18.00, 7: 63.00, 8: 168.00, 9: 378.00, 10: 756.00, 11: 1386.00, 12: 2376.00, 13: 3861.00, 14: 6006.00, 15: 9009.00},
+            'DuplaSena': {6: 2.50, 7: 17.50, 8: 70.00, 9: 210.00, 10: 525.00, 11: 1155.00, 12: 2310.00, 13: 4290.00, 14: 7507.50, 15: 12512.50},
+            'Milionaria': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00},
+            'Lotomania': {50: 3.00},
+            'Timemania': {10: 3.50}
+        };
+
+        function gerarNumeros(max, qtd, offset = 1) {
+            let nums = [];
+            while(nums.length < qtd) {
+                let n = Math.floor(Math.random() * max) + offset;
+                if(!nums.includes(n)) nums.push(n);
+            }
+            return nums.sort((a,b) => a-b).map(n => n.toString().padStart(2, '0'));
+        }
+
+        function iniciar(tipo, max, minQtd, maxQtd) {
+            let qtdJogos = prompt("Quantos jogos deseja gerar?", "5");
+            if (!qtdJogos) return;
+            let qtdNum = prompt(`Quantos números? (${minQtd} a ${maxQtd})`, minQtd);
+            if (!qtdNum) return;
+
+            let preco = precos[tipo][qtdNum] || 0;
+            let html = "", soma = 0;
+
+            for(let i = 0; i < qtdJogos; i++) {
+                let nums = (tipo === 'Lotomania') ? gerarNumeros(100, 50, 0) : gerarNumeros(max, parseInt(qtdNum));
+                let extra = "";
+                if(tipo === 'Timemania') extra = ` | Time: <b>${times[Math.floor(Math.random()*times.length)]}</b>`;
+                if(tipo === 'Milionaria') extra = ` | Trevos: ${gerarNumeros(6, 2).join(' e ')}`;
+                
+                html += `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${nums.join(' - ')}</span>${extra}</div>`;
+                soma += preco;
+            }
+
+            document.getElementById('titulo-res').innerText = "Resultado " + tipo;
+            document.getElementById('conteudo-res').innerHTML = html;
+            document.getElementById('total-geral').innerText = "R$ " + soma.toFixed(2).replace('.', ',');
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('tela-resultado').style.display = 'block';
+        }
+
+        function voltar() {
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('tela-resultado').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
