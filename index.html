@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <!-- ESSA LINHA ABAIXO É A MÁGICA QUE FAZ O CELULAR LER O TAMANHO CERTO -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>IA - Inteligência do Andrade</title>
     <style>
@@ -20,26 +19,17 @@
         .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 16px; }
         .numero { color: #2e7d32; font-weight: bold; }
 
-        /* REGRAS EXCLUSIVAS PARA A TELA DO CELULAR */
+        /* Estilo dos Novos Botões */
+        .btn-zap { background: #25D366; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 20px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .btn-caixa { background: #005CA9; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; }
+
         @media (max-width: 768px) {
-            .wrapper { 
-                flex-direction: column-reverse; /* Trevo em cima, botões embaixo */
-                gap: 20px; 
-            }
-            .painel-container { 
-                padding: 15px;
-                max-width: 100%;
-            }
-            .clover-side {
-                max-width: 250px; /* Deixa o trevo num tamanho perfeito pro celular */
-            }
-            body { 
-                padding: 10px; 
-            }
-            .btn {
-                padding: 20px; /* Botões mais gordinhos para clicar fácil com o dedo */
-                font-size: 20px;
-            }
+            .wrapper { flex-direction: column-reverse; gap: 20px; }
+            .painel-container { padding: 15px; max-width: 100%; }
+            .clover-side { max-width: 250px; }
+            body { padding: 10px; }
+            .btn { padding: 20px; font-size: 20px; }
         }
     </style>
 </head>
@@ -48,7 +38,6 @@
     <h1 style="font-size: 24px;">🍀 IA - Inteligência do Andrade</h1>
 
     <div class="wrapper">
-        <!-- Lado esquerdo (ou embaixo no celular) -->
         <div class="painel-container">
             <button class="btn" style="background:#4a148c" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
             <button class="btn" style="background:#2e7d32" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
@@ -59,7 +48,6 @@
             <button class="btn" style="background:#7b1fa2" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
         </div>
 
-        <!-- Lado direito (ou em cima no celular) -->
         <div class="clover-side">
             <img src="trevo.png" alt="Trevo do Andrade" class="clover-img">
         </div>
@@ -70,12 +58,27 @@
         <div id="conteudo-res"></div>
         <hr>
         <h3>Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
-        <button onclick="voltar()" style="padding:15px 25px; cursor:pointer; font-weight:bold; width: 100%; border-radius: 10px; background: #eee; border: 1px solid #ccc;">Voltar para Loterias</button>
+        
+        <button class="btn-zap" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
+        <button class="btn-caixa" onclick="abrirCaixa()">🎰 Jogar no Site da Caixa</button>
+        <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
     </div>
 
     <script>
         const times = ["ABC/RN","ALTOS/PI","AMAZONAS/AM","AMERICA/MG","AMERICA/RN","APARECIDENSE/GO","ATHLETIC CLUB/MG","ATHLETICO/PR","ATLETICO/GO","ATLETICO/MG","AVAI/SC","BAHIA/BA","BAHIA DE FEIRA/BA","BOTAFOGO/PB","BOTAFOGO/RJ","BOTAFOGO/SP","BRAGANTINO/SP","BRASIL DE PELOTAS/RS","BRASILIENSE/DF","BRUSQUE/SC","CAMPINENSE/PB","CASCAVEL/PR","CAXIAS/RS","CEARA/CE","CEILANDIA ESPORTE/DF","CHAPECOENSE/SC","CONFIANCA/SE","CORINTHIANS/SP","CORITIBA/PR","CRB/AL","CRICIUMA/SC","CRUZEIRO/MG","CSA/AL","CUIABA/MT","FERROVIARIA/SP","FERROVIARIO/CE","FIGUEIRENSE/SC","FLAMENGO/RJ","FLORESTA/CE","FLUMINENSE/RJ","FORTALEZA/CE","GOIAS/GO","GREMIO/RS","GUARANI/SP","INTERNACIONAL/RS","ITUANO/SP","JACUIPENSE/BA","JUAZEIRENSE/BA","JUVENTUDE/RS","LONDRINA/PR","MANAUS/AM","MIRASSOL/SP","NAUTICO/PE","NOVA IGUACU/RJ","NOVORIZONTINO/SP","OESTE/SP","OPERARIO/PR","PALMEIRAS/SP","PARANA/PR","PAYSANDU/PA","PONTE PRETA/SP","PORTUGUESA/RJ","POUSO ALEGRE/MG","REMO/PA","RETRO BRASIL/PE","SAMP CORREA/MA","SANTA CRUZ/PE","SANTOS/SP","SAO BERNARDO/SP","SAO JOSE/RS","SAO PAULO/SP","SAORAIMUNDO/RR","SPORT/PE","TOCANTINOPOLIS/TO","TOMBENSE/MG","VASCO DA GAMA/RJ","VILA NOVA/GO","VITORIA/BA","VOLTA REDONDA/RJ","YPIRANGA/RS"];
-        const precos = {'MegaSena': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00, 13: 10296.00, 14: 18018.00, 15: 30030.00, 16: 48048.00, 17: 74256.00, 18: 111384.00, 19: 162792.00, 20: 232560.00}, 'Lotofacil': {15: 3.00, 16: 48.00, 17: 408.00, 18: 2448.00, 19: 11628.00, 20: 46512.00}, 'Quina': {5: 3.00, 6: 18.00, 7: 63.00, 8: 168.00, 9: 378.00, 10: 756.00, 11: 1386.00, 12: 2376.00, 13: 3861.00, 14: 6006.00, 15: 9009.00}, 'DuplaSena': {6: 2.50, 7: 17.50, 8: 70.00, 9: 210.00, 10: 525.00, 11: 1155.00, 12: 2310.00, 13: 4290.00, 14: 7507.50, 15: 12512.50}, 'Milionaria': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00}, 'Lotomania': {50: 3.00}, 'Timemania': {10: 3.50}};
+        
+        const precos = {
+            'MegaSena': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00, 13: 10296.00, 14: 18018.00, 15: 30030.00, 16: 48048.00, 17: 74256.00, 18: 111384.00, 19: 162792.00, 20: 232560.00}, 
+            'Lotofacil': {15: 3.00, 16: 48.00, 17: 408.00, 18: 2448.00, 19: 11628.00, 20: 46512.00}, 
+            'Quina': {5: 3.00, 6: 18.00, 7: 63.00, 8: 168.00, 9: 378.00, 10: 756.00, 11: 1386.00, 12: 2376.00, 13: 3861.00, 14: 6006.00, 15: 9009.00}, 
+            'DuplaSena': {6: 2.50, 7: 17.50, 8: 70.00, 9: 210.00, 10: 525.00, 11: 1155.00, 12: 2310.00, 13: 4290.00, 14: 7507.50, 15: 12512.50}, 
+            'Milionaria': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00}, 
+            'Lotomania': {50: 3.00}, 
+            'Timemania': {10: 3.50}
+        };
+
+        // Variável global para armazenar o texto que vai para o WhatsApp
+        let textoParaWhatsApp = "";
 
         function gerarNumeros(max, qtd, offset = 1) {
             let nums = [];
@@ -93,19 +96,58 @@
             if (!qtdNum) return;
             let preco = precos[tipo][qtdNum] || 0;
             let html = "", soma = 0;
+            
+            // Prepara o cabeçalho da mensagem do WhatsApp
+            textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *Loteria:* ${tipo}\n\n`;
+
             for(let i = 0; i < qtdJogos; i++) {
                 let nums = (tipo === 'Lotomania') ? gerarNumeros(100, 50, 0) : gerarNumeros(max, parseInt(qtdNum));
-                let extra = "";
-                if(tipo === 'Timemania') extra = ` | Time: <b>${times[Math.floor(Math.random()*times.length)]}</b>`;
-                if(tipo === 'Milionaria') extra = ` | Trevos: ${gerarNumeros(6, 2).join(' e ')}`;
-                html += `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${nums.join(' - ')}</span>${extra}</div>`;
+                let extraHtml = "";
+                let extraWhats = "";
+
+                if(tipo === 'Timemania') {
+                    let timeSorteado = times[Math.floor(Math.random()*times.length)];
+                    extraHtml = ` | Time: <b>${timeSorteado}</b>`;
+                    extraWhats = ` | Time: ${timeSorteado}`;
+                }
+                if(tipo === 'Milionaria') {
+                    let trevosSorteados = gerarNumeros(6, 2).join(' e ');
+                    extraHtml = ` | Trevos: ${trevosSorteados}`;
+                    extraWhats = ` | Trevos: ${trevosSorteados}`;
+                }
+                
+                // Salva no HTML da página
+                html += `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${nums.join(' - ')}</span>${extraHtml}</div>`;
+                
+                // Salva no texto do WhatsApp
+                textoParaWhatsApp += `*Jogo ${i+1}:* ${nums.join(' - ')}${extraWhats}\n`;
+                
                 soma += preco;
             }
+
+            let totalFormatado = "R$ " + soma.toFixed(2).replace('.', ',');
+            
+            // Adiciona o total no final da mensagem do WhatsApp
+            textoParaWhatsApp += `\n💰 *Total do Bolão: ${totalFormatado}*`;
+
             document.getElementById('titulo-res').innerText = "Resultado " + tipo;
             document.getElementById('conteudo-res').innerHTML = html;
-            document.getElementById('total-geral').innerText = "R$ " + soma.toFixed(2).replace('.', ',');
+            document.getElementById('total-geral').innerText = totalFormatado;
+            
             document.querySelector('.wrapper').style.display = 'none';
             document.getElementById('tela-resultado').style.display = 'block';
+        }
+
+        function enviarWhatsApp() {
+            // Transforma o texto num formato que o WhatsApp entende (codificando os espaços e quebras de linha)
+            let textoCodificado = encodeURIComponent(textoParaWhatsApp);
+            // Abre o link do WhatsApp
+            window.open(`https://wa.me/?text=${textoCodificado}`, '_blank');
+        }
+
+        function abrirCaixa() {
+            // Abre o site oficial das Loterias Caixa em uma nova aba
+            window.open('https://www.loteriasonline.caixa.gov.br/', '_blank');
         }
 
         function voltar() {
