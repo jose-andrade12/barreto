@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>IA - Inteligência do Andrade</title>
+    <title>IA - Inteligência Andrade</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #2e7d32; color: white; text-align: center; margin: 0; padding: 20px; }
         
@@ -77,7 +77,6 @@
             'Timemania': {10: 3.50}
         };
 
-        // Variável global para armazenar o texto que vai para o WhatsApp
         let textoParaWhatsApp = "";
 
         function gerarNumeros(max, qtd, offset = 1) {
@@ -97,7 +96,6 @@
             let preco = precos[tipo][qtdNum] || 0;
             let html = "", soma = 0;
             
-            // Prepara o cabeçalho da mensagem do WhatsApp
             textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *Loteria:* ${tipo}\n\n`;
 
             for(let i = 0; i < qtdJogos; i++) {
@@ -116,10 +114,7 @@
                     extraWhats = ` | Trevos: ${trevosSorteados}`;
                 }
                 
-                // Salva no HTML da página
                 html += `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${nums.join(' - ')}</span>${extraHtml}</div>`;
-                
-                // Salva no texto do WhatsApp
                 textoParaWhatsApp += `*Jogo ${i+1}:* ${nums.join(' - ')}${extraWhats}\n`;
                 
                 soma += preco;
@@ -128,7 +123,10 @@
             let totalFormatado = "R$ " + soma.toFixed(2).replace('.', ',');
             
             // Adiciona o total no final da mensagem do WhatsApp
-            textoParaWhatsApp += `\n💰 *Total do Bolão: ${totalFormatado}*`;
+            textoParaWhatsApp += `\n💰 *Total do Bolão: ${totalFormatado}*\n`;
+            
+            // Adiciona automaticamente o link atual do site no final
+            textoParaWhatsApp += `\n🌐 *Gere seus jogos também acessando:*\n${window.location.href}`;
 
             document.getElementById('titulo-res').innerText = "Resultado " + tipo;
             document.getElementById('conteudo-res').innerHTML = html;
@@ -139,14 +137,11 @@
         }
 
         function enviarWhatsApp() {
-            // Transforma o texto num formato que o WhatsApp entende (codificando os espaços e quebras de linha)
             let textoCodificado = encodeURIComponent(textoParaWhatsApp);
-            // Abre o link do WhatsApp
             window.open(`https://wa.me/?text=${textoCodificado}`, '_blank');
         }
 
         function abrirCaixa() {
-            // Abre o site oficial das Loterias Caixa em uma nova aba
             window.open('https://www.loteriasonline.caixa.gov.br/', '_blank');
         }
 
