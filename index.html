@@ -22,12 +22,11 @@
 
         .wrapper { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; margin-top: 20px; }
         
-        /* Retângulo alterado para Azul */
         .painel-container { 
-            background: #005ca9; /* Azul principal */
+            background: #005ca9; 
             padding: 25px; 
             border-radius: 20px; 
-            border: 4px solid #003f7a; /* Borda azul escura */
+            border: 4px solid #003f7a; 
             width: 100%; 
             max-width: 400px; 
             box-sizing: border-box; 
@@ -37,14 +36,8 @@
         .clover-side { width: 100%; max-width: 350px; }
         
         @keyframes brilharTrevo {
-            0% { 
-                box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px #FFDF00; 
-                transform: scale(1); 
-            }
-            100% { 
-                box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 50px #FFF; 
-                transform: scale(1.04); 
-            }
+            0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px #FFDF00; transform: scale(1); }
+            100% { box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 50px #FFF; transform: scale(1.04); }
         }
 
         .clover-img { 
@@ -63,6 +56,27 @@
         .btn-zap { background: #25D366; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 20px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .btn-caixa { background: #005CA9; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; }
+
+        /* Estilos do Menu Flutuante (Modal) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-box {
+            background: white; color: black; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+        }
+        .fechar-modal {
+            position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; font-weight: bold; color: #888;
+        }
+        .fechar-modal:hover { color: #000; }
+        .opcoes-loteria { display: flex; gap: 10px; margin-bottom: 20px; margin-top: 15px; }
+        .btn-loteria {
+            flex: 1; padding: 12px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; opacity: 0.4; transition: 0.3s;
+        }
+        .btn-loteria.ativa { opacity: 1; border: 3px solid #FFDF00; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        #input-numeros-modal {
+            width: 100%; padding: 15px; border: 2px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; font-family: monospace; text-align: center;
+        }
 
         @media (max-width: 768px) {
             .wrapper { flex-direction: column-reverse; gap: 30px; }
@@ -87,8 +101,8 @@
             <button class="btn" style="background:#c62828" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
             <button class="btn" style="background:#7b1fa2" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
             <hr style="border-color: rgba(255,255,255,0.2); margin: 15px 0;">
-            <!-- Novo botão de desdobramento -->
-            <button class="btn" style="background:#1a1a1a; border: 2px solid #FFDF00;" onclick="iniciarDesdobramento()">DESDOBRAMENTO (Cercar Ns)</button>
+            <!-- Botão com novo Nome -->
+            <button class="btn" style="background:#1a1a1a; border: 2px solid #FFDF00;" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
         </div>
 
         <div class="clover-side">
@@ -96,15 +110,38 @@
         </div>
     </div>
 
+    <!-- Resultados -->
     <div id="tela-resultado">
         <h2 id="titulo-res">Resultado</h2>
         <div id="conteudo-res"></div>
         <hr>
-        <h3>Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
+        <!-- Novos contadores de total -->
+        <h3 style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
+        <h3 style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
         
         <button class="btn-zap" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
         <button class="btn-caixa" onclick="abrirCaixa()">🎰 Jogar no Site da Caixa</button>
         <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
+    </div>
+
+    <!-- Modal Flutuante para Combinações -->
+    <div id="modal-combinacoes" class="modal-overlay">
+        <div class="modal-box">
+            <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+            <h2 style="margin-top: 5px; color:#1a1a1a;">Gerar Combinações</h2>
+            
+            <p style="font-weight: bold; margin-bottom: 5px;">1. Selecione a Loteria:</p>
+            <div class="opcoes-loteria">
+                <button id="btn-mega-modal" class="btn-loteria ativa" style="background:#2e7d32" onclick="setLoteriaModal('MegaSena')">MEGA SENA</button>
+                <button id="btn-quina-modal" class="btn-loteria" style="background:#4a148c" onclick="setLoteriaModal('Quina')">QUINA</button>
+            </div>
+            
+            <p style="font-weight: bold; margin-bottom: 5px;">2. Digite os números:</p>
+            <p style="font-size: 13px; color: #666; margin-top: 0;">Separados por vírgula (Ex: 5, 12, 23...)</p>
+            <input type="text" id="input-numeros-modal" placeholder="Ex: 01, 15, 23, 44, 55, 60">
+            
+            <button class="btn" style="background:#005CA9; margin-top:25px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
+        </div>
     </div>
 
     <script>
@@ -121,6 +158,7 @@
         };
 
         let textoParaWhatsApp = "";
+        let loteriaSelecionadaModal = 'MegaSena'; // Padrão do Modal
 
         function gerarNumeros(max, qtd, offset = 1) {
             let nums = [];
@@ -131,7 +169,7 @@
             return nums.sort((a,b) => a-b).map(n => n.toString().padStart(2, '0'));
         }
 
-        // NOVA FUNÇÃO MATEMÁTICA: Gera todas as combinações possíveis
+        // Função Matemática: Gera todas as combinações
         function gerarCombinacoes(arr, k) {
             if (k > arr.length || k <= 0) return [];
             if (k === arr.length) return [arr];
@@ -148,46 +186,63 @@
             return combs;
         }
 
-        // NOVA FUNÇÃO DE INTERFACE: Coleta os dados e executa o desdobramento
-        function iniciarDesdobramento() {
-            let tipoInput = prompt("Para qual loteria deseja gerar o desdobramento?\nDigite M para Mega-Sena ou Q para Quina:", "M");
-            if (!tipoInput) return; // Cancela se deixar em branco
-            
-            tipoInput = tipoInput.toUpperCase().trim();
-            if (tipoInput !== 'M' && tipoInput !== 'Q') {
-                alert("Opção inválida. Use M para Mega-Sena ou Q para Quina.");
-                return;
-            }
+        // --- CONTROLES DO MENU FLUTUANTE (MODAL) ---
+        function abrirModal() {
+            document.getElementById('modal-combinacoes').style.display = 'flex';
+            setLoteriaModal('MegaSena'); // Reseta para Mega Sena ao abrir
+            document.getElementById('input-numeros-modal').value = ''; // Limpa o campo
+        }
 
-            let tipo = tipoInput === 'Q' ? 'Quina' : 'MegaSena';
+        function fecharModal() {
+            document.getElementById('modal-combinacoes').style.display = 'none';
+        }
+
+        function setLoteriaModal(tipo) {
+            loteriaSelecionadaModal = tipo;
+            document.getElementById('btn-mega-modal').classList.remove('ativa');
+            document.getElementById('btn-quina-modal').classList.remove('ativa');
+            
+            if (tipo === 'MegaSena') {
+                document.getElementById('btn-mega-modal').classList.add('ativa');
+            } else {
+                document.getElementById('btn-quina-modal').classList.add('ativa');
+            }
+        }
+
+        // Executa a combinação ao clicar no botão dentro do modal
+        function executarCombinacoes() {
+            let tipo = loteriaSelecionadaModal;
             let limiteMaximoLoteria = tipo === 'Quina' ? 80 : 60;
             let tamanhoJogo = tipo === 'Quina' ? 5 : 6;
             let precoBase = precos[tipo][tamanhoJogo];
 
-            let numerosInput = prompt(`Digite os números que deseja cercar separados por vírgula.\nExemplo: 1, 5, 12, 23, 34, 45, 56, ...`, "");
-            if (!numerosInput) return;
+            let numerosInput = document.getElementById('input-numeros-modal').value;
+            if (!numerosInput) {
+                alert("Por favor, digite os números no campo de texto.");
+                return;
+            }
 
-            // Limpa, valida, converte para inteiro e remove duplicatas
             let numerosEscolhidos = numerosInput.split(',')
                                       .map(n => parseInt(n.trim(), 10))
                                       .filter(n => !isNaN(n) && n > 0 && n <= limiteMaximoLoteria);
             numerosEscolhidos = [...new Set(numerosEscolhidos)].sort((a,b) => a-b);
 
             if (numerosEscolhidos.length < tamanhoJogo) {
-                alert(`Você precisa escolher pelo menos ${tamanhoJogo} números válidos (entre 1 e ${limiteMaximoLoteria}) para a ${tipo}. Você digitou apenas ${numerosEscolhidos.length}.`);
+                alert(`Você precisa escolher pelo menos ${tamanhoJogo} números válidos (entre 1 e ${limiteMaximoLoteria}) para a ${tipo === 'Quina' ? 'Quina' : 'Mega Sena'}.`);
                 return;
             }
 
             let combinacoes = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
             
-            // Trava de segurança para não explodir o navegador caso digitem muitos números
             if (combinacoes.length > 2000) {
-                let confirma = confirm(`Você escolheu ${numerosEscolhidos.length} números. Isso gerará ${combinacoes.length} jogos!\nPode travar o seu celular ou o WhatsApp. Deseja continuar?`);
+                let confirma = confirm(`Você escolheu ${numerosEscolhidos.length} números. Isso gerará ${combinacoes.length} jogos!\nPode travar o seu celular. Deseja continuar?`);
                 if(!confirma) return;
             }
 
             let html = "", soma = 0;
-            textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *Desdobramento: ${tipo}*\n🔢 *Números Base:* ${numerosEscolhidos.map(n => n.toString().padStart(2, '0')).join(', ')}\n📊 *Total de Jogos:* ${combinacoes.length}\n\n`;
+            let nomeLoteria = tipo === 'Quina' ? 'Quina' : 'Mega-Sena';
+            
+            textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *Gerar Combinações: ${nomeLoteria}*\n🔢 *Números Base:* ${numerosEscolhidos.map(n => n.toString().padStart(2, '0')).join(', ')}\n\n`;
 
             for(let i = 0; i < combinacoes.length; i++) {
                 let numsFormatados = combinacoes[i].map(n => n.toString().padStart(2, '0'));
@@ -198,21 +253,28 @@
 
             let totalFormatado = "R$ " + soma.toFixed(2).replace('.', ',');
             
-            textoParaWhatsApp += `\n💰 *Total do Bolão: ${totalFormatado}*\n`;
+            textoParaWhatsApp += `\n🏷️ *Total de Cartões: ${combinacoes.length}*\n`;
+            textoParaWhatsApp += `💰 *Total do Bolão: ${totalFormatado}*\n`;
             textoParaWhatsApp += `\n🌐 *Gere seus jogos também acessando:*\n${window.location.href}`;
 
-            document.getElementById('titulo-res').innerText = `Desdobramento ${tipo} (${numerosEscolhidos.length} números)`;
+            document.getElementById('titulo-res').innerText = `Combinações ${nomeLoteria} (${numerosEscolhidos.length} números)`;
             document.getElementById('conteudo-res').innerHTML = html;
+            
+            // Preenche os contadores de tela
+            document.getElementById('total-cartoes').innerText = combinacoes.length;
             document.getElementById('total-geral').innerText = totalFormatado;
+            
+            fecharModal(); // Fecha o menu flutuante
             
             document.querySelector('.wrapper').style.display = 'none';
             document.getElementById('tela-resultado').style.display = 'block';
         }
 
+        // Função original de gerar jogos aleatórios
         function iniciar(tipo, max, minQtd, maxQtd) {
             let qtdJogos = prompt("Quantos jogos deseja gerar?", "5");
             if (!qtdJogos) return;
-            let qtdNum = prompt(`Quantos números? (${minQtd} a ${maxQtd})`, minQtd);
+            let qtdNum = prompt(`Quantos números por jogo? (${minQtd} a ${maxQtd})`, minQtd);
             if (!qtdNum) return;
             let preco = precos[tipo][qtdNum] || 0;
             let html = "", soma = 0;
@@ -243,11 +305,14 @@
 
             let totalFormatado = "R$ " + soma.toFixed(2).replace('.', ',');
             
-            textoParaWhatsApp += `\n💰 *Total do Bolão: ${totalFormatado}*\n`;
+            textoParaWhatsApp += `\n🏷️ *Total de Cartões: ${qtdJogos}*\n`;
+            textoParaWhatsApp += `💰 *Total do Bolão: ${totalFormatado}*\n`;
             textoParaWhatsApp += `\n🌐 *Gere seus jogos também acessando:*\n${window.location.href}`;
 
             document.getElementById('titulo-res').innerText = "Resultado " + tipo;
             document.getElementById('conteudo-res').innerHTML = html;
+            
+            document.getElementById('total-cartoes').innerText = qtdJogos;
             document.getElementById('total-geral').innerText = totalFormatado;
             
             document.querySelector('.wrapper').style.display = 'none';
