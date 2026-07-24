@@ -63,20 +63,56 @@
             background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-box {
-            background: white; color: black; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+            background: white; color: black; padding: 20px; border-radius: 15px; width: 95%; max-width: 450px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.7); display: flex; flex-direction: column; max-height: 90vh;
         }
         .fechar-modal {
             position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; font-weight: bold; color: #888;
         }
         .fechar-modal:hover { color: #000; }
-        .opcoes-loteria { display: flex; gap: 10px; margin-bottom: 20px; margin-top: 15px; }
+        .opcoes-loteria { display: flex; gap: 10px; margin-bottom: 10px; margin-top: 15px; }
         .btn-loteria {
             flex: 1; padding: 12px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; opacity: 0.4; transition: 0.3s;
         }
         .btn-loteria.ativa { opacity: 1; border: 3px solid #FFDF00; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        #input-numeros-modal {
-            width: 100%; padding: 15px; border: 2px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; font-family: monospace; text-align: center;
+        
+        /* Estilos do Grid de Números Dinâmico */
+        .grid-numeros {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+            gap: 8px;
+            max-height: 250px; /* Para não estourar a tela do celular */
+            overflow-y: auto;
+            padding: 10px 5px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #ddd;
         }
+        .num-btn {
+            background: #fff;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            user-select: none;
+            margin: 0 auto;
+        }
+        .num-btn:hover { background: #eee; }
+        .num-btn.ativo {
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border-color: transparent;
+        }
+        .contador-info { font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; }
 
         @media (max-width: 768px) {
             .wrapper { flex-direction: column-reverse; gap: 30px; }
@@ -84,6 +120,7 @@
             .clover-side { max-width: 250px; }
             body { padding: 15px; }
             .btn { padding: 20px; font-size: 20px; }
+            .grid-numeros { max-height: 200px; }
         }
     </style>
 </head>
@@ -101,7 +138,6 @@
             <button class="btn" style="background:#c62828" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
             <button class="btn" style="background:#7b1fa2" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
             <hr style="border-color: rgba(255,255,255,0.2); margin: 15px 0;">
-            <!-- Botão com novo Nome -->
             <button class="btn" style="background:#1a1a1a; border: 2px solid #FFDF00;" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
         </div>
 
@@ -115,7 +151,6 @@
         <h2 id="titulo-res">Resultado</h2>
         <div id="conteudo-res"></div>
         <hr>
-        <!-- Novos contadores de total -->
         <h3 style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
         <h3 style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
         
@@ -128,7 +163,7 @@
     <div id="modal-combinacoes" class="modal-overlay">
         <div class="modal-box">
             <span class="fechar-modal" onclick="fecharModal()">&times;</span>
-            <h2 style="margin-top: 5px; color:#1a1a1a;">Gerar Combinações</h2>
+            <h2 style="margin-top: 5px; color:#1a1a1a; font-size: 22px;">Gerar Combinações</h2>
             
             <p style="font-weight: bold; margin-bottom: 5px;">1. Selecione a Loteria:</p>
             <div class="opcoes-loteria">
@@ -136,11 +171,13 @@
                 <button id="btn-quina-modal" class="btn-loteria" style="background:#4a148c" onclick="setLoteriaModal('Quina')">QUINA</button>
             </div>
             
-            <p style="font-weight: bold; margin-bottom: 5px;">2. Digite os números:</p>
-            <p style="font-size: 13px; color: #666; margin-top: 0;">Separados por vírgula (Ex: 5, 12, 23...)</p>
-            <input type="text" id="input-numeros-modal" placeholder="Ex: 01, 15, 23, 44, 55, 60">
+            <p style="font-weight: bold; margin-bottom: 2px; margin-top: 10px;">2. Escolha os números:</p>
+            <div class="contador-info">Selecionados: <span id="contador-num" style="color:#e53935; font-size: 16px;">0</span></div>
             
-            <button class="btn" style="background:#005CA9; margin-top:25px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
+            <!-- Grid onde as bolinhas vão aparecer -->
+            <div id="grid-numeros-modal" class="grid-numeros"></div>
+            
+            <button class="btn" style="background:#005CA9; margin-top:10px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
         </div>
     </div>
 
@@ -158,7 +195,8 @@
         };
 
         let textoParaWhatsApp = "";
-        let loteriaSelecionadaModal = 'MegaSena'; // Padrão do Modal
+        let loteriaSelecionadaModal = 'MegaSena'; 
+        let numerosEscolhidosArray = []; // Guarda as seleções do grid
 
         function gerarNumeros(max, qtd, offset = 1) {
             let nums = [];
@@ -169,7 +207,6 @@
             return nums.sort((a,b) => a-b).map(n => n.toString().padStart(2, '0'));
         }
 
-        // Função Matemática: Gera todas as combinações
         function gerarCombinacoes(arr, k) {
             if (k > arr.length || k <= 0) return [];
             if (k === arr.length) return [arr];
@@ -186,11 +223,54 @@
             return combs;
         }
 
+        // --- LÓGICA DO NOVO GRID DE NÚMEROS ---
+        function renderizarGridNumeros(maxDezenas, corTema) {
+            let grid = document.getElementById('grid-numeros-modal');
+            grid.innerHTML = '';
+            numerosEscolhidosArray = []; // Limpa seleções anteriores
+            atualizarContadorGrid();
+
+            for(let i = 1; i <= maxDezenas; i++) {
+                let btn = document.createElement('div');
+                btn.className = 'num-btn';
+                btn.innerText = i.toString().padStart(2, '0');
+                
+                btn.onclick = function() {
+                    let index = numerosEscolhidosArray.indexOf(i);
+                    if (index > -1) {
+                        // Desmarcar
+                        numerosEscolhidosArray.splice(index, 1);
+                        btn.classList.remove('ativo');
+                        btn.style.background = '#fff';
+                    } else {
+                        // Marcar
+                        numerosEscolhidosArray.push(i);
+                        btn.classList.add('ativo');
+                        btn.style.background = corTema;
+                    }
+                    atualizarContadorGrid();
+                };
+                grid.appendChild(btn);
+            }
+        }
+
+        function atualizarContadorGrid() {
+            let contadorSpan = document.getElementById('contador-num');
+            contadorSpan.innerText = numerosEscolhidosArray.length;
+            
+            // Muda a cor do texto dependendo se escolheu dezenas suficientes
+            let tamanhoMinimo = loteriaSelecionadaModal === 'Quina' ? 5 : 6;
+            if (numerosEscolhidosArray.length >= tamanhoMinimo) {
+                contadorSpan.style.color = '#2e7d32'; // Verde se OK
+            } else {
+                contadorSpan.style.color = '#e53935'; // Vermelho se faltar
+            }
+        }
+
         // --- CONTROLES DO MENU FLUTUANTE (MODAL) ---
         function abrirModal() {
             document.getElementById('modal-combinacoes').style.display = 'flex';
             setLoteriaModal('MegaSena'); // Reseta para Mega Sena ao abrir
-            document.getElementById('input-numeros-modal').value = ''; // Limpa o campo
         }
 
         function fecharModal() {
@@ -204,38 +284,31 @@
             
             if (tipo === 'MegaSena') {
                 document.getElementById('btn-mega-modal').classList.add('ativa');
+                renderizarGridNumeros(60, '#2e7d32'); // 60 dezenas e bolinha Verde
             } else {
                 document.getElementById('btn-quina-modal').classList.add('ativa');
+                renderizarGridNumeros(80, '#4a148c'); // 80 dezenas e bolinha Roxa
             }
         }
 
-        // Executa a combinação ao clicar no botão dentro do modal
+        // Executa a combinação com os números selecionados no Grid
         function executarCombinacoes() {
             let tipo = loteriaSelecionadaModal;
-            let limiteMaximoLoteria = tipo === 'Quina' ? 80 : 60;
             let tamanhoJogo = tipo === 'Quina' ? 5 : 6;
             let precoBase = precos[tipo][tamanhoJogo];
 
-            let numerosInput = document.getElementById('input-numeros-modal').value;
-            if (!numerosInput) {
-                alert("Por favor, digite os números no campo de texto.");
-                return;
-            }
-
-            let numerosEscolhidos = numerosInput.split(',')
-                                      .map(n => parseInt(n.trim(), 10))
-                                      .filter(n => !isNaN(n) && n > 0 && n <= limiteMaximoLoteria);
-            numerosEscolhidos = [...new Set(numerosEscolhidos)].sort((a,b) => a-b);
+            // Pega o array do grid, garante que está ordenado
+            let numerosEscolhidos = [...numerosEscolhidosArray].sort((a,b) => a-b);
 
             if (numerosEscolhidos.length < tamanhoJogo) {
-                alert(`Você precisa escolher pelo menos ${tamanhoJogo} números válidos (entre 1 e ${limiteMaximoLoteria}) para a ${tipo === 'Quina' ? 'Quina' : 'Mega Sena'}.`);
+                alert(`Você precisa selecionar pelo menos ${tamanhoJogo} números para a ${tipo === 'Quina' ? 'Quina' : 'Mega Sena'}.`);
                 return;
             }
 
             let combinacoes = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
             
             if (combinacoes.length > 2000) {
-                let confirma = confirm(`Você escolheu ${numerosEscolhidos.length} números. Isso gerará ${combinacoes.length} jogos!\nPode travar o seu celular. Deseja continuar?`);
+                let confirma = confirm(`Você selecionou ${numerosEscolhidos.length} números. Isso gerará ${combinacoes.length} jogos!\nPode travar o seu celular. Deseja continuar?`);
                 if(!confirma) return;
             }
 
@@ -260,17 +333,15 @@
             document.getElementById('titulo-res').innerText = `Combinações ${nomeLoteria} (${numerosEscolhidos.length} números)`;
             document.getElementById('conteudo-res').innerHTML = html;
             
-            // Preenche os contadores de tela
             document.getElementById('total-cartoes').innerText = combinacoes.length;
             document.getElementById('total-geral').innerText = totalFormatado;
             
-            fecharModal(); // Fecha o menu flutuante
+            fecharModal(); 
             
             document.querySelector('.wrapper').style.display = 'none';
             document.getElementById('tela-resultado').style.display = 'block';
         }
 
-        // Função original de gerar jogos aleatórios
         function iniciar(tipo, max, minQtd, maxQtd) {
             let qtdJogos = prompt("Quantos jogos deseja gerar?", "5");
             if (!qtdJogos) return;
