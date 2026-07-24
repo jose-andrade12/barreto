@@ -86,6 +86,9 @@
             <button class="btn" style="background:#fbc02d; color:black" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
             <button class="btn" style="background:#c62828" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
             <button class="btn" style="background:#7b1fa2" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
+            <hr style="border-color: rgba(255,255,255,0.2); margin: 15px 0;">
+            <!-- Novo botão de desdobramento -->
+            <button class="btn" style="background:#1a1a1a; border: 2px solid #FFDF00;" onclick="iniciarDesdobramento()">DESDOBRAMENTO (Cercar Ns)</button>
         </div>
 
         <div class="clover-side">
@@ -126,6 +129,84 @@
                 if(!nums.includes(n)) nums.push(n);
             }
             return nums.sort((a,b) => a-b).map(n => n.toString().padStart(2, '0'));
+        }
+
+        // NOVA FUNÇÃO MATEMÁTICA: Gera todas as combinações possíveis
+        function gerarCombinacoes(arr, k) {
+            if (k > arr.length || k <= 0) return [];
+            if (k === arr.length) return [arr];
+            if (k === 1) return arr.map(n => [n]);
+
+            let combs = [];
+            for (let i = 0; i < arr.length - k + 1; i++) {
+                let head = arr.slice(i, i + 1);
+                let tailcombs = gerarCombinacoes(arr.slice(i + 1), k - 1);
+                for (let j = 0; j < tailcombs.length; j++) {
+                    combs.push(head.concat(tailcombs[j]));
+                }
+            }
+            return combs;
+        }
+
+        // NOVA FUNÇÃO DE INTERFACE: Coleta os dados e executa o desdobramento
+        function iniciarDesdobramento() {
+            let tipoInput = prompt("Para qual loteria deseja gerar o desdobramento?\nDigite M para Mega-Sena ou Q para Quina:", "M");
+            if (!tipoInput) return; // Cancela se deixar em branco
+            
+            tipoInput = tipoInput.toUpperCase().trim();
+            if (tipoInput !== 'M' && tipoInput !== 'Q') {
+                alert("Opção inválida. Use M para Mega-Sena ou Q para Quina.");
+                return;
+            }
+
+            let tipo = tipoInput === 'Q' ? 'Quina' : 'MegaSena';
+            let limiteMaximoLoteria = tipo === 'Quina' ? 80 : 60;
+            let tamanhoJogo = tipo === 'Quina' ? 5 : 6;
+            let precoBase = precos[tipo][tamanhoJogo];
+
+            let numerosInput = prompt(`Digite os números que deseja cercar separados por vírgula.\nExemplo: 1, 5, 12, 23, 34, 45, 56, ...`, "");
+            if (!numerosInput) return;
+
+            // Limpa, valida, converte para inteiro e remove duplicatas
+            let numerosEscolhidos = numerosInput.split(',')
+                                      .map(n => parseInt(n.trim(), 10))
+                                      .filter(n => !isNaN(n) && n > 0 && n <= limiteMaximoLoteria);
+            numerosEscolhidos = [...new Set(numerosEscolhidos)].sort((a,b) => a-b);
+
+            if (numerosEscolhidos.length < tamanhoJogo) {
+                alert(`Você precisa escolher pelo menos ${tamanhoJogo} números válidos (entre 1 e ${limiteMaximoLoteria}) para a ${tipo}. Você digitou apenas ${numerosEscolhidos.length}.`);
+                return;
+            }
+
+            let combinacoes = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
+            
+            // Trava de segurança para não explodir o navegador caso digitem muitos números
+            if (combinacoes.length > 2000) {
+                let confirma = confirm(`Você escolheu ${numerosEscolhidos.length} números. Isso gerará ${combinacoes.length} jogos!\nPode travar o seu celular ou o WhatsApp. Deseja continuar?`);
+                if(!confirma) return;
+            }
+
+            let html = "", soma = 0;
+            textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *Desdobramento: ${tipo}*\n🔢 *Números Base:* ${numerosEscolhidos.map(n => n.toString().padStart(2, '0')).join(', ')}\n📊 *Total de Jogos:* ${combinacoes.length}\n\n`;
+
+            for(let i = 0; i < combinacoes.length; i++) {
+                let numsFormatados = combinacoes[i].map(n => n.toString().padStart(2, '0'));
+                html += `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${numsFormatados.join(' - ')}</span></div>`;
+                textoParaWhatsApp += `*Jogo ${i+1}:* ${numsFormatados.join(' - ')}\n`;
+                soma += precoBase;
+            }
+
+            let totalFormatado = "R$ " + soma.toFixed(2).replace('.', ',');
+            
+            textoParaWhatsApp += `\n💰 *Total do Bolão: ${totalFormatado}*\n`;
+            textoParaWhatsApp += `\n🌐 *Gere seus jogos também acessando:*\n${window.location.href}`;
+
+            document.getElementById('titulo-res').innerText = `Desdobramento ${tipo} (${numerosEscolhidos.length} números)`;
+            document.getElementById('conteudo-res').innerHTML = html;
+            document.getElementById('total-geral').innerText = totalFormatado;
+            
+            document.querySelector('.wrapper').style.display = 'none';
+            document.getElementById('tela-resultado').style.display = 'block';
         }
 
         function iniciar(tipo, max, minQtd, maxQtd) {
