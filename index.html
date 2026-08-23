@@ -87,9 +87,24 @@
         .num-btn.ativo { color: white; transform: scale(1.15); box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-color: transparent; }
         .contador-info { font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; }
 
-        /* Estilos específicos para Conferência (Visual Premium) */
+        /* PAINEL PREMIUM DE CONFERÊNCIA */
         .info-api { font-size: 13px; color: #888; font-weight: normal; margin-bottom: 10px; min-height: 18px; text-align: left; padding-left: 5px;}
         
+        .busca-concurso-container {
+            display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 14.5px; color: #425f7a;
+        }
+        #input-busca-concurso {
+            width: 75px; padding: 8px; text-align: center; border: 1px solid #c4d1db; border-radius: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); font-size: 15px; color: #555;
+        }
+        #input-busca-concurso::-webkit-outer-spin-button, #input-busca-concurso::-webkit-inner-spin-button {
+            -webkit-appearance: none; margin: 0;
+        }
+        #input-busca-concurso[type=number] { -moz-appearance: textfield; }
+        
+        .nav-concurso { color: #0073e6; cursor: pointer; user-select: none; transition: color 0.2s; font-weight: 500;}
+        .nav-concurso:hover { text-decoration: underline; color: #005bb5; }
+        .nav-concurso.disabled { color: #ccc; cursor: not-allowed; text-decoration: none; }
+
         .painel-premium {
             background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 20px 15px; margin-bottom: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); display: none;
         }
@@ -109,7 +124,6 @@
             font-size: 24px; color: #425f7a; white-space: nowrap; font-family: 'Segoe UI', sans-serif; letter-spacing: -0.5px;
         }
 
-        .input-text-modal { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 15px; box-sizing: border-box; font-family: monospace; text-align: center; margin-bottom: 10px; background: #fdfdfd;}
         .textarea-jogos { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; font-family: monospace; height: 100px; resize: none; margin-bottom: 10px; white-space: pre; background: #fdfdfd;}
         .badge-acertos { margin-left: auto; font-size: 13px; padding: 4px 8px; border-radius: 20px; background: #e0e0e0; font-weight: bold; }
         .badge-premiado { background: #FFDF00; color: #996515; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
@@ -122,6 +136,7 @@
             .btn { padding: 20px; font-size: 20px; }
             .bolinha-oficial { width: 42px; height: 42px; font-size: 18px; }
             .premio-valor { font-size: 20px; }
+            .busca-concurso-container { font-size: 13px; gap: 8px; }
         }
     </style>
 </head>
@@ -196,24 +211,29 @@
                 <button id="btn-quina-conf" class="btn-loteria" style="background:#260085" onclick="setLoteriaConferencia('Quina')">QUINA</button>
             </div>
             
+            <!-- Barra de Busca de Concurso -->
+            <div class="busca-concurso-container">
+                <span>Buscar por concurso</span>
+                <input type="number" id="input-busca-concurso" onchange="buscarConcursoEspecifico()" onkeyup="if(event.key === 'Enter') buscarConcursoEspecifico()" placeholder="Nº">
+                <span class="nav-concurso disabled" id="btn-ant-concurso" onclick="navegarConcurso(-1)">&lt; Anterior</span>
+                <span class="nav-concurso disabled" id="btn-prox-concurso" onclick="navegarConcurso(1)">Próximo &gt;</span>
+            </div>
+            
             <div id="info-api" class="info-api">Buscando resultado oficial...</div>
             
-            <!-- Painel Visual Estilo "Site da Caixa" -->
+            <!-- Painel Visual Estilo Site da Caixa -->
             <div id="painel-premium" class="painel-premium">
                 <div id="bolinhas-container" class="bolinhas-container">
                     <!-- Bolinhas injetadas aqui -->
                 </div>
                 <div class="premio-detalhes">
-                    <div class="premio-texto">
+                    <div id="label-premio-texto" class="premio-texto">
                         Estimativa de<br>prêmio do próximo<br>concurso<br>
                         <span id="data-proximo" style="font-weight: bold;">--/--/----</span>
                     </div>
                     <div id="valor-estimado" class="premio-valor">R$ --</div>
                 </div>
             </div>
-            
-            <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Dezenas do Concurso (Edite se quiser outro):</p>
-            <input type="text" id="input-sorteadas" class="input-text-modal" placeholder="Aguardando conexão...">
             
             <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos gerados aqui:</p>
             <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados. Ex:&#10;Jogo 1: 01 - 02 - 15 - 20 - 33 - 40&#10;Jogo 2: 02 - 08 - 15..."></textarea>
@@ -236,9 +256,14 @@
         };
 
         let textoParaWhatsApp = "";
+        
+        // Variáveis de Controle da Conferência
         let loteriaSelecionadaModal = 'MegaSena'; 
         let loteriaSelecionadaConf = 'MegaSena';
         let numerosEscolhidosArray = [];
+        let concursoCarregado = null;
+        let ultimoConcursoDisponivel = null;
+        let dezenasSorteadasConferencia = [];
 
         function gerarNumeros(max, qtd, offset = 1) {
             let nums = [];
@@ -351,7 +376,7 @@
             fecharModal('modal-combinacoes'); 
         }
 
-        // --- PAINEL PREMIUM DE CONFERÊNCIA ---
+        // --- LÓGICA DO NOVO PAINEL DE CONFERÊNCIA COM BUSCA ---
         function abrirModalConferencia() {
             document.getElementById('modal-conferencia').style.display = 'flex';
             setLoteriaConferencia('MegaSena');
@@ -372,65 +397,142 @@
             buscarUltimoResultadoAPI(tipo);
         }
 
-        async function buscarUltimoResultadoAPI(tipo) {
+        function prepararBuscaAPI() {
             let infoDiv = document.getElementById('info-api');
-            let inputSorteio = document.getElementById('input-sorteadas');
+            let painelPremium = document.getElementById('painel-premium');
+            infoDiv.innerText = "Buscando dados do concurso...";
+            infoDiv.style.color = '#888';
+            painelPremium.style.display = 'none';
+        }
+        
+        function falhaBuscaAPI(num) {
+            let infoDiv = document.getElementById('info-api');
+            infoDiv.innerText = `⚠️ Falha ao buscar concurso ${num || ''}. Verifique o número ou tente depois.`;
+            infoDiv.style.color = '#e53935';
+        }
+
+        function processarDadosAPI(data, isLatest) {
+            let corTema = loteriaSelecionadaConf === 'MegaSena' ? '#209869' : '#260085';
+            let infoDiv = document.getElementById('info-api');
             let painelPremium = document.getElementById('painel-premium');
             
-            infoDiv.innerText = "Buscando último concurso na base de dados...";
-            infoDiv.style.color = '#888';
-            inputSorteio.value = "";
-            painelPremium.style.display = 'none'; // Esconde até carregar
+            if (isLatest) {
+                ultimoConcursoDisponivel = data.concurso;
+            }
+            concursoCarregado = data.concurso;
             
-            let endpoint = tipo === 'MegaSena' ? 'megasena' : 'quina';
-            let corTema = tipo === 'MegaSena' ? '#209869' : '#260085';
+            // Salva array oficial de números
+            dezenasSorteadasConferencia = data.dezenas.map(n => parseInt(n, 10));
             
-            try {
-                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${endpoint}/latest`);
-                if(!response.ok) throw new Error('API Indisponível');
-                let data = await response.json();
-                
-                infoDiv.innerText = `✔️ Último Concurso: ${data.concurso} (${data.data})`;
-                infoDiv.style.color = '#209869';
-                inputSorteio.value = data.dezenas.join(', ');
-                
-                // Popula as bolinhas do painel visual
-                let containerBolinhas = document.getElementById('bolinhas-container');
-                containerBolinhas.innerHTML = '';
-                
-                data.dezenas.forEach(dezena => {
-                    let bola = document.createElement('div');
-                    bola.className = 'bolinha-oficial';
-                    bola.style.backgroundColor = corTema;
-                    bola.innerText = dezena;
-                    containerBolinhas.appendChild(bola);
-                });
-                
-                // Informações do prêmio
-                document.getElementById('data-proximo').innerText = data.dataProximoConcurso || 'Aguardando';
+            // Atualiza Input da Barra
+            document.getElementById('input-busca-concurso').value = concursoCarregado;
+            atualizarBotoesNavegacao();
+
+            infoDiv.innerText = `✔️ Sorteio do Concurso: ${data.concurso} realizado em ${data.data}`;
+            infoDiv.style.color = '#555';
+            
+            // Popula as bolinhas do painel visual
+            let containerBolinhas = document.getElementById('bolinhas-container');
+            containerBolinhas.innerHTML = '';
+            
+            data.dezenas.forEach(dezena => {
+                let bola = document.createElement('div');
+                bola.className = 'bolinha-oficial';
+                bola.style.backgroundColor = corTema;
+                bola.innerText = dezena;
+                containerBolinhas.appendChild(bola);
+            });
+            
+            // Lógica de Informações do Prêmio Visual
+            let labelPremio = document.getElementById('label-premio-texto');
+            if (concursoCarregado === ultimoConcursoDisponivel) {
+                labelPremio.innerHTML = `Estimativa de<br>prêmio do próximo<br>concurso<br><span style="font-weight: bold;">${data.dataProximoConcurso || '--/--/----'}</span>`;
                 
                 let valorProx = data.valorEstimadoProximoConcurso ? 
                                 data.valorEstimadoProximoConcurso.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : 
                                 'Aguardando Rateio';
-                                
                 document.getElementById('valor-estimado').innerText = valorProx;
+            } else {
+                labelPremio.innerHTML = `Prêmio<br>deste<br>concurso<br><span style="font-weight: bold;">Finalizado</span>`;
                 
-                // Exibe o painel visual lindo
-                painelPremium.style.display = 'block';
-                
+                let valorPrize = "Apurado";
+                if(data.acumulou) {
+                     valorPrize = "Acumulou!";
+                } else if(data.premiacoes && data.premiacoes.length > 0) {
+                     // Pega o valor do prêmio principal
+                     valorPrize = data.premiacoes[0].premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+                }
+                document.getElementById('valor-estimado').innerText = valorPrize;
+            }
+            
+            painelPremium.style.display = 'block';
+        }
+
+        async function buscarUltimoResultadoAPI(tipo) {
+            prepararBuscaAPI();
+            let endpoint = tipo === 'MegaSena' ? 'megasena' : 'quina';
+            try {
+                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${endpoint}/latest`);
+                if(!response.ok) throw new Error('API Indisponível');
+                let data = await response.json();
+                processarDadosAPI(data, true);
             } catch (error) {
-                infoDiv.innerText = "⚠️ Não foi possível carregar imagem do resultado. Digite as dezenas abaixo.";
-                infoDiv.style.color = '#e53935';
-                painelPremium.style.display = 'none';
+                falhaBuscaAPI();
             }
         }
 
+        async function buscarConcursoEspecifico() {
+            let num = parseInt(document.getElementById('input-busca-concurso').value, 10);
+            if(isNaN(num) || num < 1) return;
+            if(num === concursoCarregado) return;
+            
+            // Impede de buscar concurso futuro que não existe
+            if(ultimoConcursoDisponivel && num > ultimoConcursoDisponivel) {
+                 num = ultimoConcursoDisponivel;
+                 document.getElementById('input-busca-concurso').value = num;
+            }
+            
+            prepararBuscaAPI();
+            let endpoint = loteriaSelecionadaConf === 'MegaSena' ? 'megasena' : 'quina';
+            try {
+                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${endpoint}/${num}`);
+                if(!response.ok) throw new Error('API Indisponível');
+                let data = await response.json();
+                processarDadosAPI(data, false);
+            } catch (error) {
+                falhaBuscaAPI(num);
+            }
+        }
+
+        function navegarConcurso(dir) {
+            if(!concursoCarregado) return;
+            let num = concursoCarregado + dir;
+            if(num < 1) return;
+            if(ultimoConcursoDisponivel && num > ultimoConcursoDisponivel) return;
+            
+            document.getElementById('input-busca-concurso').value = num;
+            buscarConcursoEspecifico();
+        }
+
+        function atualizarBotoesNavegacao() {
+             let btnAnt = document.getElementById('btn-ant-concurso');
+             let btnProx = document.getElementById('btn-prox-concurso');
+             
+             if(concursoCarregado <= 1) btnAnt.classList.add('disabled');
+             else btnAnt.classList.remove('disabled');
+
+             if(ultimoConcursoDisponivel && concursoCarregado >= ultimoConcursoDisponivel) {
+                 btnProx.classList.add('disabled');
+             } else {
+                 btnProx.classList.remove('disabled');
+             }
+        }
+
         function executarConferencia() {
-            let inputSorteio = document.getElementById('input-sorteadas').value;
             let textareaJogos = document.getElementById('textarea-jogos').value;
             
-            if(!inputSorteio.trim()) {
-                alert("Por favor, informe as dezenas sorteadas oficiais.");
+            if(dezenasSorteadasConferencia.length === 0) {
+                alert("Aguarde o carregamento do concurso ou busque um sorteio válido antes de conferir.");
                 return;
             }
             if(!textareaJogos.trim()) {
@@ -438,7 +540,7 @@
                 return;
             }
 
-            let sorteadas = inputSorteio.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
+            let sorteadas = dezenasSorteadasConferencia;
             let linhas = textareaJogos.split('\n');
             let html = "";
             let corDestaque = loteriaSelecionadaConf === 'MegaSena' ? '#209869' : '#260085';
@@ -487,7 +589,7 @@
                 html += linhaHtml;
             }
 
-            document.getElementById('titulo-res').innerText = `Resultado da Conferência: ${loteriaSelecionadaConf === 'MegaSena' ? 'Mega-Sena' : 'Quina'}`;
+            document.getElementById('titulo-res').innerText = `Resultado da Conferência (Concurso ${concursoCarregado})`;
             document.getElementById('conteudo-res').innerHTML = html;
             
             document.getElementById('titulo-cartoes').style.display = 'none';
@@ -500,7 +602,7 @@
             document.getElementById('tela-resultado').style.display = 'block';
         }
 
-        // --- FUNÇÕES DE EXIBIÇÃO ---
+        // --- FUNÇÕES GERAIS ---
         function exibirResultados(arrayJogos, tipo, precoBase, titulo) {
             let html = "", soma = 0;
             textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
