@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>IA - Inteligência do Andrade</title>
+    
+    <!-- Configurações do Aplicativo (PWA) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#005ca9">
+    <link rel="apple-touch-icon" href="trevo.png">
+    
     <style>
         body { 
             font-family: 'Segoe UI', sans-serif; 
@@ -15,22 +21,13 @@
             min-height: 100vh;
         }
         
-        h1 {
-            font-size: 26px;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
-        }
+        h1 { font-size: 26px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); }
 
         .wrapper { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; margin-top: 20px; }
         
         .painel-container { 
-            background: #005ca9; 
-            padding: 25px; 
-            border-radius: 20px; 
-            border: 4px solid #003f7a; 
-            width: 100%; 
-            max-width: 400px; 
-            box-sizing: border-box; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+            background: #005ca9; padding: 25px; border-radius: 20px; border: 4px solid #003f7a; 
+            width: 100%; max-width: 400px; box-sizing: border-box; box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
         }
         
         .clover-side { width: 100%; max-width: 350px; }
@@ -40,14 +37,10 @@
             100% { box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 50px #FFF; transform: scale(1.04); }
         }
 
-        .clover-img { 
-            width: 100%; 
-            height: auto; 
-            border-radius: 20px;
-            animation: brilharTrevo 1.5s infinite alternate ease-in-out;
-        }
+        .clover-img { width: 100%; height: auto; border-radius: 20px; animation: brilharTrevo 1.5s infinite alternate ease-in-out; }
         
         .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .btn-install { background: #1a1a1a; border: 2px solid #25D366; color: #25D366; display: none; margin-top: 20px; box-shadow: 0 0 15px rgba(37, 211, 102, 0.5); }
         
         #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; width: 100%; max-width: 500px; box-sizing: border-box; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 5px;}
@@ -58,72 +51,33 @@
         .btn-caixa { background: #005CA9; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; }
 
-        /* Estilos do Menu Flutuante (Modal) */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000;
-        }
-        .modal-box {
-            background: white; color: black; padding: 20px; border-radius: 15px; width: 95%; max-width: 450px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.7); display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto;
-        }
-        .fechar-modal {
-            position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; font-weight: bold; color: #888; z-index: 10;
-        }
+        /* Modais */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: white; color: black; padding: 20px; border-radius: 15px; width: 95%; max-width: 450px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.7); display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto; }
+        .fechar-modal { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; font-weight: bold; color: #888; z-index: 10; }
         .fechar-modal:hover { color: #000; }
         .opcoes-loteria { display: flex; gap: 10px; margin-bottom: 10px; margin-top: 5px; }
-        .btn-loteria {
-            flex: 1; padding: 12px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; opacity: 0.4; transition: 0.3s;
-        }
+        .btn-loteria { flex: 1; padding: 12px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; opacity: 0.4; transition: 0.3s; }
         .btn-loteria.ativa { opacity: 1; border: 3px solid #FFDF00; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         
-        /* Grid de Números Dinâmico (Geração) */
-        .grid-numeros {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; max-height: 200px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd;
-        }
-        .num-btn {
-            background: #fff; border: 2px solid #ccc; border-radius: 50%; width: 38px; height: 38px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; margin: 0 auto;
-        }
-        .num-btn:hover { background: #eee; }
+        .grid-numeros { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; max-height: 200px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; }
+        .num-btn { background: #fff; border: 2px solid #ccc; border-radius: 50%; width: 38px; height: 38px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; margin: 0 auto; }
         .num-btn.ativo { color: white; transform: scale(1.15); box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-color: transparent; }
         .contador-info { font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; }
 
-        /* PAINEL PREMIUM DE CONFERÊNCIA */
-        .info-api { font-size: 13px; color: #888; font-weight: normal; margin-bottom: 10px; min-height: 18px; text-align: left; padding-left: 5px;}
-        
-        .busca-concurso-container {
-            display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 14.5px; color: #425f7a;
-        }
-        #input-busca-concurso {
-            width: 75px; padding: 8px; text-align: center; border: 1px solid #c4d1db; border-radius: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); font-size: 15px; color: #555;
-        }
-        #input-busca-concurso::-webkit-outer-spin-button, #input-busca-concurso::-webkit-inner-spin-button {
-            -webkit-appearance: none; margin: 0;
-        }
-        #input-busca-concurso[type=number] { -moz-appearance: textfield; }
-        
+        /* Painel Conferência */
+        .info-api { font-size: 13px; color: #888; margin-bottom: 10px; min-height: 18px; text-align: left; padding-left: 5px;}
+        .busca-concurso-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 14.5px; color: #425f7a; }
+        #input-busca-concurso { width: 75px; padding: 8px; text-align: center; border: 1px solid #c4d1db; border-radius: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); font-size: 15px; color: #555; }
+        #input-busca-concurso::-webkit-outer-spin-button, #input-busca-concurso::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .nav-concurso { color: #0073e6; cursor: pointer; user-select: none; transition: color 0.2s; font-weight: 500;}
-        .nav-concurso:hover { text-decoration: underline; color: #005bb5; }
         .nav-concurso.disabled { color: #ccc; cursor: not-allowed; text-decoration: none; }
-
-        .painel-premium {
-            background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 20px 15px; margin-bottom: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); display: none;
-        }
-        .bolinhas-container {
-            display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
-        }
-        .bolinha-oficial {
-            width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; box-shadow: 0 3px 6px rgba(0,0,0,0.15); font-family: 'Segoe UI', sans-serif;
-        }
-        .premio-detalhes {
-            display: flex; justify-content: space-between; align-items: center; text-align: left; border-top: 1px solid #e0e0e0; padding-top: 15px;
-        }
-        .premio-texto {
-            font-size: 13px; color: #5c6a79; line-height: 1.3;
-        }
-        .premio-valor {
-            font-size: 24px; color: #425f7a; white-space: nowrap; font-family: 'Segoe UI', sans-serif; letter-spacing: -0.5px;
-        }
-
+        .painel-premium { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 20px 15px; margin-bottom: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); display: none; }
+        .bolinhas-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .bolinha-oficial { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; box-shadow: 0 3px 6px rgba(0,0,0,0.15); font-family: 'Segoe UI', sans-serif; }
+        .premio-detalhes { display: flex; justify-content: space-between; align-items: center; text-align: left; border-top: 1px solid #e0e0e0; padding-top: 15px; }
+        .premio-texto { font-size: 13px; color: #5c6a79; line-height: 1.3; }
+        .premio-valor { font-size: 24px; color: #425f7a; white-space: nowrap; font-family: 'Segoe UI', sans-serif; letter-spacing: -0.5px; }
         .textarea-jogos { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; font-family: monospace; height: 100px; resize: none; margin-bottom: 10px; white-space: pre; background: #fdfdfd;}
         .badge-acertos { margin-left: auto; font-size: 13px; padding: 4px 8px; border-radius: 20px; background: #e0e0e0; font-weight: bold; }
         .badge-premiado { background: #FFDF00; color: #996515; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
@@ -136,7 +90,6 @@
             .btn { padding: 20px; font-size: 20px; }
             .bolinha-oficial { width: 42px; height: 42px; font-size: 18px; }
             .premio-valor { font-size: 20px; }
-            .busca-concurso-container { font-size: 13px; gap: 8px; }
         }
     </style>
 </head>
@@ -160,12 +113,15 @@
             <button class="btn" style="background:#b71c1c; border: 2px solid #fff;" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
             
             <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 12px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
-                <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> (cercando dezenas) e também <b>conferi automaticamente</b> os seus acertos puxando o último concurso oficial.
+                <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> e também <b>conferi automaticamente</b> os seus acertos.
             </p>
         </div>
 
         <div class="clover-side">
             <img src="trevo.png" alt="Trevo do Andrade" class="clover-img">
+            
+            <!-- NOVO BOTÃO DE INSTALAÇÃO DO APP -->
+            <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
         </div>
     </div>
 
@@ -182,7 +138,7 @@
         <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
     </div>
 
-    <!-- Modal Flutuante para Gerar Combinações -->
+    <!-- Modal Gerar -->
     <div id="modal-combinacoes" class="modal-overlay">
         <div class="modal-box">
             <span class="fechar-modal" onclick="fecharModal('modal-combinacoes')">&times;</span>
@@ -200,7 +156,7 @@
         </div>
     </div>
 
-    <!-- Modal Flutuante para Conferência de Jogos -->
+    <!-- Modal Conferência -->
     <div id="modal-conferencia" class="modal-overlay">
         <div class="modal-box">
             <span class="fechar-modal" onclick="fecharModal('modal-conferencia')">&times;</span>
@@ -211,7 +167,6 @@
                 <button id="btn-quina-conf" class="btn-loteria" style="background:#260085" onclick="setLoteriaConferencia('Quina')">QUINA</button>
             </div>
             
-            <!-- Barra de Busca de Concurso -->
             <div class="busca-concurso-container">
                 <span>Buscar por concurso</span>
                 <input type="number" id="input-busca-concurso" onchange="buscarConcursoEspecifico()" onkeyup="if(event.key === 'Enter') buscarConcursoEspecifico()" placeholder="Nº">
@@ -221,22 +176,16 @@
             
             <div id="info-api" class="info-api">Buscando resultado oficial...</div>
             
-            <!-- Painel Visual Estilo Site da Caixa -->
             <div id="painel-premium" class="painel-premium">
-                <div id="bolinhas-container" class="bolinhas-container">
-                    <!-- Bolinhas injetadas aqui -->
-                </div>
+                <div id="bolinhas-container" class="bolinhas-container"></div>
                 <div class="premio-detalhes">
-                    <div id="label-premio-texto" class="premio-texto">
-                        Estimativa de<br>prêmio do próximo<br>concurso<br>
-                        <span id="data-proximo" style="font-weight: bold;">--/--/----</span>
-                    </div>
+                    <div id="label-premio-texto" class="premio-texto"></div>
                     <div id="valor-estimado" class="premio-valor">R$ --</div>
                 </div>
             </div>
             
             <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos gerados aqui:</p>
-            <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados. Ex:&#10;Jogo 1: 01 - 02 - 15 - 20 - 33 - 40&#10;Jogo 2: 02 - 08 - 15..."></textarea>
+            <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados..."></textarea>
             
             <button class="btn" style="background:#b71c1c; margin-top:5px; margin-bottom:0;" onclick="executarConferencia()">REALIZAR CONFERÊNCIA</button>
         </div>
@@ -257,7 +206,6 @@
 
         let textoParaWhatsApp = "";
         
-        // Variáveis de Controle da Conferência
         let loteriaSelecionadaModal = 'MegaSena'; 
         let loteriaSelecionadaConf = 'MegaSena';
         let numerosEscolhidosArray = [];
@@ -361,7 +309,7 @@
             let numerosEscolhidos = [...numerosEscolhidosArray].sort((a,b) => a-b);
 
             if (numerosEscolhidos.length < tamanhoJogo) {
-                alert(`Você precisa selecionar pelo menos ${tamanhoJogo} números para a ${tipo === 'Quina' ? 'Quina' : 'Mega Sena'}.`);
+                alert(`Você precisa selecionar pelo menos ${tamanhoJogo} números.`);
                 return;
             }
 
@@ -376,7 +324,6 @@
             fecharModal('modal-combinacoes'); 
         }
 
-        // --- LÓGICA DO NOVO PAINEL DE CONFERÊNCIA COM BUSCA ---
         function abrirModalConferencia() {
             document.getElementById('modal-conferencia').style.display = 'flex';
             setLoteriaConferencia('MegaSena');
@@ -416,22 +363,16 @@
             let infoDiv = document.getElementById('info-api');
             let painelPremium = document.getElementById('painel-premium');
             
-            if (isLatest) {
-                ultimoConcursoDisponivel = data.concurso;
-            }
+            if (isLatest) { ultimoConcursoDisponivel = data.concurso; }
             concursoCarregado = data.concurso;
-            
-            // Salva array oficial de números
             dezenasSorteadasConferencia = data.dezenas.map(n => parseInt(n, 10));
             
-            // Atualiza Input da Barra
             document.getElementById('input-busca-concurso').value = concursoCarregado;
             atualizarBotoesNavegacao();
 
             infoDiv.innerText = `✔️ Sorteio do Concurso: ${data.concurso} realizado em ${data.data}`;
             infoDiv.style.color = '#555';
             
-            // Popula as bolinhas do painel visual
             let containerBolinhas = document.getElementById('bolinhas-container');
             containerBolinhas.innerHTML = '';
             
@@ -443,25 +384,16 @@
                 containerBolinhas.appendChild(bola);
             });
             
-            // Lógica de Informações do Prêmio Visual
             let labelPremio = document.getElementById('label-premio-texto');
             if (concursoCarregado === ultimoConcursoDisponivel) {
                 labelPremio.innerHTML = `Estimativa de<br>prêmio do próximo<br>concurso<br><span style="font-weight: bold;">${data.dataProximoConcurso || '--/--/----'}</span>`;
-                
-                let valorProx = data.valorEstimadoProximoConcurso ? 
-                                data.valorEstimadoProximoConcurso.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : 
-                                'Aguardando Rateio';
+                let valorProx = data.valorEstimadoProximoConcurso ? data.valorEstimadoProximoConcurso.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : 'Aguardando Rateio';
                 document.getElementById('valor-estimado').innerText = valorProx;
             } else {
                 labelPremio.innerHTML = `Prêmio<br>deste<br>concurso<br><span style="font-weight: bold;">Finalizado</span>`;
-                
                 let valorPrize = "Apurado";
-                if(data.acumulou) {
-                     valorPrize = "Acumulou!";
-                } else if(data.premiacoes && data.premiacoes.length > 0) {
-                     // Pega o valor do prêmio principal
-                     valorPrize = data.premiacoes[0].premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-                }
+                if(data.acumulou) { valorPrize = "Acumulou!"; } 
+                else if(data.premiacoes && data.premiacoes.length > 0) { valorPrize = data.premiacoes[0].premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}); }
                 document.getElementById('valor-estimado').innerText = valorPrize;
             }
             
@@ -476,9 +408,7 @@
                 if(!response.ok) throw new Error('API Indisponível');
                 let data = await response.json();
                 processarDadosAPI(data, true);
-            } catch (error) {
-                falhaBuscaAPI();
-            }
+            } catch (error) { falhaBuscaAPI(); }
         }
 
         async function buscarConcursoEspecifico() {
@@ -486,7 +416,6 @@
             if(isNaN(num) || num < 1) return;
             if(num === concursoCarregado) return;
             
-            // Impede de buscar concurso futuro que não existe
             if(ultimoConcursoDisponivel && num > ultimoConcursoDisponivel) {
                  num = ultimoConcursoDisponivel;
                  document.getElementById('input-busca-concurso').value = num;
@@ -499,9 +428,7 @@
                 if(!response.ok) throw new Error('API Indisponível');
                 let data = await response.json();
                 processarDadosAPI(data, false);
-            } catch (error) {
-                falhaBuscaAPI(num);
-            }
+            } catch (error) { falhaBuscaAPI(num); }
         }
 
         function navegarConcurso(dir) {
@@ -509,7 +436,6 @@
             let num = concursoCarregado + dir;
             if(num < 1) return;
             if(ultimoConcursoDisponivel && num > ultimoConcursoDisponivel) return;
-            
             document.getElementById('input-busca-concurso').value = num;
             buscarConcursoEspecifico();
         }
@@ -521,23 +447,18 @@
              if(concursoCarregado <= 1) btnAnt.classList.add('disabled');
              else btnAnt.classList.remove('disabled');
 
-             if(ultimoConcursoDisponivel && concursoCarregado >= ultimoConcursoDisponivel) {
-                 btnProx.classList.add('disabled');
-             } else {
-                 btnProx.classList.remove('disabled');
-             }
+             if(ultimoConcursoDisponivel && concursoCarregado >= ultimoConcursoDisponivel) { btnProx.classList.add('disabled'); } 
+             else { btnProx.classList.remove('disabled'); }
         }
 
         function executarConferencia() {
             let textareaJogos = document.getElementById('textarea-jogos').value;
             
             if(dezenasSorteadasConferencia.length === 0) {
-                alert("Aguarde o carregamento do concurso ou busque um sorteio válido antes de conferir.");
-                return;
+                alert("Aguarde o carregamento do concurso."); return;
             }
             if(!textareaJogos.trim()) {
-                alert("Por favor, cole seus jogos na caixa de texto.");
-                return;
+                alert("Cole seus jogos na caixa de texto."); return;
             }
 
             let sorteadas = dezenasSorteadasConferencia;
@@ -570,8 +491,7 @@
                 let badgeClass = "badge-acertos";
                 let textoBadge = `Acertos: ${acertos}`;
                 
-                if((loteriaSelecionadaConf === 'MegaSena' && acertos >= 4) || 
-                   (loteriaSelecionadaConf === 'Quina' && acertos >= 2)) {
+                if((loteriaSelecionadaConf === 'MegaSena' && acertos >= 4) || (loteriaSelecionadaConf === 'Quina' && acertos >= 2)) {
                     badgeClass += " badge-premiado";
                     if(loteriaSelecionadaConf === 'MegaSena') {
                         if(acertos === 4) textoBadge = "QUADRA (4)!";
@@ -584,12 +504,11 @@
                         if(acertos === 5) textoBadge = "QUINA (5)!!!";
                     }
                 }
-                
                 linhaHtml += `<span class="${badgeClass}">${textoBadge}</span></div>`;
                 html += linhaHtml;
             }
 
-            document.getElementById('titulo-res').innerText = `Resultado da Conferência (Concurso ${concursoCarregado})`;
+            document.getElementById('titulo-res').innerText = `Conferência (Concurso ${concursoCarregado})`;
             document.getElementById('conteudo-res').innerHTML = html;
             
             document.getElementById('titulo-cartoes').style.display = 'none';
@@ -602,7 +521,6 @@
             document.getElementById('tela-resultado').style.display = 'block';
         }
 
-        // --- FUNÇÕES GERAIS ---
         function exibirResultados(arrayJogos, tipo, precoBase, titulo) {
             let html = "", soma = 0;
             textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
@@ -615,10 +533,7 @@
             }
 
             let totalFormatado = "R$ " + soma.toFixed(2).replace('.', ',');
-            
-            textoParaWhatsApp += `\n🏷️ *Total de Cartões: ${arrayJogos.length}*\n`;
-            textoParaWhatsApp += `💰 *Total do Bolão: ${totalFormatado}*\n`;
-            textoParaWhatsApp += `\n🌐 *Gere seus jogos acessando:*\n${window.location.href}`;
+            textoParaWhatsApp += `\n🏷️ *Total de Cartões: ${arrayJogos.length}*\n💰 *Total do Bolão: ${totalFormatado}*\n\n🌐 *Gere seus jogos acessando:*\n${window.location.href}`;
 
             document.getElementById('titulo-res').innerText = titulo;
             document.getElementById('conteudo-res').innerHTML = html;
@@ -646,23 +561,48 @@
                 let nums = (tipo === 'Lotomania') ? gerarNumeros(100, 50, 0) : gerarNumeros(max, parseInt(qtdNum));
                 arrayJogos.push(nums);
             }
-            
             let precoBase = precos[tipo][qtdNum] || 0;
             exibirResultados(arrayJogos, tipo, precoBase, `Resultado ${tipo}`);
         }
 
-        function enviarWhatsApp() {
-            let textoCodificado = encodeURIComponent(textoParaWhatsApp);
-            window.open(`https://wa.me/?text=${textoCodificado}`, '_blank');
-        }
+        function enviarWhatsApp() { let textoCodificado = encodeURIComponent(textoParaWhatsApp); window.open(`https://wa.me/?text=${textoCodificado}`, '_blank'); }
+        function abrirCaixa() { window.open('https://www.loteriasonline.caixa.gov.br/', '_blank'); }
+        function voltar() { document.querySelector('.wrapper').style.display = 'flex'; document.getElementById('tela-resultado').style.display = 'none'; }
 
-        function abrirCaixa() {
-            window.open('https://www.loteriasonline.caixa.gov.br/', '_blank');
-        }
 
-        function voltar() {
-            document.querySelector('.wrapper').style.display = 'flex';
-            document.getElementById('tela-resultado').style.display = 'none';
+        // --- CONFIGURAÇÕES DE PWA (INSTALAÇÃO DO APP) ---
+        let deferredPrompt;
+        const installBtn = document.getElementById('btn-install');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Previne o Chrome de exibir o prompt padrão na tela
+            e.preventDefault();
+            // Guarda o evento para ser disparado pelo nosso botão
+            deferredPrompt = e;
+            // Mostra o botão de instalação (que estava invisível)
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt !== null) {
+                // Dispara o prompt de instalação do celular
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('App instalado com sucesso!');
+                    installBtn.style.display = 'none'; // Esconde o botão após instalar
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        // Registrar o Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registrado!', reg))
+                    .catch(err => console.error('Falha ao registrar Service Worker', err));
+            });
         }
     </script>
 </body>
