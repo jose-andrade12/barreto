@@ -1,0 +1,21 @@
+{
+  "name": "IA - Inteligência do Andrade",
+  "short_name": "Inteligência Andrade",
+  "description": "Gerador e conferidor inteligente de Loterias e Bolões",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FFDF00",
+  "theme_color": "#005ca9",
+  "icons": [
+    {
+      "src": "trevo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "trevo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
