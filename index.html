@@ -166,7 +166,6 @@
             
             <div class="contador-info" style="margin-top: 10px;">Dezenas Selecionadas: <span id="contador-num" style="color:#e53935; font-size: 16px;">0</span></div>
             
-            <!-- NOVA SESSÃO: Seleção Aleatória -->
             <div class="painel-aleatorio">
                 <span style="font-size: 14px; font-weight: bold; color: #334155;">Aleatório:</span>
                 <input type="number" id="qtd-aleatoria" class="input-aleatorio" placeholder="Qtd">
@@ -213,7 +212,6 @@
                 </div>
             </div>
             
-            <!-- TEXTO ATUALIZADO AQUI -->
             <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos ou digite os números do seu cartão aqui:</p>
             <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados ou digite os números manualmente (ex: 01 02 03 04 05 06). Pode usar espaços, traços ou vírgulas."></textarea>
             
@@ -245,13 +243,13 @@
         };
 
         const configLoterias = {
-            'MegaSena': { id: 'btn-mega-conf', endp: 'megasena', cor: '#209869', txt: 'white' },
-            'Quina': { id: 'btn-quina-conf', endp: 'quina', cor: '#4a148c', txt: 'white' },
-            'Milionaria': { id: 'btn-milionaria-conf', endp: 'maismilionaria', cor: '#311b92', txt: 'white' },
-            'Lotomania': { id: 'btn-lotomania-conf', endp: 'lotomania', cor: '#ef6c00', txt: 'white' },
-            'Timemania': { id: 'btn-timemania-conf', endp: 'timemania', cor: '#fbc02d', txt: 'black' },
-            'DuplaSena': { id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white' },
-            'Lotofacil': { id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white' }
+            'MegaSena': { id: 'btn-mega-conf', endp: 'megasena', cor: '#209869', txt: 'white', nome: 'Mega-Sena' },
+            'Quina': { id: 'btn-quina-conf', endp: 'quina', cor: '#4a148c', txt: 'white', nome: 'Quina' },
+            'Milionaria': { id: 'btn-milionaria-conf', endp: 'maismilionaria', cor: '#311b92', txt: 'white', nome: '+Milionária' },
+            'Lotomania': { id: 'btn-lotomania-conf', endp: 'lotomania', cor: '#ef6c00', txt: 'white', nome: 'Lotomania' },
+            'Timemania': { id: 'btn-timemania-conf', endp: 'timemania', cor: '#fbc02d', txt: 'black', nome: 'Timemania' },
+            'DuplaSena': { id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white', nome: 'Dupla Sena' },
+            'Lotofacil': { id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white', nome: 'Lotofácil' }
         };
 
         let textoParaWhatsApp = "";
@@ -328,7 +326,6 @@
             }
         }
         
-        // FUNÇÕES NOVAS DE LIMPAR E SORTEAR (SURPRESINHA)
         function limparGridModal() {
             numerosEscolhidosArray = [];
             let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
@@ -350,10 +347,7 @@
                 return;
             }
 
-            // Limpa tudo antes de sortear os novos
             numerosEscolhidosArray = [];
-            
-            // Sorteia
             while(numerosEscolhidosArray.length < qtd) {
                 let n = Math.floor(Math.random() * maxDezenas) + 1;
                 if(!numerosEscolhidosArray.includes(n)) {
@@ -361,7 +355,6 @@
                 }
             }
 
-            // Pinta o Grid
             let corTema = loteriaSelecionadaModal === 'MegaSena' ? '#209869' : '#4a148c';
             let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
             
@@ -400,7 +393,6 @@
                 document.getElementById('btn-quina-modal').classList.add('ativa');
                 renderizarGridNumeros(80, '#4a148c'); 
             }
-            // Limpa o campo de aleatório ao trocar de loteria
             document.getElementById('qtd-aleatoria').value = '';
         }
 
@@ -552,6 +544,7 @@
              else { btnProx.classList.remove('disabled'); }
         }
 
+        // NOVA FUNÇÃO DE CONFERÊNCIA COM ORDENAÇÃO POR ACERTOS
         function executarConferencia() {
             let textareaJogos = document.getElementById('textarea-jogos').value;
             
@@ -564,11 +557,11 @@
 
             let sorteadas = dezenasSorteadasConferencia;
             let linhas = textareaJogos.split('\n');
-            let html = "";
             let conf = configLoterias[loteriaSelecionadaConf];
             
             let totalJogosPremiados = 0;
             let contagemPremios = {}; 
+            let jogosAvaliados = []; // Array que vai armazenar os jogos para ordenação
 
             for(let i = 0; i < linhas.length; i++) {
                 let linha = linhas[i].trim();
@@ -576,11 +569,12 @@
 
                 let linhaLimpa = linha.replace(/Jogo \d+:/gi, '');
                 let dezenasStr = linhaLimpa.split('|')[0];
-                let numerosJogo = dezenasStr.match(/\d+/g); // A mágica que puxa todos os números, não importa se usou hífen, espaço, etc.
+                let numerosJogo = dezenasStr.match(/\d+/g); 
                 
                 if(!numerosJogo) continue;
 
                 let acertos = 0;
+                // Mantém a numeração original da linha (Jogo X)
                 let linhaHtml = `<div class="linha-jogo">Jogo ${i+1}: `;
                 
                 for(let n of numerosJogo) {
@@ -597,7 +591,6 @@
                 let premiado = false;
                 let textoBadge = `Acertos: ${acertos}`;
                 
-                // Lógica de premiação
                 if (loteriaSelecionadaConf === 'MegaSena' && acertos >= 4) { premiado = true; if(acertos===4) textoBadge="QUADRA!"; if(acertos===5) textoBadge="QUINA!"; if(acertos===6) textoBadge="SENA!"; }
                 else if (loteriaSelecionadaConf === 'Quina' && acertos >= 2) { premiado = true; if(acertos===2) textoBadge="DUQUE!"; if(acertos===3) textoBadge="TERNO!"; if(acertos===4) textoBadge="QUADRA!"; if(acertos===5) textoBadge="QUINA!"; }
                 else if (loteriaSelecionadaConf === 'Lotofacil' && acertos >= 11) { premiado = true; textoBadge = `${acertos} ACERTOS!`; }
@@ -613,11 +606,22 @@
                 
                 let badgeClass = "badge-acertos" + (premiado ? " badge-premiado" : "");
                 linhaHtml += `<span class="${badgeClass}">${textoBadge}</span></div>`;
-                html += linhaHtml;
+                
+                // Em vez de concatenar direto na string HTML, salva no array
+                jogosAvaliados.push({
+                    acertos: acertos,
+                    html: linhaHtml
+                });
             }
 
-            document.getElementById('titulo-res').innerText = `Conferência (Concurso ${concursoCarregado})`;
-            document.getElementById('conteudo-res').innerHTML = html;
+            // Ordena o array: do maior número de acertos para o menor
+            jogosAvaliados.sort((a, b) => b.acertos - a.acertos);
+
+            // Monta o HTML final com a lista ordenada
+            let htmlFinal = jogosAvaliados.map(jogo => jogo.html).join('');
+
+            document.getElementById('titulo-res').innerText = `Conferência: ${conf.nome} (Concurso ${concursoCarregado})`;
+            document.getElementById('conteudo-res').innerHTML = htmlFinal;
             
             document.getElementById('titulo-cartoes').style.display = 'none';
             document.getElementById('titulo-bolao').style.display = 'none';
@@ -639,7 +643,6 @@
             }
         }
 
-        // --- FUNÇÕES DE EXIBIÇÃO E COPIA ---
         function exibirResultados(arrayJogos, tipo, precoBase, titulo) {
             let html = "", soma = 0;
             textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
