@@ -42,10 +42,10 @@
         .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .btn-install { background: #1a1a1a; border: 2px solid #25D366; color: #25D366; display: none; margin-top: 20px; box-shadow: 0 0 15px rgba(37, 211, 102, 0.5); }
         
-        #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; width: 100%; max-width: 500px; box-sizing: border-box; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 5px;}
-        .numero { color: #555; font-weight: bold; padding: 2px 4px; }
-        .numero-acerto { color: white; font-weight: bold; border-radius: 5px; padding: 2px 6px; } 
+        #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; width: 100%; max-width: 550px; box-sizing: border-box; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px;}
+        .numero { color: #555; font-weight: bold; padding: 2px 4px; border: 1px solid #eee; border-radius: 4px; background: #fafafa;}
+        .numero-acerto { color: white; font-weight: bold; border-radius: 5px; padding: 2px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); } 
 
         .btn-copiar { background: #f57c00; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 20px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.3s; }
         .btn-zap { background: #25D366; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
@@ -62,12 +62,11 @@
         .btn-loteria-grid { padding: 10px 4px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; opacity: 0.4; transition: 0.3s; }
         .btn-loteria-grid.ativa { opacity: 1; border: 2px solid #FFDF00; transform: scale(1.03); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         
-        .grid-numeros { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; max-height: 250px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; }
+        .grid-numeros { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; max-height: 230px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; }
         .num-btn { background: #fff; border: 2px solid #ccc; border-radius: 50%; width: 38px; height: 38px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; margin: 0 auto; }
         .num-btn.ativo { color: white; transform: scale(1.15); box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-color: transparent; }
         .contador-info { font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; }
 
-        /* Painel Aleatório */
         .painel-aleatorio { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px; background: #f5f7fa; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
         .input-aleatorio { width: 70px; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; font-size: 15px; color: #0f172a; outline: none; }
         .btn-acao-p { color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s; }
@@ -90,7 +89,6 @@
         .badge-acertos { margin-left: auto; font-size: 13px; padding: 4px 8px; border-radius: 20px; background: #e0e0e0; font-weight: bold; }
         .badge-premiado { background: #FFDF00; color: #996515; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-        /* Estilo do Popup de Premiação */
         .popup-premiacao { background: white; color: #333; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 4px solid #FFDF00; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popupAnim { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .popup-icone { font-size: 55px; margin-bottom: 10px; }
@@ -105,7 +103,6 @@
             body { padding: 15px; }
             .btn { padding: 20px; font-size: 20px; }
             .premio-valor { font-size: 18px; }
-            .busca-concurso-container { font-size: 13px; gap: 8px; }
         }
     </style>
 </head>
@@ -129,7 +126,7 @@
             <button class="btn" style="background:#b71c1c; border: 2px solid #fff;" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
             
             <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 12px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
-                <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> e também <b>conferi automaticamente</b> os seus acertos puxando a base oficial.
+                <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> e confere os acertos buscando no banco oficial da Caixa.
             </p>
         </div>
 
@@ -153,7 +150,7 @@
         <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
     </div>
 
-    <!-- Modal Gerar (ATUALIZADO COM TODAS AS LOTERIAS) -->
+    <!-- Modal Gerar Combinacoes -->
     <div id="modal-combinacoes" class="modal-overlay">
         <div class="modal-box">
             <span class="fechar-modal" onclick="fecharModal('modal-combinacoes')">&times;</span>
@@ -180,7 +177,13 @@
             
             <div id="grid-numeros-modal" class="grid-numeros"></div>
             
-            <button class="btn" style="background:#005CA9; margin-top:5px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
+            <!-- Sessão Exclusiva: Trevos da Milionária -->
+            <div id="container-trevos-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
+                <div class="contador-info" style="color:#311b92;">🍀 Trevos Selecionados: <span id="contador-trevos" style="color:#e53935; font-size: 16px;">0</span></div>
+                <div id="grid-trevos-modal" class="grid-numeros" style="display: flex; justify-content: center; gap: 10px; min-height: auto; overflow: hidden; padding-bottom: 0;"></div>
+            </div>
+            
+            <button class="btn" style="background:#005CA9; margin-top:15px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
         </div>
     </div>
 
@@ -218,7 +221,7 @@
             </div>
             
             <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos ou digite os números do seu cartão aqui:</p>
-            <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados ou digite os números manualmente (ex: 01 02 03 04 05 06). Pode usar espaços, traços ou vírgulas."></textarea>
+            <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados ou digite (ex: 01 02 03 04 05 06 | Trevos: 01 02)"></textarea>
             
             <button class="btn" style="background:#b71c1c; margin-top:5px; margin-bottom:0;" onclick="executarConferencia()">REALIZAR CONFERÊNCIA</button>
         </div>
@@ -235,27 +238,22 @@
     </div>
 
     <script>
-        const times = ["ABC/RN","ALTOS/PI","AMAZONAS/AM","AMERICA/MG","AMERICA/RN","APARECIDENSE/GO","ATHLETIC CLUB/MG","ATHLETICO/PR","ATLETICO/GO","ATLETICO/MG","AVAI/SC","BAHIA/BA","BAHIA DE FEIRA/BA","BOTAFOGO/PB","BOTAFOGO/RJ","BOTAFOGO/SP","BRAGANTINO/SP","BRASIL DE PELOTAS/RS","BRASILIENSE/DF","BRUSQUE/SC","CAMPINENSE/PB","CASCAVEL/PR","CAXIAS/RS","CEARA/CE","CEILANDIA ESPORTE/DF","CHAPECOENSE/SC","CONFIANCA/SE","CORINTHIANS/SP","CORITIBA/PR","CRB/AL","CRICIUMA/SC","CRUZEIRO/MG","CSA/AL","CUIABA/MT","FERROVIARIA/SP","FERROVIARIO/CE","FIGUEIRENSE/SC","FLAMENGO/RJ","FLORESTA/CE","FLUMINENSE/RJ","FORTALEZA/CE","GOIAS/GO","GREMIO/RS","GUARANI/SP","INTERNACIONAL/RS","ITUANO/SP","JACUIPENSE/BA","JUAZEIRENSE/BA","JUVENTUDE/RS","LONDRINA/PR","MANAUS/AM","MIRASSOL/SP","NAUTICO/PE","NOVA IGUACU/RJ","NOVORIZONTINO/SP","OESTE/SP","OPERARIO/PR","PALMEIRAS/SP","PARANA/PR","PAYSANDU/PA","PONTE PRETA/SP","PORTUGUESA/RJ","POUSO ALEGRE/MG","REMO/PA","RETRO BRASIL/PE","SAMP CORREA/MA","SANTA CRUZ/PE","SANTOS/SP","SAO BERNARDO/SP","SAO JOSE/RS","SAO PAULO/SP","SAORAIMUNDO/RR","SPORT/PE","TOCANTINOPOLIS/TO","TOMBENSE/MG","VASCO DA GAMA/RJ","VILA NOVA/GO","VITORIA/BA","VOLTA REDONDA/RJ","YPIRANGA/RS"];
-        
+        // Dicionário Centralizado (Controla Modal de Geração, Conferência e Preços Base)
+        const configLoterias = {
+            'MegaSena': { idGen: 'btn-mega-modal', id: 'btn-mega-conf', endp: 'megasena', cor: '#209869', txt: 'white', nome: 'Mega-Sena', max: 60, minReq: 6, precoBase: 6.00 },
+            'Quina': { idGen: 'btn-quina-modal', id: 'btn-quina-conf', endp: 'quina', cor: '#4a148c', txt: 'white', nome: 'Quina', max: 80, minReq: 5, precoBase: 3.00 },
+            'Milionaria': { idGen: 'btn-milionaria-modal', id: 'btn-milionaria-conf', endp: 'maismilionaria', cor: '#311b92', txt: 'white', nome: '+Milionária', max: 50, minReq: 6, precoBase: 6.00 },
+            'Lotomania': { idGen: 'btn-lotomania-modal', id: 'btn-lotomania-conf', endp: 'lotomania', cor: '#ef6c00', txt: 'white', nome: 'Lotomania', max: 100, minReq: 50, precoBase: 3.00 },
+            'Timemania': { idGen: 'btn-timemania-modal', id: 'btn-timemania-conf', endp: 'timemania', cor: '#fbc02d', txt: 'black', nome: 'Timemania', max: 80, minReq: 10, precoBase: 3.50 },
+            'DuplaSena': { idGen: 'btn-dupla-modal', id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white', nome: 'Dupla Sena', max: 50, minReq: 6, precoBase: 2.50 },
+            'Lotofacil': { idGen: 'btn-lotofacil-modal', id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white', nome: 'Lotofácil', max: 25, minReq: 15, precoBase: 3.00 }
+        };
+
         const precos = {
             'MegaSena': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00, 13: 10296.00, 14: 18018.00, 15: 30030.00, 16: 48048.00, 17: 74256.00, 18: 111384.00, 19: 162792.00, 20: 232560.00}, 
             'Lotofacil': {15: 3.00, 16: 48.00, 17: 408.00, 18: 2448.00, 19: 11628.00, 20: 46512.00}, 
             'Quina': {5: 3.00, 6: 18.00, 7: 63.00, 8: 168.00, 9: 378.00, 10: 756.00, 11: 1386.00, 12: 2376.00, 13: 3861.00, 14: 6006.00, 15: 9009.00}, 
-            'DuplaSena': {6: 2.50, 7: 17.50, 8: 70.00, 9: 210.00, 10: 525.00, 11: 1155.00, 12: 2310.00, 13: 4290.00, 14: 7507.50, 15: 12512.50}, 
-            'Milionaria': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00}, 
-            'Lotomania': {50: 3.00}, 
-            'Timemania': {10: 3.50}
-        };
-
-        // Dicionário Centralizado (Agora controla Modal de Geração e Conferência)
-        const configLoterias = {
-            'MegaSena': { idGen: 'btn-mega-modal', id: 'btn-mega-conf', endp: 'megasena', cor: '#209869', txt: 'white', nome: 'Mega-Sena', max: 60, minReq: 6 },
-            'Quina': { idGen: 'btn-quina-modal', id: 'btn-quina-conf', endp: 'quina', cor: '#4a148c', txt: 'white', nome: 'Quina', max: 80, minReq: 5 },
-            'Milionaria': { idGen: 'btn-milionaria-modal', id: 'btn-milionaria-conf', endp: 'maismilionaria', cor: '#311b92', txt: 'white', nome: '+Milionária', max: 50, minReq: 6 },
-            'Lotomania': { idGen: 'btn-lotomania-modal', id: 'btn-lotomania-conf', endp: 'lotomania', cor: '#ef6c00', txt: 'white', nome: 'Lotomania', max: 100, minReq: 50 },
-            'Timemania': { idGen: 'btn-timemania-modal', id: 'btn-timemania-conf', endp: 'timemania', cor: '#fbc02d', txt: 'black', nome: 'Timemania', max: 80, minReq: 10 },
-            'DuplaSena': { idGen: 'btn-dupla-modal', id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white', nome: 'Dupla Sena', max: 50, minReq: 6 },
-            'Lotofacil': { idGen: 'btn-lotofacil-modal', id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white', nome: 'Lotofácil', max: 25, minReq: 15 }
+            'DuplaSena': {6: 2.50, 7: 17.50, 8: 70.00, 9: 210.00, 10: 525.00, 11: 1155.00, 12: 2310.00, 13: 4290.00, 14: 7507.50, 15: 12512.50}
         };
 
         let textoParaWhatsApp = "";
@@ -263,10 +261,14 @@
         
         let loteriaSelecionadaModal = 'MegaSena'; 
         let loteriaSelecionadaConf = 'MegaSena';
+        
         let numerosEscolhidosArray = [];
+        let trevosEscolhidosArray = []; // Para a Milionária
+        
         let concursoCarregado = null;
         let ultimoConcursoDisponivel = null;
         let dezenasSorteadasConferencia = [];
+        let trevosSorteadosConferencia = [];
 
         function gerarNumeros(max, qtd, offset = 1) {
             let nums = [];
@@ -274,10 +276,9 @@
                 let n = Math.floor(Math.random() * max) + offset;
                 if(!nums.includes(n)) nums.push(n);
             }
-            return nums.sort((a,b) => a-b).map(n => n.toString().padStart(2, '0'));
+            return nums.sort((a,b) => a-b);
         }
 
-        // Previne o navegador de travar com números abusivos
         function calcularCombinacoesPossiveis(n, k) {
             if (k > n) return 0;
             if (k === 0 || k === n) return 1;
@@ -292,7 +293,6 @@
             if (k > arr.length || k <= 0) return [];
             if (k === arr.length) return [arr];
             if (k === 1) return arr.map(n => [n]);
-
             let combs = [];
             for (let i = 0; i < arr.length - k + 1; i++) {
                 let head = arr.slice(i, i + 1);
@@ -313,20 +313,53 @@
             for(let i = 1; i <= maxDezenas; i++) {
                 let btn = document.createElement('div');
                 btn.className = 'num-btn';
-                btn.innerText = i.toString().padStart(2, '0');
+                btn.innerText = (i === 100 ? 0 : i).toString().padStart(2, '0');
                 
                 btn.onclick = function() {
-                    let index = numerosEscolhidosArray.indexOf(i);
+                    let val = i === 100 ? 0 : i;
+                    let index = numerosEscolhidosArray.indexOf(val);
                     if (index > -1) {
                         numerosEscolhidosArray.splice(index, 1);
                         btn.classList.remove('ativo');
                         btn.style.background = '#fff';
                     } else {
-                        numerosEscolhidosArray.push(i);
+                        numerosEscolhidosArray.push(val);
                         btn.classList.add('ativo');
                         btn.style.background = corTema;
                     }
                     atualizarContadorGrid();
+                };
+                grid.appendChild(btn);
+            }
+        }
+        
+        // NOVO: Grid exclusivo para Trevos da Milionária
+        function renderizarGridTrevos() {
+            let grid = document.getElementById('grid-trevos-modal');
+            grid.innerHTML = '';
+            trevosEscolhidosArray = [];
+            document.getElementById('contador-trevos').innerText = '0';
+            
+            for(let i = 1; i <= 6; i++) {
+                let btn = document.createElement('div');
+                btn.className = 'num-btn';
+                btn.innerText = i.toString().padStart(2, '0');
+                
+                btn.onclick = function() {
+                    let index = trevosEscolhidosArray.indexOf(i);
+                    if (index > -1) {
+                        trevosEscolhidosArray.splice(index, 1);
+                        btn.classList.remove('ativo');
+                        btn.style.background = '#fff';
+                    } else {
+                        trevosEscolhidosArray.push(i);
+                        btn.classList.add('ativo');
+                        btn.style.background = '#311b92'; // Cor da Milionária
+                    }
+                    document.getElementById('contador-trevos').innerText = trevosEscolhidosArray.length;
+                    
+                    if(trevosEscolhidosArray.length >= 2) document.getElementById('contador-trevos').style.color = '#209869';
+                    else document.getElementById('contador-trevos').style.color = '#e53935';
                 };
                 grid.appendChild(btn);
             }
@@ -337,58 +370,68 @@
             contadorSpan.innerText = numerosEscolhidosArray.length;
             let conf = configLoterias[loteriaSelecionadaModal];
             
-            if (numerosEscolhidosArray.length >= conf.minReq) {
-                contadorSpan.style.color = '#209869';
-            } else {
-                contadorSpan.style.color = '#e53935'; 
-            }
+            if (numerosEscolhidosArray.length >= conf.minReq) contadorSpan.style.color = '#209869';
+            else contadorSpan.style.color = '#e53935'; 
         }
         
         function limparGridModal() {
             numerosEscolhidosArray = [];
+            trevosEscolhidosArray = [];
+            
             let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
-            for (let i = 0; i < botoes.length; i++) {
-                botoes[i].classList.remove('ativo');
-                botoes[i].style.background = '#fff';
-            }
+            for (let btn of botoes) { btn.classList.remove('ativo'); btn.style.background = '#fff'; }
+            
+            let botoesTrevos = document.getElementById('grid-trevos-modal').getElementsByClassName('num-btn');
+            for (let btn of botoesTrevos) { btn.classList.remove('ativo'); btn.style.background = '#fff'; }
+            
             atualizarContadorGrid();
+            document.getElementById('contador-trevos').innerText = '0';
+            document.getElementById('contador-trevos').style.color = '#e53935';
         }
 
         function selecionarAleatorioModal() {
             let inputQtd = document.getElementById('qtd-aleatoria').value;
             let qtd = parseInt(inputQtd, 10);
             let conf = configLoterias[loteriaSelecionadaModal];
-            let maxDezenas = conf.max;
-            let minExigido = conf.minReq;
 
-            if (isNaN(qtd) || qtd < minExigido || qtd > maxDezenas) {
-                alert(`Por favor, insira uma quantidade válida (entre ${minExigido} e ${maxDezenas}).`);
+            if (isNaN(qtd) || qtd < conf.minReq || qtd > conf.max) {
+                alert(`Por favor, insira uma quantidade válida (entre ${conf.minReq} e ${conf.max}).`);
                 return;
             }
 
-            numerosEscolhidosArray = [];
+            limparGridModal(); // Limpa antes de preencher
+
+            // Sorteia Dezenas
             while(numerosEscolhidosArray.length < qtd) {
-                let n = Math.floor(Math.random() * maxDezenas) + 1;
-                if(!numerosEscolhidosArray.includes(n)) {
-                    numerosEscolhidosArray.push(n);
-                }
+                let n = Math.floor(Math.random() * conf.max) + (loteriaSelecionadaModal === 'Lotomania' ? 0 : 1);
+                if(!numerosEscolhidosArray.includes(n)) numerosEscolhidosArray.push(n);
             }
 
             let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
-            
             for (let i = 0; i < botoes.length; i++) {
-                let numBtn = i + 1;
-                let btn = botoes[i];
+                let numBtn = (i+1 === 100 && loteriaSelecionadaModal === 'Lotomania') ? 0 : i+1;
                 if (numerosEscolhidosArray.includes(numBtn)) {
-                    btn.classList.add('ativo');
-                    btn.style.background = conf.cor;
-                } else {
-                    btn.classList.remove('ativo');
-                    btn.style.background = '#fff';
+                    botoes[i].classList.add('ativo');
+                    botoes[i].style.background = conf.cor;
                 }
             }
-            
             atualizarContadorGrid();
+            
+            // Se for Milionária, sorteia 2 trevos automáticos como cortesia para o usuário
+            if (loteriaSelecionadaModal === 'Milionaria') {
+                while(trevosEscolhidosArray.length < 2) {
+                    let n = Math.floor(Math.random() * 6) + 1;
+                    if(!trevosEscolhidosArray.includes(n)) trevosEscolhidosArray.push(n);
+                }
+                let bTrevos = document.getElementById('grid-trevos-modal').getElementsByClassName('num-btn');
+                for (let i = 0; i < bTrevos.length; i++) {
+                    if (trevosEscolhidosArray.includes(i+1)) {
+                        bTrevos[i].classList.add('ativo'); bTrevos[i].style.background = '#311b92';
+                    }
+                }
+                document.getElementById('contador-trevos').innerText = '2';
+                document.getElementById('contador-trevos').style.color = '#209869';
+            }
         }
 
         function abrirModal() {
@@ -404,47 +447,78 @@
             loteriaSelecionadaModal = tipo;
             let conf = configLoterias[tipo];
             
-            // Remove ativação de todos e ativa só a escolhida
             for (const key in configLoterias) {
-                let btn = document.getElementById(configLoterias[key].idGen);
-                if(btn) btn.classList.remove('ativa');
+                document.getElementById(configLoterias[key].idGen).classList.remove('ativa');
             }
             document.getElementById(conf.idGen).classList.add('ativa');
             
             renderizarGridNumeros(conf.max, conf.cor);
             document.getElementById('qtd-aleatoria').value = '';
+            
+            // Exibe o painel de Trevos apenas se for Milionária
+            if (tipo === 'Milionaria') {
+                document.getElementById('container-trevos-modal').style.display = 'block';
+                renderizarGridTrevos();
+            } else {
+                document.getElementById('container-trevos-modal').style.display = 'none';
+            }
         }
 
         function executarCombinacoes() {
             let tipo = loteriaSelecionadaModal;
             let conf = configLoterias[tipo];
             let tamanhoJogo = conf.minReq; 
-            
-            let precoBase = precos[tipo] && precos[tipo][tamanhoJogo] ? precos[tipo][tamanhoJogo] : 0;
             let numerosEscolhidos = [...numerosEscolhidosArray].sort((a,b) => a-b);
+            let precoBase = conf.precoBase;
 
             if (numerosEscolhidos.length < tamanhoJogo) {
-                alert(`Para a loteria ${conf.nome}, você precisa selecionar pelo menos ${tamanhoJogo} números.`);
+                alert(`Para a loteria ${conf.nome}, você precisa selecionar pelo menos ${tamanhoJogo} dezenas.`);
                 return;
             }
 
-            // Trava de segurança para não explodir o celular do usuário gerando milhões de arrays
-            let totalComb = calcularCombinacoesPossiveis(numerosEscolhidos.length, tamanhoJogo);
-            if (totalComb > 50000) {
-                alert(`⚠️ TRAVA DE SEGURANÇA:\n\nA quantidade gerada seria de ${totalComb.toLocaleString('pt-BR')} cartões!\nIsso faria o seu navegador travar ou fechar. Por favor, desmarque algumas dezenas.`);
-                return;
-            } else if (totalComb > 2500) {
-                let confirma = confirm(`Você selecionou ${numerosEscolhidos.length} números. Isso vai gerar ${totalComb.toLocaleString('pt-BR')} cartões.\nPode deixar seu celular um pouco lento. Deseja continuar?`);
-                if(!confirma) return;
-            }
-
-            let combinacoes = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
+            let arrayJogosFinal = [];
             
-            exibirResultados(combinacoes, tipo, precoBase, `Combinações: ${conf.nome} (${numerosEscolhidos.length} dezenas)`);
+            // Lógica Exclusiva da Milionária (Matriz Dupla: Números + Trevos)
+            if (tipo === 'Milionaria') {
+                let trevosEscolhidos = [...trevosEscolhidosArray].sort((a,b) => a-b);
+                if(trevosEscolhidos.length < 2) {
+                    alert(`Para a +Milionária, você precisa selecionar pelo menos 2 Trevos.`);
+                    return;
+                }
+                
+                let combNumeros = gerarCombinacoes(numerosEscolhidos, 6);
+                let combTrevos = gerarCombinacoes(trevosEscolhidos, 2);
+                let totalComb = combNumeros.length * combTrevos.length;
+                
+                if (totalComb > 50000) { alert(`⚠️ Isso vai gerar ${totalComb.toLocaleString()} cartões e vai travar o celular!\nDesmarque algumas dezenas ou trevos.`); return; }
+                if (totalComb > 3000 && !confirm(`Isso vai gerar ${totalComb.toLocaleString()} cartões. Deseja continuar?`)) return;
+
+                // Cruza as dezenas com os trevos
+                for(let nums of combNumeros) {
+                    for(let trevs of combTrevos) {
+                        arrayJogosFinal.push({ numeros: nums, trevos: trevs });
+                    }
+                }
+            } 
+            // Lógica Tradicional para as outras loterias
+            else {
+                let totalComb = calcularCombinacoesPossiveis(numerosEscolhidos.length, tamanhoJogo);
+                
+                if (totalComb > 50000) { alert(`⚠️ Isso vai gerar ${totalComb.toLocaleString()} cartões e vai travar o celular!\nDesmarque algumas dezenas.`); return; }
+                if (totalComb > 3000 && !confirm(`Isso vai gerar ${totalComb.toLocaleString()} cartões. Deseja continuar?`)) return;
+
+                let combNumeros = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
+                arrayJogosFinal = combNumeros.map(nums => ({ numeros: nums, trevos: null }));
+            }
+            
+            let dezenasText = `${numerosEscolhidos.length} dz`;
+            if (tipo === 'Milionaria') dezenasText += ` e ${trevosEscolhidosArray.length} trevos`;
+
+            exibirResultados(arrayJogosFinal, tipo, precoBase, `Combinações: ${conf.nome} (${dezenasText})`);
             fecharModal('modal-combinacoes'); 
         }
 
-        // --- LÓGICA DE CONFERÊNCIA MULTI-LOTERIAS ---
+        // --- LÓGICA DE CONFERÊNCIA ---
         function abrirModalConferencia() {
             document.getElementById('modal-conferencia').style.display = 'flex';
             setLoteriaConferencia('MegaSena');
@@ -479,9 +553,12 @@
             let infoDiv = document.getElementById('info-api');
             let painelPremium = document.getElementById('painel-premium');
             
-            if (isLatest) { ultimoConcursoDisponivel = data.concurso; }
+            if (isLatest) ultimoConcursoDisponivel = data.concurso;
             concursoCarregado = data.concurso;
+            
             dezenasSorteadasConferencia = data.dezenas.map(n => parseInt(n, 10));
+            // Captura os Trevos da API da Caixa se houver
+            trevosSorteadosConferencia = data.trevos ? data.trevos.map(n => parseInt(n, 10)) : [];
             
             document.getElementById('input-busca-concurso').value = concursoCarregado;
             atualizarBotoesNavegacao();
@@ -492,27 +569,42 @@
             let containerBolinhas = document.getElementById('bolinhas-container');
             containerBolinhas.innerHTML = '';
             
+            // Renderiza dezenas oficiais
             data.dezenas.forEach(dezena => {
                 let bola = document.createElement('div');
                 bola.className = 'bolinha-oficial';
                 bola.style.backgroundColor = conf.cor;
                 bola.style.color = conf.txt;
                 bola.innerText = dezena;
-                
-                if(data.dezenas.length > 10) {
-                    bola.style.width = '32px'; bola.style.height = '32px'; bola.style.fontSize = '14px';
-                }
-                
+                if(data.dezenas.length > 10) { bola.style.width = '32px'; bola.style.height = '32px'; bola.style.fontSize = '14px'; }
                 containerBolinhas.appendChild(bola);
             });
             
+            // Renderiza Trevos oficiais se for Milionária
+            if (loteriaSelecionadaConf === 'Milionaria' && data.trevos) {
+                let spanTxt = document.createElement('span');
+                spanTxt.innerText = "+";
+                spanTxt.style.cssText = "font-size: 24px; color: #888; font-weight: bold; margin: 5px;";
+                containerBolinhas.appendChild(spanTxt);
+                
+                data.trevos.forEach(trevo => {
+                    let bola = document.createElement('div');
+                    bola.className = 'bolinha-oficial';
+                    bola.style.backgroundColor = '#fbc02d'; // Destaque para o Trevo da Caixa
+                    bola.style.color = '#311b92';
+                    bola.style.boxShadow = '0 0 10px rgba(251,192,45,0.7)';
+                    bola.innerText = trevo;
+                    containerBolinhas.appendChild(bola);
+                });
+            }
+            
             let labelPremio = document.getElementById('label-premio-texto');
             if (concursoCarregado === ultimoConcursoDisponivel) {
-                labelPremio.innerHTML = `Estimativa de<br>prêmio do próximo<br>concurso<br><span style="font-weight: bold;">${data.dataProximoConcurso || '--/--/----'}</span>`;
+                labelPremio.innerHTML = `Estimativa de prêmio<br>concurso <span style="font-weight: bold;">${data.dataProximoConcurso || '--/--/----'}</span>`;
                 let valorProx = data.valorEstimadoProximoConcurso ? data.valorEstimadoProximoConcurso.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : 'Aguardando Rateio';
                 document.getElementById('valor-estimado').innerText = valorProx;
             } else {
-                labelPremio.innerHTML = `Prêmio<br>deste<br>concurso<br><span style="font-weight: bold;">Finalizado</span>`;
+                labelPremio.innerHTML = `Prêmio deste concurso<br><span style="font-weight: bold;">Finalizado</span>`;
                 let valorPrize = "Apurado";
                 if(data.acumulou) { valorPrize = "Acumulou!"; } 
                 else if(data.premiacoes && data.premiacoes.length > 0) { valorPrize = data.premiacoes[0].premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}); }
@@ -524,9 +616,8 @@
 
         async function buscarUltimoResultadoAPI(tipo) {
             prepararBuscaAPI();
-            let endpoint = configLoterias[tipo].endp;
             try {
-                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${endpoint}/latest`);
+                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${configLoterias[tipo].endp}/latest`);
                 if(!response.ok) throw new Error('API Indisponível');
                 let data = await response.json();
                 processarDadosAPI(data, true);
@@ -535,18 +626,13 @@
 
         async function buscarConcursoEspecifico() {
             let num = parseInt(document.getElementById('input-busca-concurso').value, 10);
-            if(isNaN(num) || num < 1) return;
-            if(num === concursoCarregado) return;
-            
+            if(isNaN(num) || num < 1 || num === concursoCarregado) return;
             if(ultimoConcursoDisponivel && num > ultimoConcursoDisponivel) {
-                 num = ultimoConcursoDisponivel;
-                 document.getElementById('input-busca-concurso').value = num;
+                 num = ultimoConcursoDisponivel; document.getElementById('input-busca-concurso').value = num;
             }
-            
             prepararBuscaAPI();
-            let endpoint = configLoterias[loteriaSelecionadaConf].endp;
             try {
-                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${endpoint}/${num}`);
+                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${configLoterias[loteriaSelecionadaConf].endp}/${num}`);
                 if(!response.ok) throw new Error('API Indisponível');
                 let data = await response.json();
                 processarDadosAPI(data, false);
@@ -556,8 +642,7 @@
         function navegarConcurso(dir) {
             if(!concursoCarregado) return;
             let num = concursoCarregado + dir;
-            if(num < 1) return;
-            if(ultimoConcursoDisponivel && num > ultimoConcursoDisponivel) return;
+            if(num < 1 || (ultimoConcursoDisponivel && num > ultimoConcursoDisponivel)) return;
             document.getElementById('input-busca-concurso').value = num;
             buscarConcursoEspecifico();
         }
@@ -565,26 +650,20 @@
         function atualizarBotoesNavegacao() {
              let btnAnt = document.getElementById('btn-ant-concurso');
              let btnProx = document.getElementById('btn-prox-concurso');
-             
              if(concursoCarregado <= 1) btnAnt.classList.add('disabled'); else btnAnt.classList.remove('disabled');
-             if(ultimoConcursoDisponivel && concursoCarregado >= ultimoConcursoDisponivel) { btnProx.classList.add('disabled'); } 
-             else { btnProx.classList.remove('disabled'); }
+             if(ultimoConcursoDisponivel && concursoCarregado >= ultimoConcursoDisponivel) btnProx.classList.add('disabled');
+             else btnProx.classList.remove('disabled');
         }
 
+        // --- MOTOR DE CONFERÊNCIA (Ordenação e Trevos Inclusos) ---
         function executarConferencia() {
             let textareaJogos = document.getElementById('textarea-jogos').value;
             
-            if(dezenasSorteadasConferencia.length === 0) {
-                alert("Aguarde o carregamento do concurso."); return;
-            }
-            if(!textareaJogos.trim()) {
-                alert("Insira ou cole seus jogos na caixa de texto."); return;
-            }
+            if(dezenasSorteadasConferencia.length === 0) { alert("Aguarde o carregamento do concurso."); return; }
+            if(!textareaJogos.trim()) { alert("Insira ou cole seus jogos na caixa de texto."); return; }
 
-            let sorteadas = dezenasSorteadasConferencia;
             let linhas = textareaJogos.split('\n');
             let conf = configLoterias[loteriaSelecionadaConf];
-            
             let totalJogosPremiados = 0;
             let contagemPremios = {}; 
             let jogosAvaliados = []; 
@@ -594,35 +673,63 @@
                 if(linha === "") continue;
 
                 let linhaLimpa = linha.replace(/Jogo \d+:/gi, '');
-                let dezenasStr = linhaLimpa.split('|')[0];
-                let numerosJogo = dezenasStr.match(/\d+/g); 
+                let partes = linhaLimpa.split('|'); // Separa dezenas dos trevos
+                
+                let numerosJogo = partes[0].match(/\d+/g); 
+                let trevosJogo = partes[1] ? partes[1].match(/\d+/g) : [];
                 
                 if(!numerosJogo) continue;
 
                 let acertos = 0;
+                let acertosTrevos = 0;
+                
                 let linhaHtml = `<div class="linha-jogo">Jogo ${i+1}: `;
                 
+                // Pinta dezenas acertadas
                 for(let n of numerosJogo) {
                     let numInt = parseInt(n, 10);
-                    if(sorteadas.includes(numInt)) {
-                        linhaHtml += `<span class="numero-acerto" style="background-color:${conf.cor}; color:${conf.txt}">${n.padStart(2, '0')}</span> - `;
+                    if(dezenasSorteadasConferencia.includes(numInt)) {
+                        linhaHtml += `<span class="numero-acerto" style="background-color:${conf.cor}; color:${conf.txt}">${n.padStart(2, '0')}</span>`;
                         acertos++;
                     } else {
-                        linhaHtml += `<span class="numero">${n.padStart(2, '0')}</span> - `;
+                        linhaHtml += `<span class="numero">${n.padStart(2, '0')}</span>`;
                     }
                 }
-                linhaHtml = linhaHtml.slice(0, -3); 
+                
+                // Pinta Trevos acertados (se Milionária)
+                if (loteriaSelecionadaConf === 'Milionaria' && trevosJogo.length > 0) {
+                    linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 8px;">| Trevos: </span>`;
+                    for(let t of trevosJogo) {
+                        let tInt = parseInt(t, 10);
+                        if(trevosSorteadosConferencia.includes(tInt)) {
+                            linhaHtml += `<span class="numero-acerto" style="background-color:#311b92; color:white;">${t.padStart(2, '0')}</span>`;
+                            acertosTrevos++;
+                        } else {
+                            linhaHtml += `<span class="numero">${t.padStart(2, '0')}</span>`;
+                        }
+                    }
+                }
                 
                 let premiado = false;
                 let textoBadge = `Acertos: ${acertos}`;
                 
+                // Lógica de premiação rigorosa
                 if (loteriaSelecionadaConf === 'MegaSena' && acertos >= 4) { premiado = true; if(acertos===4) textoBadge="QUADRA!"; if(acertos===5) textoBadge="QUINA!"; if(acertos===6) textoBadge="SENA!"; }
                 else if (loteriaSelecionadaConf === 'Quina' && acertos >= 2) { premiado = true; if(acertos===2) textoBadge="DUQUE!"; if(acertos===3) textoBadge="TERNO!"; if(acertos===4) textoBadge="QUADRA!"; if(acertos===5) textoBadge="QUINA!"; }
                 else if (loteriaSelecionadaConf === 'Lotofacil' && acertos >= 11) { premiado = true; textoBadge = `${acertos} ACERTOS!`; }
                 else if (loteriaSelecionadaConf === 'Lotomania' && (acertos >= 15 || acertos === 0)) { premiado = true; textoBadge = `${acertos} ACERTOS!`; }
-                else if (loteriaSelecionadaConf === 'Timemania' && acertos >= 3) { premiado = true; textoBadge = `${acertos} ACERTOS!`; }
                 else if (loteriaSelecionadaConf === 'DuplaSena' && acertos >= 3) { premiado = true; if(acertos===3) textoBadge="TERNO!"; if(acertos===4) textoBadge="QUADRA!"; if(acertos===5) textoBadge="QUINA!"; if(acertos===6) textoBadge="SENA!"; }
-                else if (loteriaSelecionadaConf === 'Milionaria' && acertos >= 2) { premiado = true; textoBadge = `${acertos} ACERTOS!`; } 
+                else if (loteriaSelecionadaConf === 'Milionaria') {
+                    // Milionária premia com 2 acertos + 1 trevo no mínimo
+                    if (acertos >= 2) {
+                        if (acertos === 6 && acertosTrevos === 2) textoBadge = "PRÊMIO MÁXIMO!";
+                        else textoBadge = `${acertos} Acertos + ${acertosTrevos} Trevo(s)`;
+                        
+                        if ((acertos >= 2 && acertosTrevos >= 1) || acertos >= 6) premiado = true;
+                    } else {
+                        textoBadge = `Acertos: ${acertos} e ${acertosTrevos}T`;
+                    }
+                }
                 
                 if (premiado) {
                     totalJogosPremiados++;
@@ -630,15 +737,16 @@
                 }
                 
                 let badgeClass = "badge-acertos" + (premiado ? " badge-premiado" : "");
-                linhaHtml += `<span class="${badgeClass}">${textoBadge}</span></div>`;
+                linhaHtml += `<span class="${badgeClass}" style="margin-left: auto;">${textoBadge}</span></div>`;
                 
-                jogosAvaliados.push({
-                    acertos: acertos,
-                    html: linhaHtml
-                });
+                // Peso de ordenação (Milionária leva trevos em consideração na ordem)
+                let pesoOrdem = acertos + (acertosTrevos * 0.1);
+                
+                jogosAvaliados.push({ peso: pesoOrdem, html: linhaHtml });
             }
 
-            jogosAvaliados.sort((a, b) => b.acertos - a.acertos);
+            // Ordena o array: do maior número de acertos (e trevos) para o menor
+            jogosAvaliados.sort((a, b) => b.peso - a.peso);
             let htmlFinal = jogosAvaliados.map(jogo => jogo.html).join('');
 
             document.getElementById('titulo-res').innerText = `Conferência: ${conf.nome} (Concurso ${concursoCarregado})`;
@@ -654,6 +762,7 @@
             document.querySelector('.wrapper').style.display = 'none';
             document.getElementById('tela-resultado').style.display = 'block';
             
+            // Mostra o Troféu
             if (totalJogosPremiados > 0) {
                 let msgPremio = `Detectamos <b>${totalJogosPremiados}</b> jogo(s) premiado(s)!<br><br>`;
                 for (let tipoPremio in contagemPremios) {
@@ -664,18 +773,30 @@
             }
         }
 
+        // Adaptação para formatar visualmente com os Trevos
         function exibirResultados(arrayJogos, tipo, precoBase, titulo) {
             let html = "", soma = 0;
             textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
             textoParaCopiar = ""; 
 
             for(let i = 0; i < arrayJogos.length; i++) {
-                let numsFormatados = arrayJogos[i].map(n => n.toString().padStart(2, '0'));
-                html += `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${numsFormatados.join(' - ')}</span></div>`;
+                let jogo = arrayJogos[i];
+                let numsFormatados = jogo.numeros.map(n => n.toString().padStart(2, '0')).join(' - ');
                 
-                let linhaTexto = `Jogo ${i+1}: ${numsFormatados.join(' - ')}\n`;
-                textoParaWhatsApp += `*Jogo ${i+1}:* ${numsFormatados.join(' - ')}\n`;
-                textoParaCopiar += linhaTexto;
+                let linhaHtml = `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${numsFormatados}</span>`;
+                let linhaTexto = `Jogo ${i+1}: ${numsFormatados}`;
+                
+                // Adiciona formatação dos trevos se existirem
+                if (jogo.trevos) {
+                    let trevsFormatados = jogo.trevos.map(n => n.toString().padStart(2, '0')).join(' - ');
+                    linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Trevos: <span style="color:#311b92;">${trevsFormatados}</span></span>`;
+                    linhaTexto += ` | Trevos: ${trevsFormatados}`;
+                }
+                linhaHtml += `</div>`;
+                
+                html += linhaHtml;
+                textoParaWhatsApp += `*${linhaTexto}*\n`;
+                textoParaCopiar += `${linhaTexto}\n`;
                 
                 soma += precoBase;
             }
@@ -706,65 +827,60 @@
                 let textoOriginal = btn.innerText;
                 btn.innerText = "✅ Jogos Copiados!";
                 btn.style.background = "#209869"; 
-                setTimeout(() => {
-                    btn.innerText = textoOriginal;
-                    btn.style.background = "#f57c00"; 
-                }, 2000);
-            }).catch(err => {
-                alert("Erro ao copiar os jogos: " + err);
-            });
+                setTimeout(() => { btn.innerText = textoOriginal; btn.style.background = "#f57c00"; }, 2000);
+            }).catch(err => { alert("Erro ao copiar os jogos: " + err); });
         }
 
-        // Função de tela inicial mantida independente para compatibilidade original
+        // ATUALIZADO: Gerador da Tela Inicial agora pergunta os Trevos para a Milionária
         function iniciar(tipo, max, minQtd, maxQtd) {
-            let qtdJogos = prompt("Quantos jogos deseja gerar?", "5");
+            let qtdJogos = prompt(`Quantos jogos de ${configLoterias[tipo].nome} deseja gerar?`, "5");
             if (!qtdJogos) return;
-            let qtdNum = prompt(`Quantos números por jogo? (${minQtd} a ${maxQtd})`, minQtd);
-            if (!qtdNum) return;
+            
+            // Para lotomania o número é fixo
+            let qtdNum = minQtd;
+            if (tipo !== 'Lotomania') {
+                qtdNum = prompt(`Quantas dezenas por jogo? (${minQtd} a ${maxQtd})`, minQtd);
+                if (!qtdNum) return;
+            }
+            
+            let qtdTrevos = 2;
+            if (tipo === 'Milionaria') {
+                let strTrevos = prompt(`Quantos TREVOS por jogo na +Milionária? (2 a 6)`, "2");
+                if (!strTrevos) return;
+                qtdTrevos = parseInt(strTrevos);
+                if (qtdTrevos < 2 || qtdTrevos > 6) { alert("Trevos inválidos!"); return; }
+            }
             
             let arrayJogos = [];
             for(let i = 0; i < qtdJogos; i++) {
-                let nums = (tipo === 'Lotomania') ? gerarNumeros(100, 50, 0) : gerarNumeros(max, parseInt(qtdNum));
-                arrayJogos.push(nums);
+                let offset = (tipo === 'Lotomania') ? 0 : 1;
+                let nums = gerarNumeros(max, parseInt(qtdNum), offset);
+                let trevs = (tipo === 'Milionaria') ? gerarNumeros(6, qtdTrevos, 1) : null;
+                
+                arrayJogos.push({ numeros: nums, trevos: trevs });
             }
-            let precoBase = precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : 0;
-            exibirResultados(arrayJogos, tipo, precoBase, `Resultado Automático ${tipo}`);
+            
+            // Puxa o preço oficial base, mas para o modo rápido consideramos preço unitário do jogo cruzado na caixa se aplicável (simplificado)
+            let prc = precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : configLoterias[tipo].precoBase;
+            
+            // Ajusta o preço da Milionária se ele escolher mais trevos no gerador rápido (Combinações matemáticas do bilhete)
+            if (tipo === 'Milionaria') {
+                prc = prc * calcularCombinacoesPossiveis(qtdTrevos, 2);
+            }
+            
+            exibirResultados(arrayJogos, tipo, prc, `Resultado Automático ${configLoterias[tipo].nome}`);
         }
 
         function enviarWhatsApp() { let textoCodificado = encodeURIComponent(textoParaWhatsApp); window.open(`https://wa.me/?text=${textoCodificado}`, '_blank'); }
         function abrirCaixa() { window.open('https://www.loteriasonline.caixa.gov.br/', '_blank'); }
         function voltar() { document.querySelector('.wrapper').style.display = 'flex'; document.getElementById('tela-resultado').style.display = 'none'; }
 
-
-        // --- CONFIGURAÇÕES DE PWA (INSTALAÇÃO DO APP) ---
+        // --- PWA ---
         let deferredPrompt;
         const installBtn = document.getElementById('btn-install');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'block';
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt !== null) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('App instalado com sucesso!');
-                    installBtn.style.display = 'none'; 
-                }
-                deferredPrompt = null;
-            }
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker registrado!', reg))
-                    .catch(err => console.error('Falha ao registrar Service Worker', err));
-            });
-        }
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'block'; });
+        installBtn.addEventListener('click', async () => { if (deferredPrompt !== null) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') { installBtn.style.display = 'none'; } deferredPrompt = null; } });
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Erro:', err)); }); }
     </script>
 </body>
 </html>
