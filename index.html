@@ -62,7 +62,7 @@
         .btn-loteria-grid { padding: 10px 4px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; opacity: 0.4; transition: 0.3s; }
         .btn-loteria-grid.ativa { opacity: 1; border: 2px solid #FFDF00; transform: scale(1.03); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         
-        .grid-numeros { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; max-height: 200px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; }
+        .grid-numeros { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; max-height: 250px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; }
         .num-btn { background: #fff; border: 2px solid #ccc; border-radius: 50%; width: 38px; height: 38px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; margin: 0 auto; }
         .num-btn.ativo { color: white; transform: scale(1.15); box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-color: transparent; }
         .contador-info { font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; }
@@ -153,15 +153,20 @@
         <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
     </div>
 
-    <!-- Modal Gerar -->
+    <!-- Modal Gerar (ATUALIZADO COM TODAS AS LOTERIAS) -->
     <div id="modal-combinacoes" class="modal-overlay">
         <div class="modal-box">
             <span class="fechar-modal" onclick="fecharModal('modal-combinacoes')">&times;</span>
             <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerar Combinações</h2>
             
-            <div class="opcoes-loteria-grid" style="display:flex;">
-                <button id="btn-mega-modal" class="btn-loteria-grid ativa" style="background:#209869; flex:1;" onclick="setLoteriaModal('MegaSena')">MEGA SENA</button>
-                <button id="btn-quina-modal" class="btn-loteria-grid" style="background:#4a148c; flex:1;" onclick="setLoteriaModal('Quina')">QUINA</button>
+            <div class="opcoes-loteria-grid">
+                <button id="btn-mega-modal" class="btn-loteria-grid ativa" style="background:#209869" onclick="setLoteriaModal('MegaSena')">MEGA SENA</button>
+                <button id="btn-quina-modal" class="btn-loteria-grid" style="background:#4a148c" onclick="setLoteriaModal('Quina')">QUINA</button>
+                <button id="btn-milionaria-modal" class="btn-loteria-grid" style="background:#311b92" onclick="setLoteriaModal('Milionaria')">MILIONÁRIA</button>
+                <button id="btn-lotomania-modal" class="btn-loteria-grid" style="background:#ef6c00" onclick="setLoteriaModal('Lotomania')">LOTOMANIA</button>
+                <button id="btn-timemania-modal" class="btn-loteria-grid" style="background:#fbc02d; color:black;" onclick="setLoteriaModal('Timemania')">TIMEMANIA</button>
+                <button id="btn-dupla-modal" class="btn-loteria-grid" style="background:#c62828" onclick="setLoteriaModal('DuplaSena')">DUPLA SENA</button>
+                <button id="btn-lotofacil-modal" class="btn-loteria-grid" style="background:#7b1fa2" onclick="setLoteriaModal('Lotofacil')">LOTOFÁCIL</button>
             </div>
             
             <div class="contador-info" style="margin-top: 10px;">Dezenas Selecionadas: <span id="contador-num" style="color:#e53935; font-size: 16px;">0</span></div>
@@ -242,14 +247,15 @@
             'Timemania': {10: 3.50}
         };
 
+        // Dicionário Centralizado (Agora controla Modal de Geração e Conferência)
         const configLoterias = {
-            'MegaSena': { id: 'btn-mega-conf', endp: 'megasena', cor: '#209869', txt: 'white', nome: 'Mega-Sena' },
-            'Quina': { id: 'btn-quina-conf', endp: 'quina', cor: '#4a148c', txt: 'white', nome: 'Quina' },
-            'Milionaria': { id: 'btn-milionaria-conf', endp: 'maismilionaria', cor: '#311b92', txt: 'white', nome: '+Milionária' },
-            'Lotomania': { id: 'btn-lotomania-conf', endp: 'lotomania', cor: '#ef6c00', txt: 'white', nome: 'Lotomania' },
-            'Timemania': { id: 'btn-timemania-conf', endp: 'timemania', cor: '#fbc02d', txt: 'black', nome: 'Timemania' },
-            'DuplaSena': { id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white', nome: 'Dupla Sena' },
-            'Lotofacil': { id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white', nome: 'Lotofácil' }
+            'MegaSena': { idGen: 'btn-mega-modal', id: 'btn-mega-conf', endp: 'megasena', cor: '#209869', txt: 'white', nome: 'Mega-Sena', max: 60, minReq: 6 },
+            'Quina': { idGen: 'btn-quina-modal', id: 'btn-quina-conf', endp: 'quina', cor: '#4a148c', txt: 'white', nome: 'Quina', max: 80, minReq: 5 },
+            'Milionaria': { idGen: 'btn-milionaria-modal', id: 'btn-milionaria-conf', endp: 'maismilionaria', cor: '#311b92', txt: 'white', nome: '+Milionária', max: 50, minReq: 6 },
+            'Lotomania': { idGen: 'btn-lotomania-modal', id: 'btn-lotomania-conf', endp: 'lotomania', cor: '#ef6c00', txt: 'white', nome: 'Lotomania', max: 100, minReq: 50 },
+            'Timemania': { idGen: 'btn-timemania-modal', id: 'btn-timemania-conf', endp: 'timemania', cor: '#fbc02d', txt: 'black', nome: 'Timemania', max: 80, minReq: 10 },
+            'DuplaSena': { idGen: 'btn-dupla-modal', id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white', nome: 'Dupla Sena', max: 50, minReq: 6 },
+            'Lotofacil': { idGen: 'btn-lotofacil-modal', id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white', nome: 'Lotofácil', max: 25, minReq: 15 }
         };
 
         let textoParaWhatsApp = "";
@@ -269,6 +275,17 @@
                 if(!nums.includes(n)) nums.push(n);
             }
             return nums.sort((a,b) => a-b).map(n => n.toString().padStart(2, '0'));
+        }
+
+        // Previne o navegador de travar com números abusivos
+        function calcularCombinacoesPossiveis(n, k) {
+            if (k > n) return 0;
+            if (k === 0 || k === n) return 1;
+            let result = 1;
+            for (let i = 1; i <= k; i++) {
+                result = result * (n - i + 1) / i;
+            }
+            return Math.round(result);
         }
 
         function gerarCombinacoes(arr, k) {
@@ -318,8 +335,9 @@
         function atualizarContadorGrid() {
             let contadorSpan = document.getElementById('contador-num');
             contadorSpan.innerText = numerosEscolhidosArray.length;
-            let tamanhoMinimo = loteriaSelecionadaModal === 'Quina' ? 5 : 6;
-            if (numerosEscolhidosArray.length >= tamanhoMinimo) {
+            let conf = configLoterias[loteriaSelecionadaModal];
+            
+            if (numerosEscolhidosArray.length >= conf.minReq) {
                 contadorSpan.style.color = '#209869';
             } else {
                 contadorSpan.style.color = '#e53935'; 
@@ -339,8 +357,9 @@
         function selecionarAleatorioModal() {
             let inputQtd = document.getElementById('qtd-aleatoria').value;
             let qtd = parseInt(inputQtd, 10);
-            let maxDezenas = loteriaSelecionadaModal === 'MegaSena' ? 60 : 80;
-            let minExigido = loteriaSelecionadaModal === 'MegaSena' ? 6 : 5;
+            let conf = configLoterias[loteriaSelecionadaModal];
+            let maxDezenas = conf.max;
+            let minExigido = conf.minReq;
 
             if (isNaN(qtd) || qtd < minExigido || qtd > maxDezenas) {
                 alert(`Por favor, insira uma quantidade válida (entre ${minExigido} e ${maxDezenas}).`);
@@ -355,7 +374,6 @@
                 }
             }
 
-            let corTema = loteriaSelecionadaModal === 'MegaSena' ? '#209869' : '#4a148c';
             let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
             
             for (let i = 0; i < botoes.length; i++) {
@@ -363,7 +381,7 @@
                 let btn = botoes[i];
                 if (numerosEscolhidosArray.includes(numBtn)) {
                     btn.classList.add('ativo');
-                    btn.style.background = corTema;
+                    btn.style.background = conf.cor;
                 } else {
                     btn.classList.remove('ativo');
                     btn.style.background = '#fff';
@@ -384,36 +402,45 @@
 
         function setLoteriaModal(tipo) {
             loteriaSelecionadaModal = tipo;
-            document.getElementById('btn-mega-modal').classList.remove('ativa');
-            document.getElementById('btn-quina-modal').classList.remove('ativa');
-            if (tipo === 'MegaSena') {
-                document.getElementById('btn-mega-modal').classList.add('ativa');
-                renderizarGridNumeros(60, '#209869'); 
-            } else {
-                document.getElementById('btn-quina-modal').classList.add('ativa');
-                renderizarGridNumeros(80, '#4a148c'); 
+            let conf = configLoterias[tipo];
+            
+            // Remove ativação de todos e ativa só a escolhida
+            for (const key in configLoterias) {
+                let btn = document.getElementById(configLoterias[key].idGen);
+                if(btn) btn.classList.remove('ativa');
             }
+            document.getElementById(conf.idGen).classList.add('ativa');
+            
+            renderizarGridNumeros(conf.max, conf.cor);
             document.getElementById('qtd-aleatoria').value = '';
         }
 
         function executarCombinacoes() {
             let tipo = loteriaSelecionadaModal;
-            let tamanhoJogo = tipo === 'Quina' ? 5 : 6;
-            let precoBase = precos[tipo][tamanhoJogo];
+            let conf = configLoterias[tipo];
+            let tamanhoJogo = conf.minReq; 
+            
+            let precoBase = precos[tipo] && precos[tipo][tamanhoJogo] ? precos[tipo][tamanhoJogo] : 0;
             let numerosEscolhidos = [...numerosEscolhidosArray].sort((a,b) => a-b);
 
             if (numerosEscolhidos.length < tamanhoJogo) {
-                alert(`Você precisa selecionar pelo menos ${tamanhoJogo} números.`);
+                alert(`Para a loteria ${conf.nome}, você precisa selecionar pelo menos ${tamanhoJogo} números.`);
                 return;
             }
 
-            let combinacoes = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
-            if (combinacoes.length > 2000) {
-                let confirma = confirm(`Você selecionou ${numerosEscolhidos.length} números. Isso gerará ${combinacoes.length} jogos!\nPode travar o seu celular. Deseja continuar?`);
+            // Trava de segurança para não explodir o celular do usuário gerando milhões de arrays
+            let totalComb = calcularCombinacoesPossiveis(numerosEscolhidos.length, tamanhoJogo);
+            if (totalComb > 50000) {
+                alert(`⚠️ TRAVA DE SEGURANÇA:\n\nA quantidade gerada seria de ${totalComb.toLocaleString('pt-BR')} cartões!\nIsso faria o seu navegador travar ou fechar. Por favor, desmarque algumas dezenas.`);
+                return;
+            } else if (totalComb > 2500) {
+                let confirma = confirm(`Você selecionou ${numerosEscolhidos.length} números. Isso vai gerar ${totalComb.toLocaleString('pt-BR')} cartões.\nPode deixar seu celular um pouco lento. Deseja continuar?`);
                 if(!confirma) return;
             }
 
-            exibirResultados(combinacoes, tipo, precoBase, `Combinações ${tipo === 'Quina' ? 'Quina' : 'Mega-Sena'} (${numerosEscolhidos.length} números)`);
+            let combinacoes = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
+            
+            exibirResultados(combinacoes, tipo, precoBase, `Combinações: ${conf.nome} (${numerosEscolhidos.length} dezenas)`);
             fecharModal('modal-combinacoes'); 
         }
 
@@ -544,7 +571,6 @@
              else { btnProx.classList.remove('disabled'); }
         }
 
-        // NOVA FUNÇÃO DE CONFERÊNCIA COM ORDENAÇÃO POR ACERTOS
         function executarConferencia() {
             let textareaJogos = document.getElementById('textarea-jogos').value;
             
@@ -561,7 +587,7 @@
             
             let totalJogosPremiados = 0;
             let contagemPremios = {}; 
-            let jogosAvaliados = []; // Array que vai armazenar os jogos para ordenação
+            let jogosAvaliados = []; 
 
             for(let i = 0; i < linhas.length; i++) {
                 let linha = linhas[i].trim();
@@ -574,7 +600,6 @@
                 if(!numerosJogo) continue;
 
                 let acertos = 0;
-                // Mantém a numeração original da linha (Jogo X)
                 let linhaHtml = `<div class="linha-jogo">Jogo ${i+1}: `;
                 
                 for(let n of numerosJogo) {
@@ -607,17 +632,13 @@
                 let badgeClass = "badge-acertos" + (premiado ? " badge-premiado" : "");
                 linhaHtml += `<span class="${badgeClass}">${textoBadge}</span></div>`;
                 
-                // Em vez de concatenar direto na string HTML, salva no array
                 jogosAvaliados.push({
                     acertos: acertos,
                     html: linhaHtml
                 });
             }
 
-            // Ordena o array: do maior número de acertos para o menor
             jogosAvaliados.sort((a, b) => b.acertos - a.acertos);
-
-            // Monta o HTML final com a lista ordenada
             let htmlFinal = jogosAvaliados.map(jogo => jogo.html).join('');
 
             document.getElementById('titulo-res').innerText = `Conferência: ${conf.nome} (Concurso ${concursoCarregado})`;
@@ -694,6 +715,7 @@
             });
         }
 
+        // Função de tela inicial mantida independente para compatibilidade original
         function iniciar(tipo, max, minQtd, maxQtd) {
             let qtdJogos = prompt("Quantos jogos deseja gerar?", "5");
             if (!qtdJogos) return;
@@ -705,8 +727,8 @@
                 let nums = (tipo === 'Lotomania') ? gerarNumeros(100, 50, 0) : gerarNumeros(max, parseInt(qtdNum));
                 arrayJogos.push(nums);
             }
-            let precoBase = precos[tipo][qtdNum] || 0;
-            exibirResultados(arrayJogos, tipo, precoBase, `Resultado ${tipo}`);
+            let precoBase = precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : 0;
+            exibirResultados(arrayJogos, tipo, precoBase, `Resultado Automático ${tipo}`);
         }
 
         function enviarWhatsApp() { let textoCodificado = encodeURIComponent(textoParaWhatsApp); window.open(`https://wa.me/?text=${textoCodificado}`, '_blank'); }
