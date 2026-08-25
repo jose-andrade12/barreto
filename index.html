@@ -67,6 +67,12 @@
         .num-btn.ativo { color: white; transform: scale(1.15); box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-color: transparent; }
         .contador-info { font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; }
 
+        /* Painel Aleatório */
+        .painel-aleatorio { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px; background: #f5f7fa; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .input-aleatorio { width: 70px; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; font-size: 15px; color: #0f172a; outline: none; }
+        .btn-acao-p { color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s; }
+        .btn-acao-p:active { transform: scale(0.95); }
+
         /* Painel Conferência */
         .info-api { font-size: 13px; color: #888; margin-bottom: 10px; min-height: 18px; text-align: left; padding-left: 5px;}
         .busca-concurso-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 14.5px; color: #425f7a; }
@@ -141,9 +147,7 @@
         <h3 id="titulo-cartoes" style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
         <h3 id="titulo-bolao" style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
         
-        <!-- Botão Novo de Copiar Jogos -->
         <button id="btn-copiar" class="btn-copiar" onclick="copiarJogos()">📋 Copiar Jogos</button>
-        
         <button id="btn-zap" class="btn-zap" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
         <button id="btn-caixa" class="btn-caixa" onclick="abrirCaixa()">🎰 Jogar no Site da Caixa</button>
         <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
@@ -161,6 +165,15 @@
             </div>
             
             <div class="contador-info" style="margin-top: 10px;">Dezenas Selecionadas: <span id="contador-num" style="color:#e53935; font-size: 16px;">0</span></div>
+            
+            <!-- NOVA SESSÃO: Seleção Aleatória -->
+            <div class="painel-aleatorio">
+                <span style="font-size: 14px; font-weight: bold; color: #334155;">Aleatório:</span>
+                <input type="number" id="qtd-aleatoria" class="input-aleatorio" placeholder="Qtd">
+                <button class="btn-acao-p" style="background: #2563eb;" onclick="selecionarAleatorioModal()">🎲 Sortear</button>
+                <button class="btn-acao-p" style="background: #ef4444;" onclick="limparGridModal()">🗑️ Limpar</button>
+            </div>
+            
             <div id="grid-numeros-modal" class="grid-numeros"></div>
             
             <button class="btn" style="background:#005CA9; margin-top:5px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
@@ -200,8 +213,9 @@
                 </div>
             </div>
             
-            <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos gerados aqui:</p>
-            <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados..."></textarea>
+            <!-- TEXTO ATUALIZADO AQUI -->
+            <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos ou digite os números do seu cartão aqui:</p>
+            <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados ou digite os números manualmente (ex: 01 02 03 04 05 06). Pode usar espaços, traços ou vírgulas."></textarea>
             
             <button class="btn" style="background:#b71c1c; margin-top:5px; margin-bottom:0;" onclick="executarConferencia()">REALIZAR CONFERÊNCIA</button>
         </div>
@@ -241,7 +255,7 @@
         };
 
         let textoParaWhatsApp = "";
-        let textoParaCopiar = ""; // Variável nova para o botão de copiar
+        let textoParaCopiar = ""; 
         
         let loteriaSelecionadaModal = 'MegaSena'; 
         let loteriaSelecionadaConf = 'MegaSena';
@@ -313,6 +327,58 @@
                 contadorSpan.style.color = '#e53935'; 
             }
         }
+        
+        // FUNÇÕES NOVAS DE LIMPAR E SORTEAR (SURPRESINHA)
+        function limparGridModal() {
+            numerosEscolhidosArray = [];
+            let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
+            for (let i = 0; i < botoes.length; i++) {
+                botoes[i].classList.remove('ativo');
+                botoes[i].style.background = '#fff';
+            }
+            atualizarContadorGrid();
+        }
+
+        function selecionarAleatorioModal() {
+            let inputQtd = document.getElementById('qtd-aleatoria').value;
+            let qtd = parseInt(inputQtd, 10);
+            let maxDezenas = loteriaSelecionadaModal === 'MegaSena' ? 60 : 80;
+            let minExigido = loteriaSelecionadaModal === 'MegaSena' ? 6 : 5;
+
+            if (isNaN(qtd) || qtd < minExigido || qtd > maxDezenas) {
+                alert(`Por favor, insira uma quantidade válida (entre ${minExigido} e ${maxDezenas}).`);
+                return;
+            }
+
+            // Limpa tudo antes de sortear os novos
+            numerosEscolhidosArray = [];
+            
+            // Sorteia
+            while(numerosEscolhidosArray.length < qtd) {
+                let n = Math.floor(Math.random() * maxDezenas) + 1;
+                if(!numerosEscolhidosArray.includes(n)) {
+                    numerosEscolhidosArray.push(n);
+                }
+            }
+
+            // Pinta o Grid
+            let corTema = loteriaSelecionadaModal === 'MegaSena' ? '#209869' : '#4a148c';
+            let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
+            
+            for (let i = 0; i < botoes.length; i++) {
+                let numBtn = i + 1;
+                let btn = botoes[i];
+                if (numerosEscolhidosArray.includes(numBtn)) {
+                    btn.classList.add('ativo');
+                    btn.style.background = corTema;
+                } else {
+                    btn.classList.remove('ativo');
+                    btn.style.background = '#fff';
+                }
+            }
+            
+            atualizarContadorGrid();
+        }
 
         function abrirModal() {
             document.getElementById('modal-combinacoes').style.display = 'flex';
@@ -334,6 +400,8 @@
                 document.getElementById('btn-quina-modal').classList.add('ativa');
                 renderizarGridNumeros(80, '#4a148c'); 
             }
+            // Limpa o campo de aleatório ao trocar de loteria
+            document.getElementById('qtd-aleatoria').value = '';
         }
 
         function executarCombinacoes() {
@@ -491,7 +559,7 @@
                 alert("Aguarde o carregamento do concurso."); return;
             }
             if(!textareaJogos.trim()) {
-                alert("Cole seus jogos na caixa de texto."); return;
+                alert("Insira ou cole seus jogos na caixa de texto."); return;
             }
 
             let sorteadas = dezenasSorteadasConferencia;
@@ -500,7 +568,7 @@
             let conf = configLoterias[loteriaSelecionadaConf];
             
             let totalJogosPremiados = 0;
-            let contagemPremios = {}; // Para agrupar: ex: 2x QUADRA
+            let contagemPremios = {}; 
 
             for(let i = 0; i < linhas.length; i++) {
                 let linha = linhas[i].trim();
@@ -508,7 +576,7 @@
 
                 let linhaLimpa = linha.replace(/Jogo \d+:/gi, '');
                 let dezenasStr = linhaLimpa.split('|')[0];
-                let numerosJogo = dezenasStr.match(/\d+/g);
+                let numerosJogo = dezenasStr.match(/\d+/g); // A mágica que puxa todos os números, não importa se usou hífen, espaço, etc.
                 
                 if(!numerosJogo) continue;
 
@@ -551,10 +619,9 @@
             document.getElementById('titulo-res').innerText = `Conferência (Concurso ${concursoCarregado})`;
             document.getElementById('conteudo-res').innerHTML = html;
             
-            // Na conferência escondemos os botões de valores/gerar
             document.getElementById('titulo-cartoes').style.display = 'none';
             document.getElementById('titulo-bolao').style.display = 'none';
-            document.getElementById('btn-copiar').style.display = 'none'; // Esconde botão copiar
+            document.getElementById('btn-copiar').style.display = 'none'; 
             document.getElementById('btn-zap').style.display = 'none';
             document.getElementById('btn-caixa').style.display = 'none';
             
@@ -562,7 +629,6 @@
             document.querySelector('.wrapper').style.display = 'none';
             document.getElementById('tela-resultado').style.display = 'block';
             
-            // Dispara o Popup se houve premiação
             if (totalJogosPremiados > 0) {
                 let msgPremio = `Detectamos <b>${totalJogosPremiados}</b> jogo(s) premiado(s)!<br><br>`;
                 for (let tipoPremio in contagemPremios) {
@@ -577,11 +643,10 @@
         function exibirResultados(arrayJogos, tipo, precoBase, titulo) {
             let html = "", soma = 0;
             textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
-            textoParaCopiar = ""; // Reseta o texto para copiar
+            textoParaCopiar = ""; 
 
             for(let i = 0; i < arrayJogos.length; i++) {
                 let numsFormatados = arrayJogos[i].map(n => n.toString().padStart(2, '0'));
-                
                 html += `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${numsFormatados.join(' - ')}</span></div>`;
                 
                 let linhaTexto = `Jogo ${i+1}: ${numsFormatados.join(' - ')}\n`;
@@ -597,10 +662,9 @@
             document.getElementById('titulo-res').innerText = titulo;
             document.getElementById('conteudo-res').innerHTML = html;
             
-            // Exibe os botões na tela de geração
             document.getElementById('titulo-cartoes').style.display = 'block';
             document.getElementById('titulo-bolao').style.display = 'block';
-            document.getElementById('btn-copiar').style.display = 'block'; // Mostra botão copiar
+            document.getElementById('btn-copiar').style.display = 'block'; 
             document.getElementById('btn-zap').style.display = 'block';
             document.getElementById('btn-caixa').style.display = 'block';
 
@@ -617,10 +681,10 @@
                 let btn = document.getElementById('btn-copiar');
                 let textoOriginal = btn.innerText;
                 btn.innerText = "✅ Jogos Copiados!";
-                btn.style.background = "#209869"; // Fica verde temporariamente
+                btn.style.background = "#209869"; 
                 setTimeout(() => {
                     btn.innerText = textoOriginal;
-                    btn.style.background = "#f57c00"; // Volta pro laranja
+                    btn.style.background = "#f57c00"; 
                 }, 2000);
             }).catch(err => {
                 alert("Erro ao copiar os jogos: " + err);
