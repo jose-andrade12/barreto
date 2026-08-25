@@ -21,16 +21,24 @@
             min-height: 100vh;
         }
         
-        h1 { font-size: 26px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); margin-bottom: 5px; }
+        h1 { font-size: 26px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); margin-bottom: 20px; }
 
-        .wrapper { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; margin-top: 10px; }
+        /* Layout unificado e centralizado (igual ao celular) */
+        .app-container {
+            max-width: 450px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
         
         .painel-container { 
             background: #005ca9; padding: 25px; border-radius: 20px; border: 4px solid #003f7a; 
-            width: 100%; max-width: 400px; box-sizing: border-box; box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+            width: 100%; box-sizing: border-box; box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
         }
         
-        .clover-side { width: 100%; max-width: 350px; }
+        .clover-side { width: 100%; max-width: 320px; }
         
         @keyframes brilharTrevo {
             0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px #FFDF00; transform: scale(1); }
@@ -96,7 +104,7 @@
 
         /* --- PAINEL DE RESULTADOS EM MENU LISTA (SELECT) --- */
         .painel-resultados-wrapper {
-            max-width: 600px; margin: 40px auto; padding: 0 15px; text-align: left;
+            width: 100%; text-align: left;
         }
         .titulo-resultados {
             font-size: 28px; color: #005ca9; margin-bottom: 15px; text-shadow: 1px 1px 0 rgba(255,255,255,0.8), -1px -1px 0 rgba(255,255,255,0.8), 1px -1px 0 rgba(255,255,255,0.8), -1px 1px 0 rgba(255,255,255,0.8); letter-spacing: -0.5px;
@@ -120,9 +128,15 @@
         .visor-resultados {
             width: 100%; background: #fff; border-radius: 12px; padding: 20px; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #333;
         }
-        .visor-header { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+        .visor-header { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .titulo-loteria-res { font-size: 24px; font-weight: bold; margin: 0 0 5px 0; }
         .info-concurso-res { font-size: 13px; color: #777; }
+        
+        .btn-recolher {
+            background: #e0e0e0; border: none; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s;
+        }
+        .btn-recolher:hover { background: #d0d0d0; }
+
         .visor-corpo { display: flex; flex-direction: column; gap: 20px; }
         
         .bolinhas-res-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; justify-content: center; }
@@ -139,21 +153,15 @@
         .ganhadores-texto { color: #666; display: block; }
         
         .loading-res { font-size: 15px; color: #666; text-align: center; padding: 30px 0; font-style: italic; }
-
-        @media (max-width: 768px) {
-            .wrapper { flex-direction: column-reverse; gap: 30px; }
-            .painel-container { padding: 15px; max-width: 100%; }
-            .clover-side { max-width: 250px; }
-            body { padding: 15px; }
-        }
     </style>
 </head>
 <body>
 
     <h1>🍀 IA - Inteligência do Andrade</h1>
 
-    <!-- App Principal -->
-    <div class="wrapper">
+    <!-- Container Principal Unificado (Funciona perfeitamente em PC e Celular) -->
+    <div class="app-container">
+        
         <div class="painel-container">
             <button class="btn" style="background:#4a148c" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
             <button class="btn" style="background:#209869" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
@@ -177,26 +185,10 @@
             <img src="trevo.png" alt="Trevo do Andrade" class="clover-img">
             <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
         </div>
-    </div>
 
-    <!-- Resultados Geração/Conferência -->
-    <div id="tela-resultado">
-        <h2 id="titulo-res">Resultado</h2>
-        <div id="conteudo-res"></div>
-        <hr>
-        <h3 id="titulo-cartoes" style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
-        <h3 id="titulo-bolao" style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
-        
-        <button id="btn-copiar" class="btn-copiar" onclick="copiarJogos()">📋 Copiar Jogos</button>
-        <button id="btn-zap" class="btn-zap" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
-        <button id="btn-caixa" class="btn-caixa" onclick="abrirCaixa()">🎰 Jogar no Site da Caixa</button>
-        <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
-    </div>
-
-    <!-- PAINEL DE RESULTADOS OFICIAIS (MENU LISTA / SELECT) -->
-    <div class="painel-resultados-wrapper" id="secao-resultados">
-        <h2 class="titulo-resultados">Resultados</h2>
-        <div class="grid-resultados-layout">
+        <!-- PAINEL DE RESULTADOS OFICIAIS LOGO ABAIXO -->
+        <div class="painel-resultados-wrapper" id="secao-resultados">
+            <h2 class="titulo-resultados">Resultados</h2>
             
             <!-- Menu Lista (Select Dropdown) -->
             <div class="select-container">
@@ -221,8 +213,11 @@
                 
                 <div id="visor-conteudo" style="display: none; width: 100%;">
                     <div class="visor-header">
-                        <h3 id="visor-titulo" class="titulo-loteria-res">Nome</h3>
-                        <div id="visor-info" class="info-concurso-res">Resultado Concurso -- (--/--/----)</div>
+                        <div>
+                            <h3 id="visor-titulo" class="titulo-loteria-res">Nome</h3>
+                            <div id="visor-info" class="info-concurso-res">Resultado Concurso -- (--/--/----)</div>
+                        </div>
+                        <button class="btn-recolher" onclick="recolherVisor()" title="Recolher / Fechar">✕</button>
                     </div>
                     
                     <div class="visor-corpo">
@@ -243,10 +238,23 @@
                     </div>
                 </div>
             </div>
-            
         </div>
+
     </div>
 
+    <!-- Resultados Geração/Conferência -->
+    <div id="tela-resultado">
+        <h2 id="titulo-res">Resultado</h2>
+        <div id="conteudo-res"></div>
+        <hr>
+        <h3 id="titulo-cartoes" style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
+        <h3 id="titulo-bolao" style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
+        
+        <button id="btn-copiar" class="btn-copiar" onclick="copiarJogos()">📋 Copiar Jogos</button>
+        <button id="btn-zap" class="btn-zap" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
+        <button id="btn-caixa" class="btn-caixa" onclick="abrirCaixa()">🎰 Jogar no Site da Caixa</button>
+        <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
+    </div>
 
     <!-- Modal Gerar Combinacoes -->
     <div id="modal-combinacoes" class="modal-overlay">
@@ -364,11 +372,18 @@
         let dezenasSorteadasConferencia = [];
         let trevosSorteadosConferencia = [];
 
-        // Função robusta com duplo fallback (API Principal + API Oficial da Caixa via Proxy)
+        // Função para recolher / fechar o visor de resultados
+        function recolherVisor() {
+            document.getElementById('select-loteria-res').value = "";
+            document.getElementById('visor-conteudo').style.display = 'none';
+            document.getElementById('visor-loading').style.display = 'block';
+            document.getElementById('visor-loading').innerText = "Selecione uma loteria no menu acima para carregar o último resultado e rateio.";
+            document.getElementById('visor-loading').style.color = '#666';
+        }
+
         async function buscarDadosLoteria(tipo, concursoNum = null) {
             let conf = configLoterias[tipo];
             
-            // 1. Tenta API Principal (Heroku)
             try {
                 let urlHeroku = concursoNum 
                     ? `https://loteriascaixa-api.herokuapp.com/api/${conf.endp}/${concursoNum}`
@@ -396,7 +411,6 @@
                 console.warn("API principal indisponível, usando API oficial da Caixa...");
             }
 
-            // 2. Fallback: API Oficial da Caixa via CORS Proxy
             let urlCaixa = concursoNum
                 ? `https://corsproxy.io/?https://servicebus.caixa.gov.br/portaldeloterias/api/${conf.endp}/${concursoNum}`
                 : `https://corsproxy.io/?https://servicebus.caixa.gov.br/portaldeloterias/api/${conf.endp}`;
@@ -966,15 +980,7 @@
             document.getElementById('titulo-res').innerText = `Conferência: ${conf.nome} (Concurso ${concursoCarregado})`;
             document.getElementById('conteudo-res').innerHTML = htmlFinal;
             
-            document.getElementById('titulo-cartoes').style.display = 'none';
-            document.getElementById('titulo-bolao').style.display = 'none';
-            document.getElementById('btn-copiar').style.display = 'none'; 
-            document.getElementById('btn-zap').style.display = 'none';
-            document.getElementById('btn-caixa').style.display = 'none';
-            
-            fecharModal('modal-conferencia'); 
-            document.querySelector('.wrapper').style.display = 'none';
-            document.getElementById('secao-resultados').style.display = 'none';
+            document.querySelector('.app-container').style.display = 'none';
             document.getElementById('tela-resultado').style.display = 'block';
             
             if (totalJogosPremiados > 0) {
@@ -1018,18 +1024,11 @@
 
             document.getElementById('titulo-res').innerText = titulo;
             document.getElementById('conteudo-res').innerHTML = html;
-            
-            document.getElementById('titulo-cartoes').style.display = 'block';
-            document.getElementById('titulo-bolao').style.display = 'block';
-            document.getElementById('btn-copiar').style.display = 'block'; 
-            document.getElementById('btn-zap').style.display = 'block';
-            document.getElementById('btn-caixa').style.display = 'block';
 
             document.getElementById('total-cartoes').innerText = arrayJogos.length;
             document.getElementById('total-geral').innerText = totalFormatado;
             
-            document.querySelector('.wrapper').style.display = 'none';
-            document.getElementById('secao-resultados').style.display = 'none';
+            document.querySelector('.app-container').style.display = 'none';
             document.getElementById('tela-resultado').style.display = 'block';
         }
         
@@ -1078,7 +1077,7 @@
 
         function enviarWhatsApp() { let textoCodificado = encodeURIComponent(textoParaWhatsApp); window.open(`https://wa.me/?text=${textoCodificado}`, '_blank'); }
         function abrirCaixa() { window.open('https://www.loteriasonline.caixa.gov.br/', '_blank'); }
-        function voltar() { document.querySelector('.wrapper').style.display = 'flex'; document.getElementById('secao-resultados').style.display = 'block'; document.getElementById('tela-resultado').style.display = 'none'; }
+        function voltar() { document.querySelector('.app-container').style.display = 'flex'; document.getElementById('tela-resultado').style.display = 'none'; }
 
         // --- INICIALIZAÇÃO PWA ---
         let deferredPrompt;
