@@ -364,6 +364,64 @@
         let dezenasSorteadasConferencia = [];
         let trevosSorteadosConferencia = [];
 
+        // Função robusta com duplo fallback (API Principal + API Oficial da Caixa via Proxy)
+        async function buscarDadosLoteria(tipo, concursoNum = null) {
+            let conf = configLoterias[tipo];
+            
+            // 1. Tenta API Principal (Heroku)
+            try {
+                let urlHeroku = concursoNum 
+                    ? `https://loteriascaixa-api.herokuapp.com/api/${conf.endp}/${concursoNum}`
+                    : `https://loteriascaixa-api.herokuapp.com/api/${conf.endp}/latest`;
+                let res = await fetch(urlHeroku);
+                if(res.ok) {
+                    let data = await res.json();
+                    return {
+                        concurso: data.concurso || data.numero,
+                        data: data.data || data.dataApuracao,
+                        dezenas: data.dezenas || data.listaDezenas,
+                        trevos: data.trevos || data.listaTrevosSorteados,
+                        mesSorte: data.mesSorte || data.nomeMesSorte,
+                        dataProximoConcurso: data.dataProximoConcurso,
+                        valorEstimadoProximoConcurso: data.valorEstimadoProximoConcurso,
+                        acumulou: data.acumulou,
+                        premiacoes: data.premiacoes || (data.listaRateioPremio ? data.listaRateioPremio.map(p => ({
+                            descricao: p.descricaoFaixa,
+                            ganhadores: p.numeroGanhadores,
+                            premio: p.valorPremio
+                        })) : [])
+                    };
+                }
+            } catch(e) {
+                console.warn("API principal indisponível, usando API oficial da Caixa...");
+            }
+
+            // 2. Fallback: API Oficial da Caixa via CORS Proxy
+            let urlCaixa = concursoNum
+                ? `https://corsproxy.io/?https://servicebus.caixa.gov.br/portaldeloterias/api/${conf.endp}/${concursoNum}`
+                : `https://corsproxy.io/?https://servicebus.caixa.gov.br/portaldeloterias/api/${conf.endp}`;
+                
+            let resCaixa = await fetch(urlCaixa);
+            if(!resCaixa.ok) throw new Error('Falha ao buscar dados nas fontes oficiais.');
+            let dataC = await resCaixa.json();
+            
+            return {
+                concurso: dataC.numero || dataC.concurso,
+                data: dataC.dataApuracao || dataC.data,
+                dezenas: dataC.listaDezenas || dataC.dezenas,
+                trevos: dataC.listaTrevosSorteados || dataC.trevos,
+                mesSorte: dataC.nomeMesSorte || dataC.mesSorte,
+                dataProximoConcurso: dataC.dataProximoConcurso,
+                valorEstimadoProximoConcurso: dataC.valorEstimadoProximoConcurso,
+                acumulou: dataC.acumulado !== undefined ? dataC.acumulado : dataC.acumulou,
+                premiacoes: (dataC.listaRateioPremio || dataC.premiacoes || []).map(p => ({
+                    descricao: p.descricaoFaixa || p.descricao,
+                    ganhadores: p.numeroGanhadores !== undefined ? p.numeroGanhadores : p.ganhadores,
+                    premio: p.valorPremio !== undefined ? p.valorPremio : p.premio
+                }))
+            };
+        }
+
         async function carregarVisorResultado(tipo) {
             if(!tipo) return;
             let loadingDiv = document.getElementById('visor-loading');
@@ -376,16 +434,12 @@
 
             try {
                 let conf = configLoterias[tipo];
-                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${conf.endp}/latest`);
-                if(!response.ok) throw new Error('Falha na comunicação');
-                
-                let data = await response.json();
+                let data = await buscarDadosLoteria(tipo);
                 
                 document.getElementById('visor-titulo').innerText = conf.nome;
                 document.getElementById('visor-titulo').style.color = conf.cor;
                 let dataSorteio = data.data || '--/--/----';
-                let localSorteio = data.localSorteio ? ` Sorteio realizado no ${data.localSorteio}` : '';
-                document.getElementById('visor-info').innerHTML = `Resultado Concurso <b>${data.concurso}</b> (${dataSorteio})<br><span style="font-size:11px;">${localSorteio}</span>`;
+                document.getElementById('visor-info').innerHTML = `Resultado Concurso <b>${data.concurso}</b> (${dataSorteio})`;
 
                 let containerBolinhas = document.getElementById('visor-bolinhas');
                 containerBolinhas.innerHTML = '';
@@ -442,7 +496,7 @@
                         if(premio.ganhadores === 0) {
                             txtGanhadores = `<span class="ganhadores-texto">Acumulou!</span>`;
                         } else {
-                            let valorSt = premio.premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+                            let valorSt = premio.premio ? premio.premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : '';
                             txtGanhadores = `<span class="ganhadores-texto">${premio.ganhadores} aposta(s) ganhadora(s), ${valorSt}</span>`;
                         }
                         li.innerHTML = txtAcertos + txtGanhadores;
@@ -782,7 +836,7 @@
                 labelPremio.innerHTML = `Prêmio deste concurso<br><span style="font-weight: bold;">Finalizado</span>`;
                 let valorPrize = "Apurado";
                 if(data.acumulou) { valorPrize = "Acumulou!"; } 
-                else if(data.premiacoes && data.premiacoes.length > 0) { valorPrize = data.premiacoes[0].premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}); }
+                else if(data.premiacoes && data.premiacoes.length > 0) { valorPrize = data.premiacoes[0].premio ? data.premiacoes[0].premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : 'Apurado'; }
                 document.getElementById('valor-estimado').innerText = valorPrize;
             }
             
@@ -792,9 +846,7 @@
         async function buscarUltimoResultadoAPIAntiga(tipo) {
             prepararBuscaAPI();
             try {
-                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${configLoterias[tipo].endp}/latest`);
-                if(!response.ok) throw new Error('API');
-                let data = await response.json();
+                let data = await buscarDadosLoteria(tipo);
                 processarDadosAPI(data, true);
             } catch (error) { falhaBuscaAPI(); }
         }
@@ -807,9 +859,7 @@
             }
             prepararBuscaAPI();
             try {
-                let response = await fetch(`https://loteriascaixa-api.herokuapp.com/api/${configLoterias[loteriaSelecionadaConf].endp}/${num}`);
-                if(!response.ok) throw new Error('API');
-                let data = await response.json();
+                let data = await buscarDadosLoteria(loteriaSelecionadaConf, num);
                 processarDadosAPI(data, false);
             } catch (error) { falhaBuscaAPI(num); }
         }
