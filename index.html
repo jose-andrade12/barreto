@@ -23,7 +23,7 @@
         
         h1 { font-size: 26px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); margin-bottom: 20px; }
 
-        /* Layout unificado e centralizado (igual ao celular) */
+        /* Layout unificado e centralizado */
         .app-container {
             max-width: 450px;
             margin: 0 auto;
@@ -38,7 +38,7 @@
             width: 100%; box-sizing: border-box; box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
         }
         
-        .clover-side { width: 100%; max-width: 320px; }
+        .clover-side { width: 100%; max-width: 280px; }
         
         @keyframes brilharTrevo {
             0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px #FFDF00; transform: scale(1); }
@@ -159,9 +159,16 @@
 
     <h1>🍀 IA - Inteligência do Andrade</h1>
 
-    <!-- Container Principal Unificado (Funciona perfeitamente em PC e Celular) -->
+    <!-- Container Principal Unificado (Trevo em cima do painel) -->
     <div class="app-container">
         
+        <!-- Trevo em cima -->
+        <div class="clover-side">
+            <img src="trevo.png" alt="Trevo do Andrade" class="clover-img">
+            <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
+        </div>
+
+        <!-- Painel principal abaixo do trevo -->
         <div class="painel-container">
             <button class="btn" style="background:#4a148c" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
             <button class="btn" style="background:#209869" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
@@ -179,11 +186,6 @@
             <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 12px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
                 <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> e confere os acertos buscando no banco oficial da Caixa.
             </p>
-        </div>
-
-        <div class="clover-side">
-            <img src="trevo.png" alt="Trevo do Andrade" class="clover-img">
-            <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
         </div>
 
         <!-- PAINEL DE RESULTADOS OFICIAIS LOGO ABAIXO -->
@@ -372,7 +374,6 @@
         let dezenasSorteadasConferencia = [];
         let trevosSorteadosConferencia = [];
 
-        // Função para recolher / fechar o visor de resultados
         function recolherVisor() {
             document.getElementById('select-loteria-res').value = "";
             document.getElementById('visor-conteudo').style.display = 'none';
@@ -733,7 +734,7 @@
             
             if (tipo === 'Milionaria') {
                 let trevosEscolhidos = [...trevosEscolhidosArray].sort((a,b) => a-b);
-                if(trevosEscolhidos.length < 2) { alert(`Para a +Milionária, selecione pelo menos 2 Trevos.`); return; }
+                if(trevosEscolhidos.length < 2) { alert(`⚠️ Para a +Milionária, selecione pelo menos 2 Trevos.`); return; }
                 
                 let combNumeros = gerarCombinacoes(numerosEscolhidos, 6);
                 let combTrevos = gerarCombinacoes(trevosEscolhidos, 2);
