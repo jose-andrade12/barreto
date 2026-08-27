@@ -247,8 +247,8 @@
             <div id="container-time-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
                 <div class="contador-info" style="color:#b71c1c; margin-bottom: 8px;">⚽ Time do Coração:</div>
                 <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
-                    <input type="text" id="input-time-coracao" class="input-aleatorio" style="flex: 1; min-width: 150px; max-width: 250px; text-align: center;" placeholder="Digite seu time...">
-                    <button class="btn-acao-p" style="background: #2563eb;" onclick="sortearTimeModal()" title="Sortear Time Aleatório">🎲 Sortear</button>
+                    <input type="text" id="input-time-coracao" class="input-aleatorio" style="flex: 1; min-width: 150px; text-align: center; font-size: 13px;" placeholder="Deixe em branco p/ sortear">
+                    <button class="btn-acao-p" style="background: #2563eb;" onclick="sortearTimeModal()" title="Fixar um time aleatório para todos">🎲 Único</button>
                 </div>
             </div>
 
@@ -636,7 +636,6 @@
             document.getElementById('contador-trevos').style.color = '#e53935';
         }
 
-        // Função para sortear Time no Modal
         function sortearTimeModal() {
             let timeSorteado = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
             document.getElementById('input-time-coracao').value = timeSorteado;
@@ -683,10 +682,6 @@
                 document.getElementById('contador-trevos').innerText = '2';
                 document.getElementById('contador-trevos').style.color = '#209869';
             }
-
-            if (loteriaSelecionadaModal === 'Timemania') {
-                sortearTimeModal();
-            }
         }
 
         function abrirModal() {
@@ -719,7 +714,7 @@
             } else if (tipo === 'Timemania') {
                 document.getElementById('container-trevos-modal').style.display = 'none';
                 document.getElementById('container-time-modal').style.display = 'block';
-                document.getElementById('input-time-coracao').value = ''; // Reseta ao abrir
+                document.getElementById('input-time-coracao').value = ''; 
             } else {
                 document.getElementById('container-trevos-modal').style.display = 'none';
                 document.getElementById('container-time-modal').style.display = 'none';
@@ -740,12 +735,13 @@
 
             let arrayJogosFinal = [];
             let timeEscolhido = null;
+            let isTimeAleatorio = false;
 
             if (tipo === 'Timemania') {
                 timeEscolhido = document.getElementById('input-time-coracao').value.trim();
                 if(!timeEscolhido) {
-                    alert(`⚠️ Para a Timemania, você precisa preencher ou sortear o Time do Coração.`);
-                    return;
+                    // Se estiver em branco, aciona a flag para sortear por cartão
+                    isTimeAleatorio = true;
                 }
             }
             
@@ -772,12 +768,19 @@
                 if (totalComb > 3000 && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
 
                 let combNumeros = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
-                arrayJogosFinal = combNumeros.map(nums => ({ numeros: nums, trevos: null, time: timeEscolhido }));
+                
+                arrayJogosFinal = combNumeros.map(nums => {
+                    let timeDoCartao = timeEscolhido;
+                    if (isTimeAleatorio) {
+                        timeDoCartao = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+                    }
+                    return { numeros: nums, trevos: null, time: timeDoCartao };
+                });
             }
             
             let dezenasText = `${numerosEscolhidos.length} dz`;
             if (tipo === 'Milionaria') dezenasText += ` e ${trevosEscolhidosArray.length} trevos`;
-            if (tipo === 'Timemania') dezenasText += ` e 1 time`;
+            if (tipo === 'Timemania') dezenasText += ` e ${isTimeAleatorio ? 'times sorteados' : '1 time'}`;
 
             exibirResultados(arrayJogosFinal, tipo, precoBase, `Combinações: ${conf.nome} (${dezenasText})`);
             fecharModal('modal-combinacoes'); 
@@ -1130,11 +1133,14 @@
             }
 
             let timeEscolhido = null;
+            let isTimeAleatorio = false;
+
             if (tipo === 'Timemania') {
-                let respTime = prompt(`Qual o seu Time do Coração?\n(Deixe em branco para sortear um automaticamente)`, "");
+                let respTime = prompt(`Qual o seu Time do Coração?\n(Deixe em branco para sortear times diferentes para cada cartão)`, "");
                 if (respTime === null) return; // Cancela a operação
                 if (respTime.trim() === "") {
-                    timeEscolhido = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+                    // Sinaliza para sortear um diferente para cada loop
+                    isTimeAleatorio = true;
                 } else {
                     timeEscolhido = respTime.trim();
                 }
@@ -1145,7 +1151,14 @@
                 let offset = (tipo === 'Lotomania') ? 0 : 1;
                 let nums = gerarNumeros(max, parseInt(qtdNum), offset);
                 let trevs = (tipo === 'Milionaria') ? gerarNumeros(6, qtdTrevos, 1) : null;
-                arrayJogos.push({ numeros: nums, trevos: trevs, time: timeEscolhido });
+                
+                let timeDoCartao = timeEscolhido;
+                // Sorteia individualmente para o cartão se foi deixado em branco
+                if (isTimeAleatorio) {
+                    timeDoCartao = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+                }
+
+                arrayJogos.push({ numeros: nums, trevos: trevs, time: timeDoCartao });
             }
             
             let prc = precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : configLoterias[tipo].precoBase;
