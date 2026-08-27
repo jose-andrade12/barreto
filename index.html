@@ -285,6 +285,13 @@
             
             <div id="grid-numeros-modal" class="grid-numeros"></div>
             
+            <!-- Adicionado Input de Time da Timemania -->
+            <div id="container-time-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
+                <div class="contador-info" style="color:#b71c1c;">⚽ Time do Coração:</div>
+                <input type="text" id="input-time-coracao" class="input-aleatorio" style="width: 80%; max-width: 250px; text-align: center; margin: 0 auto; display: block;" placeholder="Digite o Time (Ex: Flamengo)">
+            </div>
+
+            <!-- Adicionado Input de Trevos da Milionária -->
             <div id="container-trevos-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
                 <div class="contador-info" style="color:#311b92;">🍀 Trevos Selecionados: <span id="contador-trevos" style="color:#e53935; font-size: 16px;">0</span></div>
                 <div id="grid-trevos-modal" class="grid-numeros" style="display: flex; justify-content: center; gap: 10px; min-height: auto; overflow: hidden; padding-bottom: 0;"></div>
@@ -328,7 +335,7 @@
             </div>
             
             <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos ou digite os números do seu cartão aqui:</p>
-            <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados ou digite (ex: 01 02 03 04 05 06 | Trevos: 01 02)"></textarea>
+            <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados ou digite (ex: 01 02 03 04 05 06 | Trevos: 01 02 | Time: Flamengo)"></textarea>
             
             <button class="btn" style="background:#b71c1c; margin-top:5px; margin-bottom:0;" onclick="executarConferencia()">REALIZAR CONFERÊNCIA</button>
         </div>
@@ -373,6 +380,7 @@
         let ultimoConcursoDisponivel = null;
         let dezenasSorteadasConferencia = [];
         let trevosSorteadosConferencia = [];
+        let timeCoracaoSorteado = "";
 
         function recolherVisor() {
             document.getElementById('select-loteria-res').value = "";
@@ -398,6 +406,7 @@
                         dezenas: data.dezenas || data.listaDezenas,
                         trevos: data.trevos || data.listaTrevosSorteados,
                         mesSorte: data.mesSorte || data.nomeMesSorte,
+                        timeCoracao: data.timeCoracao || data.nomeTimeCoracao,
                         dataProximoConcurso: data.dataProximoConcurso,
                         valorEstimadoProximoConcurso: data.valorEstimadoProximoConcurso,
                         acumulou: data.acumulou,
@@ -426,6 +435,7 @@
                 dezenas: dataC.listaDezenas || dataC.dezenas,
                 trevos: dataC.listaTrevosSorteados || dataC.trevos,
                 mesSorte: dataC.nomeMesSorte || dataC.mesSorte,
+                timeCoracao: dataC.nomeTimeCoracao || dataC.timeCoracao,
                 dataProximoConcurso: dataC.dataProximoConcurso,
                 valorEstimadoProximoConcurso: dataC.valorEstimadoProximoConcurso,
                 acumulou: dataC.acumulado !== undefined ? dataC.acumulado : dataC.acumulou,
@@ -486,8 +496,13 @@
                     });
                 } else if (tipo === 'DiaDeSorte' && data.mesSorte) {
                     let badge = document.createElement('div');
-                    badge.style.cssText = "background: #fbc02d; color:#333; font-weight:bold; padding: 8px 12px; border-radius: 20px; font-size:13px; margin-top:5px;";
+                    badge.style.cssText = "background: #fbc02d; color:#333; font-weight:bold; padding: 8px 12px; border-radius: 20px; font-size:13px; margin-top:5px; flex-basis: 100%; text-align:center;";
                     badge.innerText = `Mês da Sorte: ${data.mesSorte}`;
+                    containerBolinhas.appendChild(badge);
+                } else if (tipo === 'Timemania' && data.timeCoracao) {
+                    let badge = document.createElement('div');
+                    badge.style.cssText = "background: #fbc02d; color:#333; font-weight:bold; padding: 8px 12px; border-radius: 20px; font-size:13px; margin-top:5px; flex-basis: 100%; text-align:center;";
+                    badge.innerText = `Time do Coração: ${data.timeCoracao}`;
                     containerBolinhas.appendChild(badge);
                 }
 
@@ -639,6 +654,7 @@
             for (let btn of botoes) { btn.classList.remove('ativo'); btn.style.background = '#fff'; }
             let botoesTrevos = document.getElementById('grid-trevos-modal').getElementsByClassName('num-btn');
             for (let btn of botoesTrevos) { btn.classList.remove('ativo'); btn.style.background = '#fff'; }
+            document.getElementById('input-time-coracao').value = '';
             atualizarContadorGrid();
             document.getElementById('contador-trevos').innerText = '0';
             document.getElementById('contador-trevos').style.color = '#e53935';
@@ -712,9 +728,14 @@
             
             if (tipo === 'Milionaria') {
                 document.getElementById('container-trevos-modal').style.display = 'block';
+                document.getElementById('container-time-modal').style.display = 'none';
                 renderizarGridTrevos();
+            } else if (tipo === 'Timemania') {
+                document.getElementById('container-trevos-modal').style.display = 'none';
+                document.getElementById('container-time-modal').style.display = 'block';
             } else {
                 document.getElementById('container-trevos-modal').style.display = 'none';
+                document.getElementById('container-time-modal').style.display = 'none';
             }
         }
 
@@ -731,6 +752,15 @@
             }
 
             let arrayJogosFinal = [];
+            let timeEscolhido = null;
+
+            if (tipo === 'Timemania') {
+                timeEscolhido = document.getElementById('input-time-coracao').value.trim();
+                if(!timeEscolhido) {
+                    alert(`⚠️ Para a Timemania, você precisa preencher o Time do Coração.`);
+                    return;
+                }
+            }
             
             if (tipo === 'Milionaria') {
                 let trevosEscolhidos = [...trevosEscolhidosArray].sort((a,b) => a-b);
@@ -745,7 +775,7 @@
 
                 for(let nums of combNumeros) {
                     for(let trevs of combTrevos) {
-                        arrayJogosFinal.push({ numeros: nums, trevos: trevs });
+                        arrayJogosFinal.push({ numeros: nums, trevos: trevs, time: null });
                     }
                 }
             } else {
@@ -755,11 +785,12 @@
                 if (totalComb > 3000 && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
 
                 let combNumeros = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
-                arrayJogosFinal = combNumeros.map(nums => ({ numeros: nums, trevos: null }));
+                arrayJogosFinal = combNumeros.map(nums => ({ numeros: nums, trevos: null, time: timeEscolhido }));
             }
             
             let dezenasText = `${numerosEscolhidos.length} dz`;
             if (tipo === 'Milionaria') dezenasText += ` e ${trevosEscolhidosArray.length} trevos`;
+            if (tipo === 'Timemania') dezenasText += ` e 1 time`;
 
             exibirResultados(arrayJogosFinal, tipo, precoBase, `Combinações: ${conf.nome} (${dezenasText})`);
             fecharModal('modal-combinacoes'); 
@@ -806,6 +837,7 @@
             
             dezenasSorteadasConferencia = data.dezenas.map(n => parseInt(n, 10));
             trevosSorteadosConferencia = data.trevos ? data.trevos.map(n => parseInt(n, 10)) : [];
+            timeCoracaoSorteado = data.timeCoracao || "";
             
             document.getElementById('input-busca-concurso').value = concursoCarregado;
             atualizarBotoesNavegacao();
@@ -840,6 +872,11 @@
                     bola.innerText = trevo;
                     containerBolinhas.appendChild(bola);
                 });
+            } else if (loteriaSelecionadaConf === 'Timemania' && timeCoracaoSorteado) {
+                let badge = document.createElement('div');
+                badge.style.cssText = "background: #fbc02d; color:#333; font-weight:bold; padding: 6px 12px; border-radius: 20px; font-size:14px; margin-top:5px; flex-basis: 100%; text-align:center;";
+                badge.innerText = `Time Sorteado: ${timeCoracaoSorteado}`;
+                containerBolinhas.appendChild(badge);
             }
             
             let labelPremio = document.getElementById('label-premio-texto');
@@ -914,12 +951,24 @@
                 let linhaLimpa = linha.replace(/Jogo \d+:/gi, '');
                 let partes = linhaLimpa.split('|');
                 let numerosJogo = partes[0].match(/\d+/g); 
-                let trevosJogo = partes[1] ? partes[1].match(/\d+/g) : [];
+                
+                let trevosJogo = [];
+                let timeJogo = "";
+
+                // Extração inteligente de trevos e time do coração da string colada
+                for (let p = 1; p < partes.length; p++) {
+                    if (partes[p].toUpperCase().includes('TREVOS:')) {
+                        trevosJogo = partes[p].match(/\d+/g) || [];
+                    } else if (partes[p].toUpperCase().includes('TIME:')) {
+                        timeJogo = partes[p].toUpperCase().split('TIME:')[1].trim();
+                    }
+                }
                 
                 if(!numerosJogo) continue;
 
                 let acertos = 0;
                 let acertosTrevos = 0;
+                let acertosTime = 0;
                 let linhaHtml = `<div class="linha-jogo">Jogo ${i+1}: `;
                 
                 for(let n of numerosJogo) {
@@ -943,6 +992,21 @@
                             linhaHtml += `<span class="numero">${t.padStart(2, '0')}</span>`;
                         }
                     }
+                } else if (loteriaSelecionadaConf === 'Timemania' && timeJogo && timeCoracaoSorteado) {
+                    // Limpar strings para comparar (tira acentos, formatação /RJ, espaços extras)
+                    let timeApiClean = timeCoracaoSorteado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split('/')[0].trim();
+                    let timeJogoClean = timeJogo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+                    
+                    if (timeApiClean.includes(timeJogoClean) || timeJogoClean.includes(timeApiClean)) {
+                        acertosTime = 1;
+                    }
+                    
+                    linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 8px;">| Time: </span>`;
+                    if (acertosTime === 1) {
+                        linhaHtml += `<span class="numero-acerto" style="background-color:#fbc02d; color:#333;">${timeJogo}</span>`;
+                    } else {
+                        linhaHtml += `<span class="numero">${timeJogo}</span>`;
+                    }
                 }
                 
                 let premiado = false;
@@ -962,6 +1026,18 @@
                         textoBadge = `Acertos: ${acertos} e ${acertosTrevos}T`;
                     }
                 }
+                else if (loteriaSelecionadaConf === 'Timemania') {
+                    let badgeParts = [];
+                    if (acertos >= 3) badgeParts.push(`${acertos} Acertos`);
+                    if (acertosTime === 1) badgeParts.push(`Time!`);
+                    
+                    if (badgeParts.length > 0) {
+                        premiado = true;
+                        textoBadge = badgeParts.join(" + ");
+                    } else {
+                        textoBadge = `Acertos: ${acertos}`;
+                    }
+                }
                 
                 if (premiado) {
                     totalJogosPremiados++;
@@ -971,7 +1047,7 @@
                 let badgeClass = "badge-acertos" + (premiado ? " badge-premiado" : "");
                 linhaHtml += `<span class="${badgeClass}" style="margin-left: auto;">${textoBadge}</span></div>`;
                 
-                let pesoOrdem = acertos + (acertosTrevos * 0.1);
+                let pesoOrdem = acertos + (acertosTrevos * 0.1) + (acertosTime * 0.05);
                 jogosAvaliados.push({ peso: pesoOrdem, html: linhaHtml });
             }
 
@@ -1010,6 +1086,10 @@
                     let trevsFormatados = jogo.trevos.map(n => n.toString().padStart(2, '0')).join(' - ');
                     linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Trevos: <span style="color:#311b92;">${trevsFormatados}</span></span>`;
                     linhaTexto += ` | Trevos: ${trevsFormatados}`;
+                }
+                if (jogo.time) {
+                    linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Time: <span style="color:#b71c1c;">${jogo.time.toUpperCase()}</span></span>`;
+                    linhaTexto += ` | Time: ${jogo.time.toUpperCase()}`;
                 }
                 linhaHtml += `</div>`;
                 
@@ -1061,13 +1141,19 @@
                 qtdTrevos = parseInt(strTrevos);
                 if (qtdTrevos < 2 || qtdTrevos > 6) { alert("Trevos inválidos!"); return; }
             }
+
+            let timeAleatorio = null;
+            if (tipo === 'Timemania') {
+                timeAleatorio = prompt(`Qual o seu Time do Coração?`, "Flamengo");
+                if (!timeAleatorio) return;
+            }
             
             let arrayJogos = [];
             for(let i = 0; i < qtdJogos; i++) {
                 let offset = (tipo === 'Lotomania') ? 0 : 1;
                 let nums = gerarNumeros(max, parseInt(qtdNum), offset);
                 let trevs = (tipo === 'Milionaria') ? gerarNumeros(6, qtdTrevos, 1) : null;
-                arrayJogos.push({ numeros: nums, trevos: trevs });
+                arrayJogos.push({ numeros: nums, trevos: trevs, time: timeAleatorio });
             }
             
             let prc = precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : configLoterias[tipo].precoBase;
