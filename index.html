@@ -74,12 +74,12 @@
         .contador-info { font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; }
 
         .painel-aleatorio { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px; background: #f5f7fa; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .input-aleatorio { width: 70px; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; font-size: 15px; color: #0f172a; outline: none; }
+        .input-aleatorio { padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; font-size: 15px; color: #0f172a; outline: none; }
         .btn-acao-p { color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s; }
         .btn-acao-p:active { transform: scale(0.95); }
 
         .info-api { font-size: 13px; color: #888; margin-bottom: 10px; min-height: 18px; text-align: left; padding-left: 5px;}
-        .busca-concurso-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 14.5px; color: #425f7a; }
+        .busca-concurso-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 14.5px; color: #425f7a; flex-wrap: wrap;}
         #input-busca-concurso { width: 75px; padding: 8px; text-align: center; border: 1px solid #c4d1db; border-radius: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); font-size: 15px; color: #555; }
         #input-busca-concurso::-webkit-outer-spin-button, #input-busca-concurso::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .nav-concurso { color: #0073e6; cursor: pointer; user-select: none; transition: color 0.2s; font-weight: 500;}
@@ -102,56 +102,28 @@
         .popup-texto { font-size: 16px; margin-bottom: 25px; line-height: 1.5; color: #555; }
         .btn-fechar-popup { background: #209869; color: white; border: none; padding: 14px 20px; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
 
-        /* --- PAINEL DE RESULTADOS EM MENU LISTA (SELECT) --- */
-        .painel-resultados-wrapper {
-            width: 100%; text-align: left;
-        }
-        .titulo-resultados {
-            font-size: 28px; color: #005ca9; margin-bottom: 15px; text-shadow: 1px 1px 0 rgba(255,255,255,0.8), -1px -1px 0 rgba(255,255,255,0.8), 1px -1px 0 rgba(255,255,255,0.8), -1px 1px 0 rgba(255,255,255,0.8); letter-spacing: -0.5px;
-        }
-        .select-container {
-            margin-bottom: 20px;
-        }
-        .select-loteria {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            background: #fff;
-            border: 3px solid #003f7a;
-            border-radius: 12px;
-            outline: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            cursor: pointer;
-        }
-        .visor-resultados {
-            width: 100%; background: #fff; border-radius: 12px; padding: 20px; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #333;
-        }
+        /* --- PAINEL DE RESULTADOS EM MENU LISTA --- */
+        .painel-resultados-wrapper { width: 100%; text-align: left; }
+        .titulo-resultados { font-size: 28px; color: #005ca9; margin-bottom: 15px; text-shadow: 1px 1px 0 rgba(255,255,255,0.8), -1px -1px 0 rgba(255,255,255,0.8), 1px -1px 0 rgba(255,255,255,0.8), -1px 1px 0 rgba(255,255,255,0.8); letter-spacing: -0.5px; }
+        .select-container { margin-bottom: 20px; }
+        .select-loteria { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: #333; background: #fff; border: 3px solid #003f7a; border-radius: 12px; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; }
+        .visor-resultados { width: 100%; background: #fff; border-radius: 12px; padding: 20px; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #333; }
         .visor-header { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .titulo-loteria-res { font-size: 24px; font-weight: bold; margin: 0 0 5px 0; }
         .info-concurso-res { font-size: 13px; color: #777; }
-        
-        .btn-recolher {
-            background: #e0e0e0; border: none; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s;
-        }
+        .btn-recolher { background: #e0e0e0; border: none; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s; }
         .btn-recolher:hover { background: #d0d0d0; }
-
         .visor-corpo { display: flex; flex-direction: column; gap: 20px; }
-        
         .bolinhas-res-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; justify-content: center; }
         .bolinha-res { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-        
         .prox-premio-res { background: #f0f7ff; padding: 12px; border-radius: 8px; border-left: 4px solid #005ca9; font-size: 13px; color: #555; text-align: center; }
         .prox-premio-valor { font-size: 20px; font-weight: bold; color: #005ca9; margin-top: 5px; }
-        
         .titulo-premiacao { font-size: 16px; font-weight: bold; color: #005ca9; margin-bottom: 10px; border-top: 1px solid #eee; padding-top: 15px; }
         .lista-premiacao { list-style: none; padding: 0; margin: 0; }
         .item-premiacao { border-bottom: 1px solid #eee; padding: 8px 0; font-size: 13px; line-height: 1.4;}
         .item-premiacao:last-child { border-bottom: none; }
         .acertos-texto { font-weight: bold; color: #333; display: block; }
         .ganhadores-texto { color: #666; display: block; }
-        
         .loading-res { font-size: 15px; color: #666; text-align: center; padding: 30px 0; font-style: italic; }
     </style>
 </head>
@@ -162,13 +134,11 @@
     <!-- Container Principal Unificado (Trevo em cima do painel) -->
     <div class="app-container">
         
-        <!-- Trevo em cima -->
         <div class="clover-side">
             <img src="trevo.png" alt="Trevo do Andrade" class="clover-img">
             <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
         </div>
 
-        <!-- Painel principal abaixo do trevo -->
         <div class="painel-container">
             <button class="btn" style="background:#4a148c" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
             <button class="btn" style="background:#209869" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
@@ -188,11 +158,8 @@
             </p>
         </div>
 
-        <!-- PAINEL DE RESULTADOS OFICIAIS LOGO ABAIXO -->
         <div class="painel-resultados-wrapper" id="secao-resultados">
             <h2 class="titulo-resultados">Resultados</h2>
-            
-            <!-- Menu Lista (Select Dropdown) -->
             <div class="select-container">
                 <select id="select-loteria-res" class="select-loteria" onchange="carregarVisorResultado(this.value)">
                     <option value="" disabled selected>🔍 Selecione a loteria para ver o resultado...</option>
@@ -207,12 +174,8 @@
                 </select>
             </div>
 
-            <!-- Visor de Dados Abaixo -->
             <div class="visor-resultados">
-                <div id="visor-loading" class="loading-res">
-                    Selecione uma loteria no menu acima para carregar o último resultado e rateio.
-                </div>
-                
+                <div id="visor-loading" class="loading-res">Selecione uma loteria no menu acima para carregar o último resultado e rateio.</div>
                 <div id="visor-conteudo" style="display: none; width: 100%;">
                     <div class="visor-header">
                         <div>
@@ -224,24 +187,19 @@
                     
                     <div class="visor-corpo">
                         <div id="visor-bolinhas" class="bolinhas-res-container"></div>
-                        
                         <div class="prox-premio-res">
                             Estimativa de prêmio do próximo concurso<br>
                             <span id="visor-data-prox" style="font-size: 11px; color:#888;">--/--/----</span>
                             <div id="visor-valor-prox" class="prox-premio-valor">R$ --</div>
                         </div>
-
                         <div>
                             <div class="titulo-premiacao">Premiação</div>
-                            <ul id="visor-lista-premios" class="lista-premiacao">
-                                <!-- Preenchido via JS -->
-                            </ul>
+                            <ul id="visor-lista-premios" class="lista-premiacao"></ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Resultados Geração/Conferência -->
@@ -278,20 +236,23 @@
             
             <div class="painel-aleatorio">
                 <span style="font-size: 14px; font-weight: bold; color: #334155;">Aleatório:</span>
-                <input type="number" id="qtd-aleatoria" class="input-aleatorio" placeholder="Qtd">
+                <input type="number" id="qtd-aleatoria" class="input-aleatorio" style="width: 70px; text-align: center;" placeholder="Qtd">
                 <button class="btn-acao-p" style="background: #2563eb;" onclick="selecionarAleatorioModal()">🎲 Sortear</button>
                 <button class="btn-acao-p" style="background: #ef4444;" onclick="limparGridModal()">🗑️ Limpar</button>
             </div>
             
             <div id="grid-numeros-modal" class="grid-numeros"></div>
             
-            <!-- Adicionado Input de Time da Timemania -->
+            <!-- Painel Responsivo de Time do Coração (Timemania) -->
             <div id="container-time-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
-                <div class="contador-info" style="color:#b71c1c;">⚽ Time do Coração:</div>
-                <input type="text" id="input-time-coracao" class="input-aleatorio" style="width: 80%; max-width: 250px; text-align: center; margin: 0 auto; display: block;" placeholder="Digite o Time (Ex: Flamengo)">
+                <div class="contador-info" style="color:#b71c1c; margin-bottom: 8px;">⚽ Time do Coração:</div>
+                <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+                    <input type="text" id="input-time-coracao" class="input-aleatorio" style="flex: 1; min-width: 150px; max-width: 250px; text-align: center;" placeholder="Digite seu time...">
+                    <button class="btn-acao-p" style="background: #2563eb;" onclick="sortearTimeModal()" title="Sortear Time Aleatório">🎲 Sortear</button>
+                </div>
             </div>
 
-            <!-- Adicionado Input de Trevos da Milionária -->
+            <!-- Painel Trevos (+Milionária) -->
             <div id="container-trevos-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
                 <div class="contador-info" style="color:#311b92;">🍀 Trevos Selecionados: <span id="contador-trevos" style="color:#e53935; font-size: 16px;">0</span></div>
                 <div id="grid-trevos-modal" class="grid-numeros" style="display: flex; justify-content: center; gap: 10px; min-height: auto; overflow: hidden; padding-bottom: 0;"></div>
@@ -369,6 +330,21 @@
             'Quina': {5: 3.00, 6: 18.00, 7: 63.00, 8: 168.00, 9: 378.00, 10: 756.00, 11: 1386.00, 12: 2376.00, 13: 3861.00, 14: 6006.00, 15: 9009.00}, 
             'DuplaSena': {6: 2.50, 7: 17.50, 8: 70.00, 9: 210.00, 10: 525.00, 11: 1155.00, 12: 2310.00, 13: 4290.00, 14: 7507.50, 15: 12512.50}
         };
+
+        // Lista Oficial dos 80 Times da Timemania para Sorteio Automático
+        const timesTimemania = [
+            "ABC/RN", "América/MG", "América/RJ", "América/RN", "Americano/RJ", "Atlético/GO", "Atlético/MG", "Atlético/PR", 
+            "Avaí/SC", "Bahia/BA", "Bangu/RJ", "Barueri/SP", "Botafogo/PB", "Botafogo/RJ", "Bragantino/SP", "Brasiliense/DF", 
+            "Ceará/CE", "Corinthians/SP", "Coritiba/PR", "CRB/AL", "Criciúma/SC", "Cruzeiro/MG", "CSA/AL", "Desportiva/ES", 
+            "Figueirense/SC", "Flamengo/RJ", "Fluminense/RJ", "Fortaleza/CE", "Gama/DF", "Goiás/GO", "Grêmio/RS", "Guarani/SP", 
+            "Inter Limeira/SP", "Internacional/RS", "Ipatinga/MG", "Ituano/SP", "Ji-Paraná/RO", "Joinville/SC", "Juventus/SP", 
+            "Londrina/PR", "Marília/SP", "Mixto/MT", "Moto Clube/MA", "Nacional/AM", "Náutico/PE", "Olaria/RJ", "Operário/MS", 
+            "Palmeiras/SP", "Paraná/PR", "Paulista/SP", "Paysandu/PA", "Ponte Preta/SP", "Portuguesa/SP", "Remo/PA", "Rio Branco/AC", 
+            "Rio Branco/ES", "River/PI", "Roraima/RR", "Sampaio Corrêa/MA", "Santa Cruz/PE", "Santo André/SP", "Santos/SP", 
+            "São Caetano/SP", "São Paulo/SP", "São Raimundo/AM", "Sergipe/SE", "Sport/PE", "Treze/PB", "Tuna Luso/PA", "Tupi/MG", 
+            "União Barbarense/SP", "União São João/SP", "Vasco da Gama/RJ", "Vila Nova/GO", "Villa Nova/MG", "Vitória/BA", 
+            "Vitória/ES", "XV de Piracicaba/SP", "Ypiranga/AP", "Palmas/TO"
+        ];
 
         let textoParaWhatsApp = "";
         let textoParaCopiar = ""; 
@@ -660,6 +636,12 @@
             document.getElementById('contador-trevos').style.color = '#e53935';
         }
 
+        // Função para sortear Time no Modal
+        function sortearTimeModal() {
+            let timeSorteado = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+            document.getElementById('input-time-coracao').value = timeSorteado;
+        }
+
         function selecionarAleatorioModal() {
             let inputQtd = document.getElementById('qtd-aleatoria').value;
             let qtd = parseInt(inputQtd, 10);
@@ -701,6 +683,10 @@
                 document.getElementById('contador-trevos').innerText = '2';
                 document.getElementById('contador-trevos').style.color = '#209869';
             }
+
+            if (loteriaSelecionadaModal === 'Timemania') {
+                sortearTimeModal();
+            }
         }
 
         function abrirModal() {
@@ -733,6 +719,7 @@
             } else if (tipo === 'Timemania') {
                 document.getElementById('container-trevos-modal').style.display = 'none';
                 document.getElementById('container-time-modal').style.display = 'block';
+                document.getElementById('input-time-coracao').value = ''; // Reseta ao abrir
             } else {
                 document.getElementById('container-trevos-modal').style.display = 'none';
                 document.getElementById('container-time-modal').style.display = 'none';
@@ -757,7 +744,7 @@
             if (tipo === 'Timemania') {
                 timeEscolhido = document.getElementById('input-time-coracao').value.trim();
                 if(!timeEscolhido) {
-                    alert(`⚠️ Para a Timemania, você precisa preencher o Time do Coração.`);
+                    alert(`⚠️ Para a Timemania, você precisa preencher ou sortear o Time do Coração.`);
                     return;
                 }
             }
@@ -1142,10 +1129,15 @@
                 if (qtdTrevos < 2 || qtdTrevos > 6) { alert("Trevos inválidos!"); return; }
             }
 
-            let timeAleatorio = null;
+            let timeEscolhido = null;
             if (tipo === 'Timemania') {
-                timeAleatorio = prompt(`Qual o seu Time do Coração?`, "Flamengo");
-                if (!timeAleatorio) return;
+                let respTime = prompt(`Qual o seu Time do Coração?\n(Deixe em branco para sortear um automaticamente)`, "");
+                if (respTime === null) return; // Cancela a operação
+                if (respTime.trim() === "") {
+                    timeEscolhido = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+                } else {
+                    timeEscolhido = respTime.trim();
+                }
             }
             
             let arrayJogos = [];
@@ -1153,7 +1145,7 @@
                 let offset = (tipo === 'Lotomania') ? 0 : 1;
                 let nums = gerarNumeros(max, parseInt(qtdNum), offset);
                 let trevs = (tipo === 'Milionaria') ? gerarNumeros(6, qtdTrevos, 1) : null;
-                arrayJogos.push({ numeros: nums, trevos: trevs, time: timeAleatorio });
+                arrayJogos.push({ numeros: nums, trevos: trevs, time: timeEscolhido });
             }
             
             let prc = precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : configLoterias[tipo].precoBase;
