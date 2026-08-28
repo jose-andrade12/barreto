@@ -331,7 +331,6 @@
             'DuplaSena': {6: 2.50, 7: 17.50, 8: 70.00, 9: 210.00, 10: 525.00, 11: 1155.00, 12: 2310.00, 13: 4290.00, 14: 7507.50, 15: 12512.50}
         };
 
-        // Lista Oficial dos 80 Times da Timemania para Sorteio Automático
         const timesTimemania = [
             "ABC/RN", "América/MG", "América/RJ", "América/RN", "Americano/RJ", "Atlético/GO", "Atlético/MG", "Atlético/PR", 
             "Avaí/SC", "Bahia/BA", "Bangu/RJ", "Barueri/SP", "Botafogo/PB", "Botafogo/RJ", "Bragantino/SP", "Brasiliense/DF", 
@@ -357,6 +356,16 @@
         let dezenasSorteadasConferencia = [];
         let trevosSorteadosConferencia = [];
         let timeCoracaoSorteado = "";
+
+        // Função universal para garantir que valores da API (Heroku ou Caixa) venham corretamente formatados
+        function formatarPremiacoes(arr) {
+            if (!arr || !Array.isArray(arr)) return [];
+            return arr.map(p => ({
+                descricao: p.descricaoFaixa || p.descricao || p.acertos || "Premiação",
+                ganhadores: p.numeroGanhadores !== undefined ? p.numeroGanhadores : (p.ganhadores !== undefined ? p.ganhadores : (p.vencedores !== undefined ? p.vencedores : 0)),
+                premio: p.valorPremio !== undefined ? p.valorPremio : (p.premio !== undefined ? p.premio : 0)
+            }));
+        }
 
         function recolherVisor() {
             document.getElementById('select-loteria-res').value = "";
@@ -386,11 +395,7 @@
                         dataProximoConcurso: data.dataProximoConcurso,
                         valorEstimadoProximoConcurso: data.valorEstimadoProximoConcurso,
                         acumulou: data.acumulou,
-                        premiacoes: data.premiacoes || (data.listaRateioPremio ? data.listaRateioPremio.map(p => ({
-                            descricao: p.descricaoFaixa,
-                            ganhadores: p.numeroGanhadores,
-                            premio: p.valorPremio
-                        })) : [])
+                        premiacoes: formatarPremiacoes(data.premiacoes || data.listaRateioPremio)
                     };
                 }
             } catch(e) {
@@ -415,11 +420,7 @@
                 dataProximoConcurso: dataC.dataProximoConcurso,
                 valorEstimadoProximoConcurso: dataC.valorEstimadoProximoConcurso,
                 acumulou: dataC.acumulado !== undefined ? dataC.acumulado : dataC.acumulou,
-                premiacoes: (dataC.listaRateioPremio || dataC.premiacoes || []).map(p => ({
-                    descricao: p.descricaoFaixa || p.descricao,
-                    ganhadores: p.numeroGanhadores !== undefined ? p.numeroGanhadores : p.ganhadores,
-                    premio: p.valorPremio !== undefined ? p.valorPremio : p.premio
-                }))
+                premiacoes: formatarPremiacoes(dataC.listaRateioPremio || dataC.premiacoes)
             };
         }
 
@@ -502,8 +503,11 @@
                         if(premio.ganhadores === 0) {
                             txtGanhadores = `<span class="ganhadores-texto">Acumulou!</span>`;
                         } else {
-                            let valorSt = premio.premio ? premio.premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : '';
-                            txtGanhadores = `<span class="ganhadores-texto">${premio.ganhadores} aposta(s) ganhadora(s), ${valorSt}</span>`;
+                            // Valor renderizado sem erro se premio.premio for numérico
+                            let valorSt = (typeof premio.premio === 'number') 
+                                ? premio.premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) 
+                                : 'Apurando...';
+                            txtGanhadores = `<span class="ganhadores-texto">${premio.ganhadores} aposta(s) ganhadora(s) &bull; <strong style="color:#005ca9;">${valorSt}</strong></span>`;
                         }
                         li.innerHTML = txtAcertos + txtGanhadores;
                         listaPremios.appendChild(li);
