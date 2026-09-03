@@ -23,7 +23,6 @@
         
         h1 { font-size: 26px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); margin-bottom: 20px; }
 
-        /* Layout unificado e centralizado */
         .app-container {
             max-width: 450px;
             margin: 0 auto;
@@ -36,6 +35,7 @@
         .painel-container { 
             background: #005ca9; padding: 25px; border-radius: 20px; border: 4px solid #003f7a; 
             width: 100%; box-sizing: border-box; box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+            position: relative;
         }
         
         .clover-side { width: 100%; max-width: 280px; }
@@ -125,79 +125,150 @@
         .acertos-texto { font-weight: bold; color: #333; display: block; }
         .ganhadores-texto { color: #666; display: block; }
         .loading-res { font-size: 15px; color: #666; text-align: center; padding: 30px 0; font-style: italic; }
+
+        /* NOVOS ESTILOS PARA AUTENTICAÇÃO E ADMIN */
+        .auth-container { background: white; padding: 40px; border-radius: 20px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-top: 50px; width: 90%; max-width: 400px; margin-left: auto; margin-right: auto;}
+        .btn-google { background: #4285F4; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .btn-google:hover { background: #357AE8; }
+        .btn-google img { width: 24px; background: white; border-radius: 50%; padding: 2px; }
+        .cabecalho-usuario { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 20px auto; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 12px; box-sizing: border-box; }
+        .user-info { font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #FFDF00; }
+        .btn-logout { background: #e53935; border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .btn-painel-admin { background: #FFDF00; color: #333; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; display: none; margin-top: 10px; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        
+        /* Lista Admin */
+        .admin-lista { text-align: left; max-height: 400px; overflow-y: auto; margin-top: 15px; }
+        .admin-item { background: #f9f9f9; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-item-dados { font-size: 13px; color: #555; }
+        .admin-item-nome { font-weight: bold; color: #333; font-size: 15px; display: block;}
+        .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; margin-top: 5px; display: inline-block;}
+        .status-pendente { background: #f57c00; }
+        .status-liberado { background: #209869; }
+        .btn-toggle-status { border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; color: white; }
     </style>
 </head>
 <body>
 
     <h1>🍀 IA - Inteligência do Andrade</h1>
 
-    <!-- Container Principal Unificado (Trevo em cima do painel) -->
-    <div class="app-container">
+    <!-- 1. TELA DE LOGIN -->
+    <div id="tela-login" class="auth-container">
+        <h2 style="margin-top: 0; color: #005ca9;">Acesso Restrito</h2>
+        <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Faça login com sua conta Google para solicitar acesso ao sistema.</p>
+        <button id="btn-fazer-login" class="btn-google">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+            Entrar com o Google
+        </button>
+    </div>
+
+    <!-- 2. TELA PENDENTE (Aguardando Aprovação) -->
+    <div id="tela-pendente" class="auth-container" style="display: none;">
+        <div style="font-size: 50px; margin-bottom: 10px;">⏳</div>
+        <h2 style="margin-top: 0; color: #f57c00;">Acesso Pendente</h2>
+        <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Seu cadastro foi recebido! Aguarde a liberação do administrador para utilizar a plataforma.</p>
+        <button id="btn-logout-pendente" class="btn-logout" style="width: 100%; padding: 12px; font-size: 14px;">Sair / Trocar Conta</button>
+    </div>
+
+    <!-- 3. TELA PRINCIPAL (APP COMPLETO) -->
+    <div id="tela-principal" style="display: none; width: 100%;">
         
-        <div class="clover-side">
-            <img src="trevo.png" alt="Trevo do Andrade" class="clover-img">
-            <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
+        <!-- Cabeçalho de Autenticação -->
+        <div class="cabecalho-usuario">
+            <div class="user-info">
+                <img id="user-foto" src="" alt="Foto">
+                <div>
+                    <span id="user-nome" style="display: block;">Nome</span>
+                    <span id="user-email" style="font-size: 11px; font-weight: normal; color: #ddd;">email@gmail.com</span>
+                </div>
+            </div>
+            <button id="btn-logout-app" class="btn-logout">Sair</button>
         </div>
 
-        <div class="painel-container">
-            <button class="btn" style="background:#4a148c" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
-            <button class="btn" style="background:#209869" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
-            <button class="btn" style="background:#311b92" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
-            <button class="btn" style="background:#ef6c00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
-            <button class="btn" style="background:#fbc02d; color:black" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
-            <button class="btn" style="background:#c62828" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
-            <button class="btn" style="background:#7b1fa2" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
-            
-            <hr style="border-color: rgba(255,255,255,0.2); margin: 15px 0;">
-            
-            <button class="btn" style="background:#1a1a1a; border: 2px solid #FFDF00;" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
-            <button class="btn" style="background:#b71c1c; border: 2px solid #fff;" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
-            
-            <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 12px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
-                <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> e confere os acertos buscando no banco oficial da Caixa.
-            </p>
-        </div>
-
-        <div class="painel-resultados-wrapper" id="secao-resultados">
-            <h2 class="titulo-resultados">Resultados</h2>
-            <div class="select-container">
-                <select id="select-loteria-res" class="select-loteria" onchange="carregarVisorResultado(this.value)">
-                    <option value="" disabled selected>🔍 Selecione a loteria para ver o resultado...</option>
-                    <option value="MegaSena">Mega-Sena</option>
-                    <option value="Quina">Quina</option>
-                    <option value="Milionaria">+Milionária</option>
-                    <option value="Lotomania">Lotomania</option>
-                    <option value="Timemania">Timemania</option>
-                    <option value="DuplaSena">Dupla Sena</option>
-                    <option value="DiaDeSorte">Dia de Sorte</option>
-                    <option value="Lotofacil">Lotofácil</option>
-                </select>
+        <!-- Container Principal Unificado -->
+        <div class="app-container">
+            <div class="clover-side">
+                <img src="trevo.png" alt="Trevo do Andrade" class="clover-img">
+                <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
             </div>
 
-            <div class="visor-resultados">
-                <div id="visor-loading" class="loading-res">Selecione uma loteria no menu acima para carregar o último resultado e rateio.</div>
-                <div id="visor-conteudo" style="display: none; width: 100%;">
-                    <div class="visor-header">
-                        <div>
-                            <h3 id="visor-titulo" class="titulo-loteria-res">Nome</h3>
-                            <div id="visor-info" class="info-concurso-res">Resultado Concurso -- (--/--/----)</div>
+            <div class="painel-container">
+                
+                <!-- BOTÃO EXCLUSIVO DO MASTER -->
+                <button id="btn-painel-admin" class="btn-painel-admin" onclick="abrirAdminModal()">⚙️ PAINEL DE CONTROLE (MASTER)</button>
+                <hr id="hr-admin" style="border-color: rgba(255,255,255,0.2); margin: 15px 0; display: none;">
+
+                <button class="btn" style="background:#4a148c" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
+                <button class="btn" style="background:#209869" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
+                <button class="btn" style="background:#311b92" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
+                <button class="btn" style="background:#ef6c00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
+                <button class="btn" style="background:#fbc02d; color:black" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
+                <button class="btn" style="background:#c62828" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
+                <button class="btn" style="background:#7b1fa2" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
+                
+                <hr style="border-color: rgba(255,255,255,0.2); margin: 15px 0;">
+                
+                <button class="btn" style="background:#1a1a1a; border: 2px solid #FFDF00;" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
+                <button class="btn" style="background:#b71c1c; border: 2px solid #fff;" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
+                
+                <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 12px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
+                    <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> e confere os acertos buscando no banco oficial da Caixa.
+                </p>
+            </div>
+
+            <!-- Visor de Resultados -->
+            <div class="painel-resultados-wrapper" id="secao-resultados">
+                <h2 class="titulo-resultados">Resultados</h2>
+                <div class="select-container">
+                    <select id="select-loteria-res" class="select-loteria" onchange="carregarVisorResultado(this.value)">
+                        <option value="" disabled selected>🔍 Selecione a loteria para ver o resultado...</option>
+                        <option value="MegaSena">Mega-Sena</option>
+                        <option value="Quina">Quina</option>
+                        <option value="Milionaria">+Milionária</option>
+                        <option value="Lotomania">Lotomania</option>
+                        <option value="Timemania">Timemania</option>
+                        <option value="DuplaSena">Dupla Sena</option>
+                        <option value="DiaDeSorte">Dia de Sorte</option>
+                        <option value="Lotofacil">Lotofácil</option>
+                    </select>
+                </div>
+
+                <div class="visor-resultados">
+                    <div id="visor-loading" class="loading-res">Selecione uma loteria no menu acima para carregar o último resultado e rateio.</div>
+                    <div id="visor-conteudo" style="display: none; width: 100%;">
+                        <div class="visor-header">
+                            <div>
+                                <h3 id="visor-titulo" class="titulo-loteria-res">Nome</h3>
+                                <div id="visor-info" class="info-concurso-res">Resultado Concurso -- (--/--/----)</div>
+                            </div>
+                            <button class="btn-recolher" onclick="recolherVisor()" title="Recolher / Fechar">✕</button>
                         </div>
-                        <button class="btn-recolher" onclick="recolherVisor()" title="Recolher / Fechar">✕</button>
-                    </div>
-                    
-                    <div class="visor-corpo">
-                        <div id="visor-bolinhas" class="bolinhas-res-container"></div>
-                        <div class="prox-premio-res">
-                            Estimativa de prêmio do próximo concurso<br>
-                            <span id="visor-data-prox" style="font-size: 11px; color:#888;">--/--/----</span>
-                            <div id="visor-valor-prox" class="prox-premio-valor">R$ --</div>
-                        </div>
-                        <div>
-                            <div class="titulo-premiacao">Premiação</div>
-                            <ul id="visor-lista-premios" class="lista-premiacao"></ul>
+                        <div class="visor-corpo">
+                            <div id="visor-bolinhas" class="bolinhas-res-container"></div>
+                            <div class="prox-premio-res">
+                                Estimativa de prêmio do próximo concurso<br>
+                                <span id="visor-data-prox" style="font-size: 11px; color:#888;">--/--/----</span>
+                                <div id="visor-valor-prox" class="prox-premio-valor">R$ --</div>
+                            </div>
+                            <div>
+                                <div class="titulo-premiacao">Premiação</div>
+                                <ul id="visor-lista-premios" class="lista-premiacao"></ul>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div> <!-- Fim Tela Principal -->
+
+    <!-- Modal do Painel Admin -->
+    <div id="modal-admin" class="modal-overlay">
+        <div class="modal-box">
+            <span class="fechar-modal" onclick="fecharModal('modal-admin')">&times;</span>
+            <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerenciar Acessos</h2>
+            <p style="font-size: 13px; color:#666; margin-bottom: 10px;">Libere ou bloqueie usuários para usar o sistema.</p>
+            <div id="lista-usuarios-admin" class="admin-lista">
+                <div style="text-align: center; color: #888; padding: 20px;">Carregando usuários...</div>
             </div>
         </div>
     </div>
@@ -243,7 +314,6 @@
             
             <div id="grid-numeros-modal" class="grid-numeros"></div>
             
-            <!-- Painel Responsivo de Time do Coração (Timemania) -->
             <div id="container-time-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
                 <div class="contador-info" style="color:#b71c1c; margin-bottom: 8px;">⚽ Time do Coração:</div>
                 <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
@@ -252,7 +322,6 @@
                 </div>
             </div>
 
-            <!-- Painel Trevos (+Milionária) -->
             <div id="container-trevos-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
                 <div class="contador-info" style="color:#311b92;">🍀 Trevos Selecionados: <span id="contador-trevos" style="color:#e53935; font-size: 16px;">0</span></div>
                 <div id="grid-trevos-modal" class="grid-numeros" style="display: flex; justify-content: center; gap: 10px; min-height: auto; overflow: hidden; padding-bottom: 0;"></div>
@@ -312,6 +381,166 @@
         </div>
     </div>
 
+    <!-- =========================================================
+         SCRIPT DO FIREBASE + SISTEMA DE LOGIN/ADMIN 
+    ========================================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // =========================================================================================
+        // ATENÇÃO: SUBSTITUA ESTES DADOS PELOS DO SEU PROJETO FIREBASE E COLOQUE SEU E-MAIL
+        // =========================================================================================
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "firebase/app";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+            const firebaseConfig = {
+              apiKey: "AIzaSyBkjtBMGNSQ9WMJajgGHDar-vY5xnClzR0",
+              authDomain: "ia-andrade-loterias.firebaseapp.com",
+              projectId: "ia-andrade-loterias",
+              storageBucket: "ia-andrade-loterias.firebasestorage.app",
+              messagingSenderId: "558801870322",
+              appId: "1:558801870322:web:9271c9147f3c7a8f709f6b"
+        };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+        
+        const MASTER_EMAIL = "rss.andrade@gmail.com"; // <-- Digite seu e-mail do Gmail aqui para ser o admin
+        // =========================================================================================
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        const telaLogin = document.getElementById('tela-login');
+        const telaPendente = document.getElementById('tela-pendente');
+        const telaPrincipal = document.getElementById('tela-principal');
+        const btnAdmin = document.getElementById('btn-painel-admin');
+        const hrAdmin = document.getElementById('hr-admin');
+
+        // Escuta as mudanças de login
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Usuário Logado
+                document.getElementById('user-nome').innerText = user.displayName;
+                document.getElementById('user-email').innerText = user.email;
+                document.getElementById('user-foto').src = user.photoURL;
+                
+                telaLogin.style.display = 'none';
+
+                // Checar status no banco de dados Firestore
+                const userRef = doc(db, "usuarios", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (user.email === MASTER_EMAIL) {
+                    // É O MASTER - Garante registro e abre app
+                    if (!userSnap.exists()) {
+                        await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'master' });
+                    }
+                    btnAdmin.style.display = 'block';
+                    hrAdmin.style.display = 'block';
+                    mostrarAppPrincipal();
+                } else {
+                    // Usuário comum
+                    if (userSnap.exists()) {
+                        const dados = userSnap.data();
+                        if (dados.status === 'liberado') {
+                            mostrarAppPrincipal();
+                        } else {
+                            mostrarTelaPendente();
+                        }
+                    } else {
+                        // Novo usuário, cria cadastro como pendente
+                        await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'pendente' });
+                        mostrarTelaPendente();
+                    }
+                }
+            } else {
+                // Não logado
+                telaLogin.style.display = 'block';
+                telaPendente.style.display = 'none';
+                telaPrincipal.style.display = 'none';
+            }
+        });
+
+        function mostrarAppPrincipal() {
+            telaPendente.style.display = 'none';
+            telaPrincipal.style.display = 'block';
+        }
+
+        function mostrarTelaPendente() {
+            telaPendente.style.display = 'block';
+            telaPrincipal.style.display = 'none';
+        }
+
+        // Botões de Login / Logout
+        document.getElementById('btn-fazer-login').addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(error => alert("Erro ao fazer login: " + error.message));
+        });
+
+        const btnLogoutApp = document.getElementById('btn-logout-app');
+        const btnLogoutPendente = document.getElementById('btn-logout-pendente');
+        
+        const logoutFunc = () => signOut(auth);
+        btnLogoutApp.addEventListener('click', logoutFunc);
+        btnLogoutPendente.addEventListener('click', logoutFunc);
+
+        // FUNÇÕES DO PAINEL ADMIN (Expostas globalmente para funcionar no onclick do HTML)
+        window.abrirAdminModal = async function() {
+            document.getElementById('modal-admin').style.display = 'flex';
+            const listaDiv = document.getElementById('lista-usuarios-admin');
+            listaDiv.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Carregando usuários...</div>';
+            
+            try {
+                const querySnapshot = await getDocs(collection(db, "usuarios"));
+                let html = '';
+                querySnapshot.forEach((docSnap) => {
+                    let u = docSnap.data();
+                    if(u.email !== MASTER_EMAIL) {
+                        let isLiberado = u.status === 'liberado';
+                        let corBtn = isLiberado ? '#e53935' : '#209869'; // Vermelho p/ bloquear, Verde p/ liberar
+                        let txtBtn = isLiberado ? 'Bloquear' : 'Liberar';
+                        let novoStatus = isLiberado ? 'pendente' : 'liberado';
+                        
+                        html += `
+                        <div class="admin-item">
+                            <div>
+                                <span class="admin-item-nome">${u.nome}</span>
+                                <span class="admin-item-dados">${u.email}</span><br>
+                                <span class="badge-status ${isLiberado ? 'status-liberado' : 'status-pendente'}">${u.status.toUpperCase()}</span>
+                            </div>
+                            <button class="btn-toggle-status" style="background-color: ${corBtn};" onclick="mudarStatusUsuario('${docSnap.id}', '${novoStatus}')">${txtBtn}</button>
+                        </div>`;
+                    }
+                });
+                if(html === '') html = '<div style="text-align: center; color: #888; padding: 20px;">Nenhum usuário cadastrado ainda.</div>';
+                listaDiv.innerHTML = html;
+            } catch(e) {
+                listaDiv.innerHTML = '<div style="color:red; text-align:center;">Erro ao carregar banco de dados. Verifique as permissões do Firestore (ative o Modo Teste).</div>';
+            }
+        };
+
+        window.mudarStatusUsuario = async function(uid, novoStatus) {
+            try {
+                const userRef = doc(db, "usuarios", uid);
+                await updateDoc(userRef, { status: novoStatus });
+                // Recarrega a lista
+                abrirAdminModal();
+            } catch(e) {
+                alert("Erro ao atualizar status. Você é o master?");
+            }
+        };
+    </script>
+
+    <!-- =========================================================
+         SCRIPT ORIGINAL (LÓGICA DAS LOTERIAS)
+    ========================================================== -->
     <script>
         const configLoterias = {
             'MegaSena': { idGen: 'btn-mega-modal', id: 'btn-mega-conf', endp: 'megasena', cor: '#209869', txt: 'white', nome: 'Mega-Sena', max: 60, minReq: 6, precoBase: 6.00 },
@@ -357,7 +586,6 @@
         let trevosSorteadosConferencia = [];
         let timeCoracaoSorteado = "";
 
-        // Função universal para garantir que valores da API (Heroku ou Caixa) venham corretamente formatados
         function formatarPremiacoes(arr) {
             if (!arr || !Array.isArray(arr)) return [];
             return arr.map(p => ({
@@ -503,7 +731,6 @@
                         if(premio.ganhadores === 0) {
                             txtGanhadores = `<span class="ganhadores-texto">Acumulou!</span>`;
                         } else {
-                            // Valor renderizado sem erro se premio.premio for numérico
                             let valorSt = (typeof premio.premio === 'number') 
                                 ? premio.premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) 
                                 : 'Apurando...';
@@ -744,7 +971,6 @@
             if (tipo === 'Timemania') {
                 timeEscolhido = document.getElementById('input-time-coracao').value.trim();
                 if(!timeEscolhido) {
-                    // Se estiver em branco, aciona a flag para sortear por cartão
                     isTimeAleatorio = true;
                 }
             }
@@ -987,7 +1213,6 @@
                         }
                     }
                 } else if (loteriaSelecionadaConf === 'Timemania' && timeJogo && timeCoracaoSorteado) {
-                    // Limpar strings para comparar (tira acentos, formatação /RJ, espaços extras)
                     let timeApiClean = timeCoracaoSorteado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split('/')[0].trim();
                     let timeJogoClean = timeJogo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
                     
@@ -1141,9 +1366,8 @@
 
             if (tipo === 'Timemania') {
                 let respTime = prompt(`Qual o seu Time do Coração?\n(Deixe em branco para sortear times diferentes para cada cartão)`, "");
-                if (respTime === null) return; // Cancela a operação
+                if (respTime === null) return; 
                 if (respTime.trim() === "") {
-                    // Sinaliza para sortear um diferente para cada loop
                     isTimeAleatorio = true;
                 } else {
                     timeEscolhido = respTime.trim();
@@ -1157,7 +1381,6 @@
                 let trevs = (tipo === 'Milionaria') ? gerarNumeros(6, qtdTrevos, 1) : null;
                 
                 let timeDoCartao = timeEscolhido;
-                // Sorteia individualmente para o cartão se foi deixado em branco
                 if (isTimeAleatorio) {
                     timeDoCartao = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
                 }
