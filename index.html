@@ -23,7 +23,7 @@
         
         h1 { font-size: 26px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); margin-bottom: 20px; }
 
-.app-container {
+        .app-container {
             max-width: 450px;
             margin: 0 auto;
             display: flex;
@@ -131,6 +131,33 @@
         .ganhadores-texto { color: #666; display: block; }
         .loading-res { font-size: 15px; color: #666; text-align: center; padding: 30px 0; font-style: italic; }
 
+        /* --- ESTILO DA CHAMATIVA NA TELA INICIAL --- */
+        .chamativa-login {
+            background: linear-gradient(135deg, #fffde7, #fff9c4);
+            border: 2px solid #fbc02d;
+            padding: 18px 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: pulsarChamativa 2s infinite alternate;
+        }
+        .chamativa-login p {
+            margin: 0;
+            color: #333;
+            font-size: 14.5px;
+            line-height: 1.4;
+        }
+        .chamativa-destaque {
+            color: #b71c1c;
+            font-size: 17px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+        @keyframes pulsarChamativa {
+            0% { box-shadow: 0 2px 10px rgba(251, 192, 45, 0.2); transform: scale(1); }
+            100% { box-shadow: 0 5px 20px rgba(251, 192, 45, 0.6); transform: scale(1.02); border-color: #f57f17; }
+        }
+
         /* NOVOS ESTILOS PARA AUTENTICAÇÃO E ADMIN */
         .auth-container { background: white; padding: 40px; border-radius: 20px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-top: 50px; width: 90%; max-width: 400px; margin-left: auto; margin-right: auto;}
         .btn-google { background: #4285F4; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
@@ -159,9 +186,18 @@
 
     <!-- 1. TELA DE LOGIN -->
     <div id="tela-login" class="auth-container">
+        
+        <!-- CHAMATIVA EM DESTAQUE -->
+        <div class="chamativa-login">
+            <span class="chamativa-destaque">🎯 Aumente suas chances!</span>
+            <p>Gere seus jogos em <strong>todas as loterias</strong>, faça combinações, confira seus jogos e veja os resultados com valores.</p>
+        </div>
+
+        <hr style="border: none; border-top: 1px dashed #ccc; margin: 20px 0;">
+
         <h2 style="margin-top: 0; color: #005ca9;">Acesso Restrito</h2>
         <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Faça login com sua conta Google para solicitar acesso ao sistema.</p>
-    <button id="btn-fazer-login" class="btn-google">
+        <button id="btn-fazer-login" class="btn-google">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Google">
             Entrar com o Google
         </button>
