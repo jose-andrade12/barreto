@@ -239,16 +239,19 @@
                 <button id="btn-painel-admin" class="btn-painel-admin" onclick="abrirAdminModal()">⚙️ PAINEL DE CONTROLE (MASTER)</button>
                 <hr id="hr-admin" style="border-color: rgba(255,255,255,0.2); margin: 15px 0; display: none;">
 
-                <button class="btn" style="background:#4a148c" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
-                <button class="btn" style="background:#209869" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
-                <button class="btn" style="background:#311b92" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
-                <button class="btn" style="background:#ef6c00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
-                <button class="btn" style="background:#fbc02d; color:black" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
-                <button class="btn" style="background:#c62828" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
-                <button class="btn" style="background:#7b1fa2" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
+                <!-- Inserido hint/title com o valor de cada loteria -->
+                <button class="btn" style="background:#4a148c" title="Valor da aposta: R$ 3,00" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
+                <button class="btn" style="background:#209869" title="Valor da aposta: R$ 6,00" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
+                <button class="btn" style="background:#311b92" title="Valor da aposta: R$ 6,00" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
+                <button class="btn" style="background:#ef6c00" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
+                <button class="btn" style="background:#fbc02d; color:black" title="Valor da aposta: R$ 3,50" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
+                <button class="btn" style="background:#c62828" title="Valor da aposta: R$ 2,50" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
+                <button class="btn" style="background:#7b1fa2" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
                 
                 <hr style="border-color: rgba(255,255,255,0.2); margin: 15px 0;">
                 
+                <!-- Novo Botão para o Gerador Múltiplo -->
+                <button class="btn" style="background:#003f7a; border: 2px solid #64b5f6;" onclick="abrirModalMultiplo()">GERADOR MÚLTIPLO</button>
                 <button class="btn" style="background:#1a1a1a; border: 2px solid #FFDF00;" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
                 <button class="btn" style="background:#b71c1c; border: 2px solid #fff;" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
                 
@@ -421,6 +424,21 @@
             <button class="btn-fechar-popup" onclick="fecharModal('modal-premiacao')">VER RESULTADOS</button>
         </div>
     </div>
+    
+    <!-- Modal Geração Múltipla -->
+    <div id="modal-multiplo" class="modal-overlay">
+        <div class="modal-box">
+            <span class="fechar-modal" onclick="fecharModal('modal-multiplo')">&times;</span>
+            <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerador Múltiplo</h2>
+            <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Escolha quantos jogos deseja gerar para cada loteria de uma só vez (apostas simples).</p>
+            
+            <div id="lista-multipla" style="text-align: left; max-height: 50vh; overflow-y: auto; margin-bottom: 15px; border: 1px solid #eee; border-radius: 8px; padding: 5px;">
+                <!-- Preenchido via JS -->
+            </div>
+            
+            <button class="btn" style="background:#005CA9; margin-top:5px; margin-bottom:0;" onclick="executarGeradorMultiplo()">GERAR JOGOS COMBINADOS</button>
+        </div>
+    </div>
 
 <!-- =========================================================
          SCRIPT DO FIREBASE + SISTEMA DE LOGIN/ADMIN 
@@ -567,7 +585,7 @@
         };
     </script>
     <!-- =========================================================
-         SCRIPT ORIGINAL (LÓGICA DAS LOTERIAS)
+         SCRIPT ORIGINAL (LÓGICA DAS LOTERIAS E NOVAS FUNÇÕES)
     ========================================================== -->
     <script>
         const configLoterias = {
@@ -1043,6 +1061,126 @@
             exibirResultados(arrayJogosFinal, tipo, precoBase, `Combinações: ${conf.nome} (${dezenasText})`);
             fecharModal('modal-combinacoes'); 
         }
+
+        // --- MÓDULO DE GERAÇÃO MÚLTIPLA ---
+        window.abrirModalMultiplo = function() {
+            document.getElementById('modal-multiplo').style.display = 'flex';
+            let lista = document.getElementById('lista-multipla');
+            lista.innerHTML = '';
+            for (const key in configLoterias) {
+                if (key === 'DiaDeSorte') continue;
+                let conf = configLoterias[key];
+                let precoFormatado = conf.precoBase.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+                lista.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0;">
+                        <div>
+                            <div style="font-weight: bold; color: ${conf.cor}; font-size: 16px;">${conf.nome}</div>
+                            <div style="font-size: 11px; color: #888;">${precoFormatado} / jogo simples</div>
+                        </div>
+                        <div>
+                            <input type="number" id="qtd-mult-${key}" min="0" max="100" value="0" style="width: 50px; padding: 8px; text-align: center; border: 2px solid #ccc; border-radius: 8px; font-weight: bold; font-size: 15px; outline: none;">
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        window.executarGeradorMultiplo = function() {
+            let jogosGerados = [];
+            let custoTotal = 0;
+            
+            for (const key in configLoterias) {
+                if (key === 'DiaDeSorte') continue;
+                let input = document.getElementById(`qtd-mult-${key}`);
+                if(input) {
+                    let qtd = parseInt(input.value) || 0;
+                    let conf = configLoterias[key];
+                    
+                    for(let i = 0; i < qtd; i++) {
+                        let offset = (key === 'Lotomania') ? 0 : 1;
+                        let nums = gerarNumeros(conf.max, conf.minReq, offset);
+                        let trevs = (key === 'Milionaria') ? gerarNumeros(6, 2, 1) : null;
+                        let timeDoCartao = (key === 'Timemania') ? timesTimemania[Math.floor(Math.random() * timesTimemania.length)] : null;
+                        
+                        jogosGerados.push({
+                            loteriaKey: key,
+                            loteriaNome: conf.nome,
+                            cor: conf.cor,
+                            numeros: nums,
+                            trevos: trevs,
+                            time: timeDoCartao,
+                            preco: conf.precoBase
+                        });
+                        custoTotal += conf.precoBase;
+                    }
+                }
+            }
+            
+            if(jogosGerados.length === 0) {
+                alert("Selecione a quantidade para pelo menos uma loteria.");
+                return;
+            }
+            
+            exibirResultadosMultiplos(jogosGerados, custoTotal, "Múltiplas Loterias (Gerador Combinado)");
+            fecharModal('modal-multiplo');
+        };
+
+        window.exibirResultadosMultiplos = function(arrayJogos, custoTotal, titulo) {
+            let html = "";
+            textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
+            textoParaCopiar = ""; 
+            
+            // Agrupar os jogos gerados por loteria para visualização
+            let grupos = {};
+            arrayJogos.forEach(jogo => {
+                if(!grupos[jogo.loteriaNome]) grupos[jogo.loteriaNome] = [];
+                grupos[jogo.loteriaNome].push(jogo);
+            });
+            
+            for (const nomeLoteria in grupos) {
+                let jogosDaLoteria = grupos[nomeLoteria];
+                let corLoteria = jogosDaLoteria[0].cor;
+
+                html += `<h4 style="margin: 20px 0 10px 0; color: ${corLoteria}; border-bottom: 2px solid ${corLoteria}; padding-bottom: 5px; text-align: left; font-size: 18px;">${nomeLoteria.toUpperCase()}</h4>`;
+                textoParaWhatsApp += `\n*${nomeLoteria.toUpperCase()}*\n`;
+                textoParaCopiar += `\n[ ${nomeLoteria.toUpperCase()} ]\n`;
+                
+                for(let i = 0; i < jogosDaLoteria.length; i++) {
+                    let jogo = jogosDaLoteria[i];
+                    let numsFormatados = jogo.numeros.map(n => n.toString().padStart(2, '0')).join(' - ');
+                    
+                    let linhaHtml = `<div class="linha-jogo"><span style="color:#555; font-weight:bold; width: 55px; display:inline-block;">Jogo ${i+1}:</span> <span class="numero">${numsFormatados}</span>`;
+                    let linhaTexto = `Jogo ${i+1}: ${numsFormatados}`;
+                    
+                    if (jogo.trevos) {
+                        let trevsFormatados = jogo.trevos.map(n => n.toString().padStart(2, '0')).join(' - ');
+                        linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Trevos: <span style="color:#311b92;">${trevsFormatados}</span></span>`;
+                        linhaTexto += ` | Trevos: ${trevsFormatados}`;
+                    }
+                    if (jogo.time) {
+                        linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Time: <span style="color:#b71c1c;">${jogo.time.toUpperCase()}</span></span>`;
+                        linhaTexto += ` | Time: ${jogo.time.toUpperCase()}`;
+                    }
+                    linhaHtml += `</div>`;
+                    
+                    html += linhaHtml;
+                    textoParaWhatsApp += `*${linhaTexto}*\n`;
+                    textoParaCopiar += `${linhaTexto}\n`;
+                }
+            }
+
+            let totalFormatado = "R$ " + custoTotal.toFixed(2).replace('.', ',');
+            textoParaWhatsApp += `\n🏷️ *Total de Cartões: ${arrayJogos.length}*\n💰 *Total do Bolão: ${totalFormatado}*\n\n🌐 *Gere seus jogos acessando:*\n${window.location.href}`;
+
+            document.getElementById('titulo-res').innerText = titulo;
+            document.getElementById('conteudo-res').innerHTML = html;
+
+            document.getElementById('total-cartoes').innerText = arrayJogos.length;
+            document.getElementById('total-geral').innerText = totalFormatado;
+            
+            document.querySelector('.app-container').style.display = 'none';
+            document.getElementById('tela-resultado').style.display = 'block';
+        };
 
         // --- CONFERÊNCIA ---
         function abrirModalConferencia() {
