@@ -541,9 +541,9 @@
             // 5. Cole EXATAMENTE o mesmo nome na variável abaixo:
             // ========================================================
             
-            const topicoNtfy = 'andrade_acessos_secreto_2026'; 
+            const topicoNtfy = '$ curl -d "Olá" ntfy.sh/andrade_acessos_secreto_2026'; 
             
-            if(topicoNtfy === 'andrade_acessos_secreto_2026') return; // Se não configurado, não faz nada
+            if(topicoNtfy === '$ curl -d "Olá" ntfy.sh/andrade_acessos_secreto_2026') return; // Se não configurado, não faz nada
 
             const titulo = '🚨 Novo Acesso Autorizado';
             const msg = `Usuário: ${nome}\nE-mail: ${email}\nData: ${new Date().toLocaleString('pt-BR')}`;
