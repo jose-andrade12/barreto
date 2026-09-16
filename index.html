@@ -294,10 +294,10 @@
                 
                 <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;">
                 
-                <!-- Botões de Ação Atualizados -->
-                <button class="btn btn-multiplo" onclick="abrirModalMultiplo()">GERADOR MÚLTIPLO</button>
-                <button class="btn btn-acao" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
+                <!-- Botões de Ação Atualizados e Invertidos -->
+                <button class="btn btn-multiplo" onclick="abrirModalMultiplo()">GERAR MÚLTIPLO</button>
                 <button class="btn btn-conf" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
+                <button class="btn btn-acao" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
                 
                 <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 15px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
                     <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> e confere os acertos buscando no banco oficial da Caixa.
@@ -514,17 +514,13 @@
         const btnAdmin = document.getElementById('btn-painel-admin');
         const hrAdmin = document.getElementById('hr-admin');
 
-        // FUNÇÃO DE REGISTRO E NOTIFICAÇÃO DE ACESSO (VIA NTFY NO CELULAR)
         function registrarAcesso(user) {
-            // Verifica no sessionStorage se já foi notificado nesta aba aberta
             if (!sessionStorage.getItem('sessao_notificada_' + user.uid)) {
                 sessionStorage.setItem('sessao_notificada_' + user.uid, 'true');
                 
-                // 1. Atualiza no Banco de Dados para aparecer na Modal Admin
                 const userRef = doc(db, "usuarios", user.uid);
                 updateDoc(userRef, { ultimoAcesso: new Date().toLocaleString('pt-BR') }).catch(e => console.log(e));
 
-                // 2. Dispara a notificação pro seu celular pelo ntfy
                 if (user.email !== MASTER_EMAIL) { 
                     enviarAvisoCelular(user.displayName, user.email);
                 }
@@ -532,18 +528,9 @@
         }
 
         function enviarAvisoCelular(nome, email) {
-            // ========================================================
-            // INSTRUÇÕES PARA RECEBER NO CELULAR:
-            // 1. Baixe o aplicativo "ntfy" na Play Store ou App Store.
-            // 2. Abra o app, toque no "+" no canto inferior.
-            // 3. Escreva um nome único, por exemplo: ia_andrade_2026_secreto
-            // 4. Toque em "Inscrever-se".
-            // 5. Cole EXATAMENTE o mesmo nome na variável abaixo:
-            // ========================================================
+            const topicoNtfy = 'COLOQUE_SEU_TOPICO_AQUI'; 
             
-            const topicoNtfy = '$ curl -d "Olá" ntfy.sh/andrade_acessos_secreto_2026'; 
-            
-            if(topicoNtfy === '$ curl -d "Olá" ntfy.sh/andrade_acessos_secreto_2026') return; // Se não configurado, não faz nada
+            if(topicoNtfy === 'COLOQUE_SEU_TOPICO_AQUI') return;
 
             const titulo = '🚨 Novo Acesso Autorizado';
             const msg = `Usuário: ${nome}\nE-mail: ${email}\nData: ${new Date().toLocaleString('pt-BR')}`;
@@ -558,10 +545,8 @@
             }).catch(err => console.log('Erro notificação celular:', err));
         }
 
-        // Escuta as mudanças de login
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Usuário Logado
                 document.getElementById('user-nome').innerText = user.displayName;
                 document.getElementById('user-email').innerText = user.email;
                 document.getElementById('user-foto').src = user.photoURL;
@@ -578,13 +563,13 @@
                     btnAdmin.style.display = 'block';
                     hrAdmin.style.display = 'block';
                     mostrarAppPrincipal();
-                    registrarAcesso(user); // Grava a hora do seu acesso
+                    registrarAcesso(user);
                 } else {
                     if (userSnap.exists()) {
                         const dados = userSnap.data();
                         if (dados.status === 'liberado') {
                             mostrarAppPrincipal();
-                            registrarAcesso(user); // GATILHO DO AVISO NO CELULAR!
+                            registrarAcesso(user);
                         } else {
                             mostrarTelaPendente();
                         }
@@ -621,7 +606,6 @@
         btnLogoutApp.addEventListener('click', logoutFunc);
         btnLogoutPendente.addEventListener('click', logoutFunc);
 
-        // FUNÇÕES DO PAINEL ADMIN COM ÚLTIMO ACESSO VISÍVEL
         window.abrirAdminModal = async function() {
             document.getElementById('modal-admin').style.display = 'flex';
             const listaDiv = document.getElementById('lista-usuarios-admin');
@@ -1213,7 +1197,6 @@
             textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
             textoParaCopiar = ""; 
             
-            // Agrupar os jogos gerados por loteria para visualização
             let grupos = {};
             arrayJogos.forEach(jogo => {
                 if(!grupos[jogo.loteriaNome]) grupos[jogo.loteriaNome] = [];
@@ -1424,7 +1407,6 @@
                 let trevosJogo = [];
                 let timeJogo = "";
 
-                // Extração inteligente de trevos e time do coração da string colada
                 for (let p = 1; p < partes.length; p++) {
                     if (partes[p].toUpperCase().includes('TREVOS:')) {
                         trevosJogo = partes[p].match(/\d+/g) || [];
