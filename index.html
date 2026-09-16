@@ -33,7 +33,6 @@
             transition: max-width 0.3s ease;
         }
 
-        /* Expande o painel automaticamente em telas maiores (Tablets e PCs) */
         @media (min-width: 768px) {
             .app-container {
                 max-width: 700px;
@@ -52,7 +51,51 @@
 
         .clover-img { width: 100%; height: auto; border-radius: 20px; animation: brilharTrevo 1.5s infinite alternate ease-in-out; }
         
-        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        /* -------------------------------------------
+           BOTÕES MODERNIZADOS (MENU PRINCIPAL)
+           ------------------------------------------- */
+        .btn { 
+            display: block; 
+            width: 100%; 
+            padding: 16px; 
+            margin: 12px 0; 
+            color: white; 
+            font-size: 17px; 
+            font-weight: 800; 
+            letter-spacing: 1px;
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            box-shadow: 0 5px 12px rgba(0,0,0,0.25); 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-transform: uppercase;
+        }
+        
+        .btn:hover { 
+            transform: translateY(-3px) scale(1.01); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35); 
+            filter: brightness(1.1);
+        }
+        
+        .btn:active { 
+            transform: translateY(1px); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
+        }
+
+        /* Gradientes Modernos para Loterias */
+        .btn-quina { background: linear-gradient(135deg, #4a148c, #6a1b9a); }
+        .btn-mega { background: linear-gradient(135deg, #209869, #26a673); }
+        .btn-milionaria { background: linear-gradient(135deg, #311b92, #4527a0); }
+        .btn-lotomania { background: linear-gradient(135deg, #ef6c00, #f57c00); }
+        .btn-timemania { background: linear-gradient(135deg, #fbc02d, #fdd835); color: #222 !important; text-shadow: 1px 1px 0px rgba(255,255,255,0.4); }
+        .btn-dupla { background: linear-gradient(135deg, #c62828, #d32f2f); }
+        .btn-lotofacil { background: linear-gradient(135deg, #7b1fa2, #8e24aa); }
+        
+        /* Gradientes para Botões de Ação */
+        .btn-multiplo { background: linear-gradient(135deg, #004d40, #00695c); border: 2px solid #26a69a; }
+        .btn-acao { background: linear-gradient(135deg, #212121, #424242); border: 2px solid #FFDF00; color: #FFDF00; }
+        .btn-conf { background: linear-gradient(135deg, #b71c1c, #c62828); border: 2px solid #ffcdd2; }
+
         .btn-install { background: #1a1a1a; border: 2px solid #25D366; color: #25D366; display: none; margin-top: 20px; box-shadow: 0 0 15px rgba(37, 211, 102, 0.5); }
         
         #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; width: 100%; max-width: 550px; box-sizing: border-box; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
@@ -167,11 +210,12 @@
         .user-info { font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
         .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #FFDF00; }
         .btn-logout { background: #e53935; border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .btn-painel-admin { background: #FFDF00; color: #333; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; display: none; margin-top: 10px; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .btn-painel-admin { background: linear-gradient(135deg, #FFDF00, #fbc02d); color: #333; border: none; padding: 12px 15px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold; display: none; margin-top: 10px; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s; }
+        .btn-painel-admin:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
         
         /* Lista Admin */
         .admin-lista { text-align: left; max-height: 400px; overflow-y: auto; margin-top: 15px; }
-        .admin-item { background: #f9f9f9; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-item { background: #f9f9f9; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
         .admin-item-dados { font-size: 13px; color: #555; }
         .admin-item-nome { font-weight: bold; color: #333; font-size: 15px; display: block;}
         .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; margin-top: 5px; display: inline-block;}
@@ -239,23 +283,23 @@
                 <button id="btn-painel-admin" class="btn-painel-admin" onclick="abrirAdminModal()">⚙️ PAINEL DE CONTROLE (MASTER)</button>
                 <hr id="hr-admin" style="border-color: rgba(255,255,255,0.2); margin: 15px 0; display: none;">
 
-                <!-- Inserido hint/title com o valor de cada loteria -->
-                <button class="btn" style="background:#4a148c" title="Valor da aposta: R$ 3,00" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
-                <button class="btn" style="background:#209869" title="Valor da aposta: R$ 6,00" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
-                <button class="btn" style="background:#311b92" title="Valor da aposta: R$ 6,00" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
-                <button class="btn" style="background:#ef6c00" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
-                <button class="btn" style="background:#fbc02d; color:black" title="Valor da aposta: R$ 3,50" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
-                <button class="btn" style="background:#c62828" title="Valor da aposta: R$ 2,50" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
-                <button class="btn" style="background:#7b1fa2" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
+                <!-- Botões com novas classes e degradês -->
+                <button class="btn btn-quina" title="Valor da aposta: R$ 3,00" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
+                <button class="btn btn-mega" title="Valor da aposta: R$ 6,00" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
+                <button class="btn btn-milionaria" title="Valor da aposta: R$ 6,00" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
+                <button class="btn btn-lotomania" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
+                <button class="btn btn-timemania" title="Valor da aposta: R$ 3,50" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
+                <button class="btn btn-dupla" title="Valor da aposta: R$ 2,50" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
+                <button class="btn btn-lotofacil" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
                 
-                <hr style="border-color: rgba(255,255,255,0.2); margin: 15px 0;">
+                <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;">
                 
-                <!-- Novo Botão para o Gerador Múltiplo -->
-                <button class="btn" style="background:#003f7a; border: 2px solid #64b5f6;" onclick="abrirModalMultiplo()">GERADOR MÚLTIPLO</button>
-                <button class="btn" style="background:#1a1a1a; border: 2px solid #FFDF00;" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
-                <button class="btn" style="background:#b71c1c; border: 2px solid #fff;" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
+                <!-- Botões de Ação Atualizados -->
+                <button class="btn btn-multiplo" onclick="abrirModalMultiplo()">GERADOR MÚLTIPLO</button>
+                <button class="btn btn-acao" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
+                <button class="btn btn-conf" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
                 
-                <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 12px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
+                <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 15px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
                     <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> e confere os acertos buscando no banco oficial da Caixa.
                 </p>
             </div>
@@ -371,7 +415,7 @@
                 <div id="grid-trevos-modal" class="grid-numeros" style="display: flex; justify-content: center; gap: 10px; min-height: auto; overflow: hidden; padding-bottom: 0;"></div>
             </div>
             
-            <button class="btn" style="background:#005CA9; margin-top:15px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
+            <button class="btn btn-multiplo" style="margin-top:15px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
         </div>
     </div>
 
@@ -411,7 +455,7 @@
             <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos ou digite os números do seu cartão aqui:</p>
             <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole os jogos gerados ou digite (ex: 01 02 03 04 05 06 | Trevos: 01 02 | Time: Flamengo)"></textarea>
             
-            <button class="btn" style="background:#b71c1c; margin-top:5px; margin-bottom:0;" onclick="executarConferencia()">REALIZAR CONFERÊNCIA</button>
+            <button class="btn btn-conf" style="margin-top:5px; margin-bottom:0;" onclick="executarConferencia()">REALIZAR CONFERÊNCIA</button>
         </div>
     </div>
 
@@ -436,19 +480,18 @@
                 <!-- Preenchido via JS -->
             </div>
             
-            <button class="btn" style="background:#005CA9; margin-top:5px; margin-bottom:0;" onclick="executarGeradorMultiplo()">GERAR JOGOS COMBINADOS</button>
+            <button class="btn btn-multiplo" style="margin-top:5px; margin-bottom:0;" onclick="executarGeradorMultiplo()">GERAR JOGOS COMBINADOS</button>
         </div>
     </div>
 
 <!-- =========================================================
-         SCRIPT DO FIREBASE + SISTEMA DE LOGIN/ADMIN 
+         SCRIPT DO FIREBASE + SISTEMA DE LOGIN E NOTIFICAÇÃO
     ========================================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // Configuração do seu aplicativo Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBkjtBMGNSQ9WMJajgGHDar-vY5xnClzR0",
             authDomain: "ia-andrade-loterias.firebaseapp.com",
@@ -460,7 +503,6 @@
         
         const MASTER_EMAIL = "rss.andrade@gmail.com"; 
 
-        // Inicialização limpa e única
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -472,6 +514,50 @@
         const btnAdmin = document.getElementById('btn-painel-admin');
         const hrAdmin = document.getElementById('hr-admin');
 
+        // FUNÇÃO DE REGISTRO E NOTIFICAÇÃO DE ACESSO (VIA NTFY NO CELULAR)
+        function registrarAcesso(user) {
+            // Verifica no sessionStorage se já foi notificado nesta aba aberta
+            if (!sessionStorage.getItem('sessao_notificada_' + user.uid)) {
+                sessionStorage.setItem('sessao_notificada_' + user.uid, 'true');
+                
+                // 1. Atualiza no Banco de Dados para aparecer na Modal Admin
+                const userRef = doc(db, "usuarios", user.uid);
+                updateDoc(userRef, { ultimoAcesso: new Date().toLocaleString('pt-BR') }).catch(e => console.log(e));
+
+                // 2. Dispara a notificação pro seu celular pelo ntfy
+                if (user.email !== MASTER_EMAIL) { 
+                    enviarAvisoCelular(user.displayName, user.email);
+                }
+            }
+        }
+
+        function enviarAvisoCelular(nome, email) {
+            // ========================================================
+            // INSTRUÇÕES PARA RECEBER NO CELULAR:
+            // 1. Baixe o aplicativo "ntfy" na Play Store ou App Store.
+            // 2. Abra o app, toque no "+" no canto inferior.
+            // 3. Escreva um nome único, por exemplo: ia_andrade_2026_secreto
+            // 4. Toque em "Inscrever-se".
+            // 5. Cole EXATAMENTE o mesmo nome na variável abaixo:
+            // ========================================================
+            
+            const topicoNtfy = 'andrade_acessos_secreto_2026'; 
+            
+            if(topicoNtfy === 'andrade_acessos_secreto_2026') return; // Se não configurado, não faz nada
+
+            const titulo = '🚨 Novo Acesso Autorizado';
+            const msg = `Usuário: ${nome}\nE-mail: ${email}\nData: ${new Date().toLocaleString('pt-BR')}`;
+            
+            fetch(`https://ntfy.sh/${topicoNtfy}`, {
+                method: 'POST',
+                body: msg,
+                headers: {
+                    'Title': titulo,
+                    'Tags': 'rotating_light,clover',
+                }
+            }).catch(err => console.log('Erro notificação celular:', err));
+        }
+
         // Escuta as mudanças de login
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -482,35 +568,32 @@
                 
                 telaLogin.style.display = 'none';
 
-                // Checar status no banco de dados Firestore
                 const userRef = doc(db, "usuarios", user.uid);
                 const userSnap = await getDoc(userRef);
 
                 if (user.email === MASTER_EMAIL) {
-                    // É O MASTER - Garante registro e abre app
                     if (!userSnap.exists()) {
                         await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'master' });
                     }
                     btnAdmin.style.display = 'block';
                     hrAdmin.style.display = 'block';
                     mostrarAppPrincipal();
+                    registrarAcesso(user); // Grava a hora do seu acesso
                 } else {
-                    // Usuário comum
                     if (userSnap.exists()) {
                         const dados = userSnap.data();
                         if (dados.status === 'liberado') {
                             mostrarAppPrincipal();
+                            registrarAcesso(user); // GATILHO DO AVISO NO CELULAR!
                         } else {
                             mostrarTelaPendente();
                         }
                     } else {
-                        // Novo usuário, cria cadastro como pendente
                         await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'pendente' });
                         mostrarTelaPendente();
                     }
                 }
             } else {
-                // Não logado
                 telaLogin.style.display = 'block';
                 telaPendente.style.display = 'none';
                 telaPrincipal.style.display = 'none';
@@ -527,7 +610,6 @@
             telaPrincipal.style.display = 'none';
         }
 
-        // Botões de Login / Logout
         document.getElementById('btn-fazer-login').addEventListener('click', () => {
             signInWithPopup(auth, provider).catch(error => alert("Erro ao fazer login: " + error.message));
         });
@@ -539,7 +621,7 @@
         btnLogoutApp.addEventListener('click', logoutFunc);
         btnLogoutPendente.addEventListener('click', logoutFunc);
 
-        // FUNÇÕES DO PAINEL ADMIN
+        // FUNÇÕES DO PAINEL ADMIN COM ÚLTIMO ACESSO VISÍVEL
         window.abrirAdminModal = async function() {
             document.getElementById('modal-admin').style.display = 'flex';
             const listaDiv = document.getElementById('lista-usuarios-admin');
@@ -560,7 +642,8 @@
                         <div class="admin-item">
                             <div>
                                 <span class="admin-item-nome">${u.nome}</span>
-                                <span class="admin-item-dados">${u.email}</span><br>
+                                <span class="admin-item-dados">${u.email}</span>
+                                ${u.ultimoAcesso ? `<span class="admin-item-dados" style="display:block; font-size:11px; margin-top:3px; font-weight:600; color:#005ca9;">⏱ Últ. acesso: ${u.ultimoAcesso}</span>` : ''}
                                 <span class="badge-status ${isLiberado ? 'status-liberado' : 'status-pendente'}">${u.status.toUpperCase()}</span>
                             </div>
                             <button class="btn-toggle-status" style="background-color: ${corBtn};" onclick="mudarStatusUsuario('${docSnap.id}', '${novoStatus}')">${txtBtn}</button>
