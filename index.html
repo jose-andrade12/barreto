@@ -289,8 +289,8 @@
                 <button class="btn btn-milionaria" title="Valor da aposta: R$ 6,00" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
                 <button class="btn btn-lotomania" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
                 <button class="btn btn-timemania" title="Valor da aposta: R$ 3,50" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
-                <button class="btn btn-dupla" title="Valor da aposta: R$ 2,50" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
-                <button class="btn btn-lotofacil" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
+                <button class="btn btn-dupla" title="Valor da aposta: R$ 3,00" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
+                <button class="btn btn-lotofacil" title="Valor da aposta: R$ 3,50" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
                 
                 <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;">
                 
@@ -661,16 +661,16 @@
             'Milionaria': { idGen: 'btn-milionaria-modal', id: 'btn-milionaria-conf', endp: 'maismilionaria', cor: '#311b92', txt: 'white', nome: '+Milionária', max: 50, minReq: 6, precoBase: 6.00 },
             'Lotomania': { idGen: 'btn-lotomania-modal', id: 'btn-lotomania-conf', endp: 'lotomania', cor: '#ef6c00', txt: 'white', nome: 'Lotomania', max: 100, minReq: 50, precoBase: 3.00 },
             'Timemania': { idGen: 'btn-timemania-modal', id: 'btn-timemania-conf', endp: 'timemania', cor: '#fbc02d', txt: 'black', nome: 'Timemania', max: 80, minReq: 10, precoBase: 3.50 },
-            'DuplaSena': { idGen: 'btn-dupla-modal', id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white', nome: 'Dupla Sena', max: 50, minReq: 6, precoBase: 2.50 },
-            'Lotofacil': { idGen: 'btn-lotofacil-modal', id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white', nome: 'Lotofácil', max: 25, minReq: 15, precoBase: 3.00 },
+            'DuplaSena': { idGen: 'btn-dupla-modal', id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white', nome: 'Dupla Sena', max: 50, minReq: 6, precoBase: 3.00 },
+            'Lotofacil': { idGen: 'btn-lotofacil-modal', id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white', nome: 'Lotofácil', max: 25, minReq: 15, precoBase: 3.50 },
             'DiaDeSorte': { endp: 'diadesorte', cor: '#cb852b', txt: 'white', nome: 'Dia de Sorte' }
         };
 
         const precos = {
             'MegaSena': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00, 13: 10296.00, 14: 18018.00, 15: 30030.00, 16: 48048.00, 17: 74256.00, 18: 111384.00, 19: 162792.00, 20: 232560.00}, 
-            'Lotofacil': {15: 3.00, 16: 48.00, 17: 408.00, 18: 2448.00, 19: 11628.00, 20: 46512.00}, 
+            'Lotofacil': {15: 3.50, 16: 56.00, 17: 476.00, 18: 2856.00, 19: 13566.00, 20: 54264.00}, 
             'Quina': {5: 3.00, 6: 18.00, 7: 63.00, 8: 168.00, 9: 378.00, 10: 756.00, 11: 1386.00, 12: 2376.00, 13: 3861.00, 14: 6006.00, 15: 9009.00}, 
-            'DuplaSena': {6: 2.50, 7: 17.50, 8: 70.00, 9: 210.00, 10: 525.00, 11: 1155.00, 12: 2310.00, 13: 4290.00, 14: 7507.50, 15: 12512.50}
+            'DuplaSena': {6: 3.00, 7: 21.00, 8: 84.00, 9: 252.00, 10: 630.00, 11: 1386.00, 12: 2772.00, 13: 5148.00, 14: 9009.00, 15: 15015.00}
         };
 
         const timesTimemania = [
