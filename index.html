@@ -1,84 +1,47 @@
-<style>
-    /* ==========================================================================
-       RESET E ESTILOS GLOBAIS RESPONSIVOS
-       ========================================================================== */
-    *, *::before, *::after { 
-        box-sizing: border-box; 
-    }
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#005ca9">
+<link rel="apple-touch-icon" href="trevo.png">
 
+<style>
+    /* RESET E BOX-SIZING PARA RESPONSIVIDADE */
+    * { box-sizing: border-box; }
+    
     body { 
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+        font-family: 'Segoe UI', sans-serif; 
         background: linear-gradient(135deg, #FFDF00 0%, #D4AF37 50%, #996515 100%); 
         color: white; 
         text-align: center; 
         margin: 0; 
-        padding: 15px;
+        padding: 20px;
         min-height: 100vh;
     }
     
-    h1 { 
-        font-size: clamp(22px, 5vw, 28px); 
-        text-shadow: 2px 2px 5px rgba(0,0,0,0.7); 
-        margin: 10px 0 25px 0; 
-    }
+    h1 { font-size: clamp(20px, 5vw, 26px); text-shadow: 2px 2px 5px rgba(0,0,0,0.7); margin-bottom: 20px; }
 
-    /* ==========================================================================
-       ESTRUTURA PRINCIPAL (MOBILE FIRST -> DESKTOP)
-       ========================================================================== */
+    /* PREVINE ZOOM NO IOS */
+    input, select, textarea { font-size: 16px !important; }
+
+    /* LAYOUT ADAPTÁVEL (CELULAR -> PC) */
     .app-container {
-        width: 100%;
-        max-width: 500px;
-        margin: 0 auto;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 25px;
-        transition: all 0.3s ease;
-    }
-
-    .clover-side { 
-        width: 100%; 
-        max-width: 260px; 
+        gap: 20px;
+        max-width: 100%;
         margin: 0 auto;
     }
 
-    .conteudo-principal {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 25px;
-    }
+    .clover-side { width: 100%; max-width: 280px; margin: 0 auto; }
+    .painel-container { width: 100%; }
 
-    .painel-container {
-        width: 100%;
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 15px;
-        padding: 15px;
-    }
-
-    @media (min-width: 850px) {
-        body { padding: 30px; }
+    @media (min-width: 768px) {
         .app-container {
-            max-width: 1000px;
             flex-direction: row;
             align-items: flex-start;
-            justify-content: center;
+            max-width: 900px;
             gap: 40px;
         }
-        .clover-side { 
-            position: sticky; 
-            top: 30px; 
-            flex: 1; 
-            max-width: 320px; 
-        }
-        .conteudo-principal { 
-            flex: 2; 
-            max-width: 650px; 
-            gap: 30px;
-        }
-        .painel-container {
-            padding: 25px;
-        }
+        .clover-side { position: sticky; top: 20px; flex-shrink: 0; }
+        .painel-container { flex: 1; padding: 30px; background: rgba(0,0,0,0.1); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
     }
     
     @keyframes brilharTrevo {
@@ -86,43 +49,18 @@
         100% { box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 50px #FFF; transform: scale(1.04); }
     }
 
-    .clover-img { 
-        width: 100%; 
-        height: auto; 
-        border-radius: 20px; 
-        animation: brilharTrevo 1.5s infinite alternate ease-in-out; 
-    }
+    .clover-img { width: 100%; height: auto; border-radius: 20px; animation: brilharTrevo 1.5s infinite alternate ease-in-out; }
     
-    /* ==========================================================================
-       BOTÕES MODERNIZADOS
-       ========================================================================== */
+    /* BOTÕES PRINCIPAIS */
     .btn { 
-        display: block; 
-        width: 100%; 
-        padding: 14px; 
-        margin: 10px 0; 
-        color: white; 
-        font-size: clamp(14px, 4vw, 17px); 
-        font-weight: 800; 
-        letter-spacing: 1px;
-        border: none; 
-        border-radius: 12px; 
-        cursor: pointer; 
-        box-shadow: 0 5px 12px rgba(0,0,0,0.25); 
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        display: block; width: 100%; padding: 16px; margin: 12px 0; color: white; 
+        font-size: clamp(14px, 4vw, 17px); font-weight: 800; letter-spacing: 1px;
+        border: none; border-radius: 12px; cursor: pointer; 
+        box-shadow: 0 5px 12px rgba(0,0,0,0.25); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         text-transform: uppercase;
     }
-    
-    .btn:hover { 
-        transform: translateY(-3px) scale(1.01); 
-        box-shadow: 0 8px 20px rgba(0,0,0,0.35); 
-        filter: brightness(1.1);
-    }
-    
-    .btn:active { 
-        transform: translateY(1px); 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
-    }
+    .btn:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 8px 20px rgba(0,0,0,0.35); filter: brightness(1.1); }
+    .btn:active { transform: translateY(1px); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
     .btn-quina { background: linear-gradient(135deg, #4a148c, #6a1b9a); }
     .btn-mega { background: linear-gradient(135deg, #209869, #26a673); }
@@ -137,555 +75,425 @@
     .btn-conf { background: linear-gradient(135deg, #b71c1c, #c62828); border: 2px solid #ffcdd2; }
     .btn-install { background: #1a1a1a; border: 2px solid #25D366; color: #25D366; display: none; margin-top: 20px; box-shadow: 0 0 15px rgba(37, 211, 102, 0.5); }
     
-    /* ==========================================================================
-       TELA DE RESULTADOS
-       ========================================================================== */
-    #tela-resultado { 
-        display: none; 
-        background: white; 
-        color: black; 
-        padding: clamp(15px, 4vw, 25px); 
-        border-radius: 15px; 
-        margin-top: 20px; 
-        text-align: left; 
-        width: 100%; 
-        max-width: 600px; 
-        margin-left: auto; 
-        margin-right: auto; 
-        box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
-    }
-    
-    .linha-jogo { 
-        border-bottom: 1px solid #ddd; 
-        padding: 10px 5px; 
-        font-family: monospace; 
-        font-size: clamp(13px, 3.5vw, 15px); 
-        display: flex; 
-        flex-wrap: wrap; 
-        align-items: center; 
-        gap: 6px;
-    }
-    
-    .numero { 
-        color: #555; 
-        font-weight: bold; 
-        padding: 3px 5px; 
-        border: 1px solid #eee; 
-        border-radius: 4px; 
-        background: #fafafa;
-    }
-    
-    .numero-acerto { 
-        color: white; 
-        font-weight: bold; 
-        border-radius: 5px; 
-        padding: 3px 6px; 
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
-    } 
+    /* TELA RESULTADO */
+    #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; width: 100%; max-width: 550px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+    .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px;}
+    .numero { color: #555; font-weight: bold; padding: 2px 4px; border: 1px solid #eee; border-radius: 4px; background: #fafafa;}
+    .numero-acerto { color: white; font-weight: bold; border-radius: 5px; padding: 2px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); } 
 
-    .btn-copiar, .btn-zap, .btn-caixa, .btn-voltar {
-        width: 100%;
-        padding: 15px;
-        font-size: clamp(15px, 4vw, 18px);
-        font-weight: bold;
-        border-radius: 10px;
-        margin-top: 10px;
-        cursor: pointer;
-        border: none;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        transition: all 0.3s;
-    }
-    .btn-copiar { background: #f57c00; color: white; margin-top: 25px; }
-    .btn-zap { background: #25D366; color: white; }
-    .btn-caixa { background: #005CA9; color: white; }
-    .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; box-shadow: none; }
+    .btn-zap, .btn-copiar, .btn-caixa, .btn-voltar { color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+    .btn-copiar { background: #f57c00; margin-top: 20px; }
+    .btn-zap { background: #25D366; }
+    .btn-caixa { background: #005CA9; }
+    .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; }
 
-    /* ==========================================================================
-       MODAIS (GRID, CONTADORES E FORMULÁRIOS)
-       ========================================================================== */
-    .modal-overlay { 
-        position: fixed; 
-        top: 0; left: 0; 
-        width: 100%; height: 100%; 
-        background: rgba(0,0,0,0.85); 
-        display: none; 
-        justify-content: center; 
-        align-items: center; 
-        z-index: 1000; 
-        padding: 10px;
-    }
+    /* MODAIS RESPONSIVOS */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; }
+    .modal-box { background: white; color: black; padding: 20px; border-radius: 15px; width: 100%; max-width: 480px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.7); display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto; }
+    .fechar-modal { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; font-weight: bold; color: #888; z-index: 10; }
     
-    .modal-box { 
-        background: white; 
-        color: black; 
-        padding: clamp(15px, 4vw, 25px); 
-        border-radius: 15px; 
-        width: 100%; 
-        max-width: 500px; 
-        text-align: center; 
-        position: relative; 
-        box-shadow: 0 10px 25px rgba(0,0,0,0.7); 
-        display: flex; 
-        flex-direction: column; 
-        max-height: 95vh; 
-        overflow-y: auto; 
-    }
+    .opcoes-loteria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-bottom: 12px; margin-top: 5px; }
+    .btn-loteria-grid { padding: 10px 4px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: clamp(11px, 3vw, 13px); opacity: 0.4; transition: 0.3s; }
+    .btn-loteria-grid.ativa { opacity: 1; border: 2px solid #FFDF00; transform: scale(1.03); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
     
-    .fechar-modal { 
-        position: absolute; 
-        top: 10px; right: 15px; 
-        font-size: 28px; 
-        cursor: pointer; 
-        font-weight: bold; 
-        color: #888; 
-        z-index: 10; 
-        line-height: 1;
-        padding: 5px;
-    }
+    .grid-numeros { display: grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 6px; max-height: 250px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; }
+    .num-btn { background: #fff; border: 2px solid #ccc; border-radius: 50%; width: 36px; height: 36px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; margin: 0 auto; }
+    .num-btn.ativo { color: white; transform: scale(1.15); box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-color: transparent; }
     
-    .opcoes-loteria-grid { 
-        display: grid; 
-        grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)); 
-        gap: 6px; 
-        margin-bottom: 12px; 
-        margin-top: 5px; 
-    }
-    
-    .btn-loteria-grid { 
-        padding: 10px 4px; 
-        color: white; 
-        border: none; 
-        border-radius: 8px; 
-        cursor: pointer; 
-        font-weight: bold; 
-        font-size: clamp(11px, 3vw, 13px); 
-        opacity: 0.4; 
-        transition: 0.3s; 
-        word-wrap: break-word;
-    }
-    
-    .btn-loteria-grid.ativa { 
-        opacity: 1; 
-        border: 2px solid #FFDF00; 
-        transform: scale(1.03); 
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-    }
-    
-    .grid-numeros { 
-        display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); 
-        gap: 6px; 
-        max-height: 25vh; /* Ajuste para não estourar em modo paisagem no celular */
-        min-height: 150px;
-        overflow-y: auto; 
-        padding: 10px 5px; 
-        margin-bottom: 15px; 
-        background: #f9f9f9; 
-        border-radius: 10px; 
-        border: 1px solid #ddd; 
-    }
-    
-    .num-btn { 
-        background: #fff; 
-        border: 2px solid #ccc; 
-        border-radius: 50%; 
-        width: 36px; height: 36px; 
-        font-size: 14px; 
-        font-weight: bold; 
-        color: #333; 
-        cursor: pointer; 
-        display: flex; align-items: center; justify-content: center; 
-        transition: all 0.2s; 
-        user-select: none; 
-        margin: 0 auto; 
-    }
-    
-    .num-btn.ativo { 
-        color: white; 
-        transform: scale(1.15); 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
-        border-color: transparent; 
-    }
-    
-    .contador-info { 
-        font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; 
-    }
+    .painel-aleatorio { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px; background: #f5f7fa; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .input-aleatorio { padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; font-size: 16px; color: #0f172a; outline: none; }
+    .btn-acao-p { color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-    .painel-aleatorio { 
-        display: flex; flex-wrap: wrap; justify-content: center; align-items: center; 
-        gap: 8px; margin-bottom: 15px; background: #f5f7fa; padding: 12px; 
-        border-radius: 8px; border: 1px solid #e2e8f0; 
-    }
-    
-    /* Font-size 16px obrigatório em inputs para evitar zoom automático no iOS */
-    .input-aleatorio, #input-busca-concurso, #qtd-aleatoria, .textarea-jogos { 
-        border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; 
-        font-size: 16px; color: #0f172a; outline: none; box-sizing: border-box;
-    }
-    
-    .input-aleatorio { padding: 8px; }
-    .textarea-jogos { width: 100%; padding: 12px; height: 110px; resize: none; margin-bottom: 10px; white-space: pre; background: #fdfdfd; font-family: monospace; border: 2px solid #ddd;}
-    
-    .btn-acao-p { 
-        color: white; border: none; padding: 10px 14px; border-radius: 6px; 
-        cursor: pointer; font-weight: bold; font-size: 13px; 
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s; 
-        flex-grow: 1; /* Preenche espaço no mobile */
-    }
-    .btn-acao-p:active { transform: scale(0.95); }
-
-    /* ==========================================================================
-       MODAL DE CONFERÊNCIA
-       ========================================================================== */
-    .info-api { font-size: 13px; color: #888; margin-bottom: 10px; min-height: 18px; text-align: left; padding-left: 5px;}
-    .busca-concurso-container { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px; font-size: 14px; color: #425f7a; flex-wrap: wrap;}
-    #input-busca-concurso { width: 80px; padding: 8px; text-align: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
-    #input-busca-concurso::-webkit-outer-spin-button, #input-busca-concurso::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    
-    .nav-concurso { color: #0073e6; cursor: pointer; user-select: none; transition: color 0.2s; font-weight: 500; padding: 5px;}
-    .nav-concurso.disabled { color: #ccc; cursor: not-allowed; text-decoration: none; }
-    
-    .painel-premium { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); display: none; }
-    .bolinhas-container { display: flex; justify-content: center; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
-    .bolinha-oficial { width: clamp(34px, 10vw, 42px); height: clamp(34px, 10vw, 42px); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(14px, 4vw, 18px); color: white; box-shadow: 0 3px 6px rgba(0,0,0,0.15); font-weight: bold; flex-shrink: 0;}
-    
-    .premio-detalhes { display: flex; flex-direction: column; gap: 8px; align-items: center; border-top: 1px solid #e0e0e0; padding-top: 15px; text-align: center;}
-    @media (min-width: 400px) {
-        .premio-detalhes { flex-direction: row; justify-content: space-between; text-align: left; }
-    }
-    
-    .premio-texto { font-size: 13px; color: #5c6a79; line-height: 1.3; }
-    .premio-valor { font-size: clamp(18px, 5vw, 22px); color: #425f7a; white-space: nowrap; letter-spacing: -0.5px; font-weight: bold; }
-    
-    .badge-acertos { font-size: 12px; padding: 4px 8px; border-radius: 20px; background: #e0e0e0; font-weight: bold; text-align: center; }
-    .badge-premiado { background: #FFDF00; color: #996515; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-
-    /* ==========================================================================
-       VISOR DE RESULTADOS E LISTA DE RATEIO
-       ========================================================================== */
-    .painel-resultados-wrapper { width: 100%; text-align: left; margin-top: 10px;}
-    .titulo-resultados { font-size: clamp(22px, 6vw, 28px); color: #005ca9; margin-bottom: 15px; text-shadow: 1px 1px 0 rgba(255,255,255,0.8), -1px -1px 0 rgba(255,255,255,0.8), 1px -1px 0 rgba(255,255,255,0.8), -1px 1px 0 rgba(255,255,255,0.8); letter-spacing: -0.5px; text-align: center; }
-    
-    .select-container { margin-bottom: 20px; }
-    .select-loteria { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: #333; background: #fff; border: 3px solid #003f7a; border-radius: 12px; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; }
-    
-    .visor-resultados { width: 100%; background: #fff; border-radius: 12px; padding: clamp(15px, 4vw, 20px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #333; }
-    .visor-header { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;}
-    .titulo-loteria-res { font-size: clamp(20px, 5vw, 24px); font-weight: bold; margin: 0 0 5px 0; }
-    .info-concurso-res { font-size: 13px; color: #777; }
-    
-    .btn-recolher { background: #e0e0e0; border: none; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s; flex-shrink: 0;}
-    .btn-recolher:hover { background: #d0d0d0; }
-    
-    .visor-corpo { display: flex; flex-direction: column; gap: 20px; }
-    .bolinhas-res-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; justify-content: center; }
-    .bolinha-res { width: clamp(34px, 9vw, 38px); height: clamp(34px, 9vw, 38px); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(14px, 4vw, 16px); font-weight: bold; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-    
-    .prox-premio-res { background: #f0f7ff; padding: 12px; border-radius: 8px; border-left: 4px solid #005ca9; font-size: 13px; color: #555; text-align: center; }
-    .prox-premio-valor { font-size: clamp(18px, 5vw, 20px); font-weight: bold; color: #005ca9; margin-top: 5px; }
-    
-    .titulo-premiacao { font-size: 16px; font-weight: bold; color: #005ca9; margin-bottom: 10px; border-top: 1px solid #eee; padding-top: 15px; }
-    .lista-premiacao { list-style: none; padding: 0; margin: 0; }
-    .item-premiacao { border-bottom: 1px solid #eee; padding: 10px 0; font-size: 13px; line-height: 1.4; display: flex; flex-direction: column; gap: 4px;}
-    .item-premiacao:last-child { border-bottom: none; }
-    .acertos-texto { font-weight: bold; color: #333; }
-    .ganhadores-texto { color: #666; }
-    
-    .loading-res { font-size: 15px; color: #666; text-align: center; padding: 30px 0; font-style: italic; }
-
-    /* ==========================================================================
-       AUTENTICAÇÃO E CHAMATIVA DE LOGIN
-       ========================================================================== */
-    .auth-container { 
-        background: white; padding: clamp(20px, 6vw, 40px); border-radius: 20px; 
-        color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-top: 20px; 
-        width: 100%; max-width: 420px; margin-left: auto; margin-right: auto;
-    }
-    
-    .btn-google { 
-        background: #4285F4; color: white; border: none; padding: 15px; 
-        font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; 
-        cursor: pointer; display: flex; align-items: center; justify-content: center; 
-        gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); 
-    }
-    .btn-google:hover { background: #357AE8; }
+    /* TELA DE LOGIN / CURIOSIDADE */
+    .auth-container { background: white; padding: 30px 20px; border-radius: 20px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 450px; margin: 40px auto; position: relative; overflow: hidden; }
+    .btn-google { background: #4285F4; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); position: relative; z-index: 5; }
+    .btn-google:hover { background: #357ae8; }
     .btn-google img { width: 24px; background: white; border-radius: 50%; padding: 2px; }
     
-    .chamativa-login {
-        background: linear-gradient(135deg, #fffde7, #fff9c4); border: 2px solid #fbc02d;
-        padding: 18px 15px; border-radius: 12px; margin-bottom: 20px;
-        animation: pulsarChamativa 2s infinite alternate;
+    .curiosity-overlay {
+        background: linear-gradient(to bottom, #fff 0%, #f0f0f0 100%);
+        border: 2px dashed #ccc; border-radius: 12px;
+        padding: 20px; margin-bottom: 25px; text-align: center;
+        position: relative;
     }
-    .chamativa-login p { margin: 0; color: #333; font-size: 14px; line-height: 1.4; }
-    .chamativa-destaque { color: #b71c1c; font-size: 16px; font-weight: bold; display: block; margin-bottom: 8px; }
-    
-    @keyframes pulsarChamativa {
-        0% { box-shadow: 0 2px 10px rgba(251, 192, 45, 0.2); transform: scale(1); }
-        100% { box-shadow: 0 5px 20px rgba(251, 192, 45, 0.6); transform: scale(1.02); border-color: #f57f17; }
+    .curiosity-overlay::after {
+        content: "🔒 Painel Protegido"; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+        background: #b71c1c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;
     }
+    .curiosity-text { font-size: 14px; color: #666; margin-bottom: 15px; }
+    .curiosity-mockup { display: flex; gap: 5px; justify-content: center; opacity: 0.5; filter: blur(2px); pointer-events: none; }
+    .mock-ball { width: 25px; height: 25px; border-radius: 50%; background: #209869; }
+    .mock-ball:nth-child(even) { background: #4a148c; }
 
-    .preview-acessos-box {
-        background: rgba(0, 0, 0, 0.2); border: 2px dashed rgba(255, 255, 255, 0.6);
-        border-radius: 14px; padding: 15px; margin-bottom: 20px;
-        position: relative; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
-    }
-    .preview-dashboard-fake {
-        filter: blur(5px) brightness(0.8); pointer-events: none; user-select: none;
-        display: flex; flex-direction: column; gap: 10px; opacity: 0.85;
-    }
-    .preview-fake-header { display: flex; justify-content: space-between; background: #333; padding: 8px 12px; border-radius: 8px; font-size: 11px; color: #FFDF00; font-weight: bold; }
-    .preview-fake-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
-    .preview-fake-card { background: rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 8px; font-size: 10px; color: #fff; text-align: left; font-family: monospace; }
+    .cabecalho-usuario { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 900px; margin: 0 auto 20px auto; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 12px; box-sizing: border-box; }
+    .user-info { font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+    .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #FFDF00; }
+    .btn-logout { background: #e53935; border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
     
-    .preview-overlay-box {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.75); display: flex; flex-direction: column;
-        justify-content: center; align-items: center; padding: 15px; text-align: center;
-    }
-    .preview-lock-icon { font-size: 32px; margin-bottom: 5px; animation: bounceLock 1.5s infinite alternate; }
-    @keyframes bounceLock { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
-    .preview-overlay-text { color: #FFDF00; font-weight: bold; font-size: 14px; line-height: 1.4; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-    .preview-sub-text { color: #ddd; font-size: 11px; margin-top: 6px; }
-
-    /* CABEÇALHO DO USUÁRIO LOGADO */
-    .cabecalho-usuario { 
-        display: flex; justify-content: space-between; align-items: center; 
-        width: 100%; max-width: 500px; margin: 0 auto 20px auto; 
-        background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 12px; 
-    }
-    @media (min-width: 850px) {
-        .cabecalho-usuario { max-width: 1000px; }
-    }
-    .user-info { font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; text-align: left;}
-    .user-info img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #FFDF00; flex-shrink: 0;}
-    .btn-logout { background: #e53935; border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; flex-shrink: 0;}
-
-    /* ADMIN */
-    .btn-painel-admin { background: linear-gradient(135deg, #FFDF00, #fbc02d); color: #333; border: none; padding: 12px 15px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold; display: none; margin-top: 10px; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s; }
-    .admin-lista { text-align: left; max-height: 50vh; overflow-y: auto; margin-top: 15px; }
-    .admin-item { background: #f9f9f9; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
-    .admin-item-dados { font-size: 13px; color: #555; }
-    .admin-item-nome { font-weight: bold; color: #333; font-size: 15px; display: block;}
-    .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; margin-top: 5px; display: inline-block;}
-    .status-pendente { background: #f57c00; }
-    .status-liberado { background: #209869; }
-    .btn-toggle-status { border: none; padding: 10px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; color: white; flex-grow: 1; text-align: center;}
+    .btn-painel-admin { background: linear-gradient(135deg, #FFDF00, #fbc02d); color: #333; border: none; padding: 12px 15px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold; display: none; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     
-    /* POPUP DE PREMIAÇÃO */
-    .popup-premiacao { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 4px solid #FFDF00; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    @keyframes popupAnim { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-    .popup-icone { font-size: 55px; margin-bottom: 10px; }
-    .popup-titulo { font-size: 24px; color: #b71c1c; font-weight: bold; margin-bottom: 15px; }
-    .popup-texto { font-size: 15px; margin-bottom: 25px; line-height: 1.5; color: #555; }
-    .btn-fechar-popup { background: #209869; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+    .textarea-jogos { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; font-family: monospace; height: 110px; resize: none; margin-bottom: 10px; background: #fdfdfd;}
 </style>
 
 
-<div class="preview-acessos-box" title="Faça login com seu e-mail para desbloquear!">
-    <div class="preview-dashboard-fake">
-        <div class="preview-fake-header">
-            <span>⚡ Painel de Cartões</span>
-            <span>Ativo</span>
-        </div>
-        <div class="preview-fake-grid">
-            <div class="preview-fake-card">Mega-Sena: 05 12 23 34...<br><span style="color:#209869">★ Otimizado (IA)</span></div>
-            <div class="preview-fake-card">Quina: 11 22 33 44 77<br><span style="color:#209869">★ Top Combinação</span></div>
-            <div class="preview-fake-card">Lotofácil: 01 03 05 07...<br><span style="color:#209869">★ Filtro Avançado</span></div>
-            <div class="preview-fake-card">Dupla Sena: 14 28 35...<br><span style="color:#209869">★ Bolão</span></div>
-        </div>
-    </div>
-    <div class="preview-overlay-box">
-        <div class="preview-lock-icon">🔒</div>
-        <div class="preview-overlay-text">Acessos e Painel Protegidos</div>
-        <div class="preview-sub-text">Faça login com seu e-mail Google para liberar a visualização e os geradores!</div>
-    </div>
-</div>
+<h1>🍀 IA - Inteligência do Andrade</h1>
 
-<h2 style="margin-top: 0; color: #005ca9; font-size: 20px;">Acesso Restrito</h2>
-<p style="font-size: 13.5px; color: #666; margin-bottom: 20px;">Entre com sua conta Google para solicitar acesso ao sistema completo.</p>
-<button id="btn-fazer-login" class="btn-google">
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Google">
-    Entrar com o Google
-</button>
-
-
-<div class="cabecalho-usuario">
-    <div class="user-info">
-        <img id="user-foto" src="" alt="Foto">
-        <div>
-            <span id="user-nome" style="display: block;">Nome</span>
-            <span id="user-email" style="font-size: 11px; font-weight: normal; color: #ddd;">email@gmail.com</span>
+<!-- 1. TELA DE LOGIN -->
+<div id="tela-login" class="auth-container">
+    <div class="curiosity-overlay">
+        <h3 style="margin: 0 0 10px 0; color: #333;">🎯 Aumente suas chances!</h3>
+        <div class="curiosity-text">Gere combinações inteligentes, filtre os melhores jogos, confira acertos e acompanhe resultados.</div>
+        <div class="curiosity-mockup">
+            <div class="mock-ball"></div><div class="mock-ball"></div><div class="mock-ball"></div>
+            <div class="mock-ball"></div><div class="mock-ball"></div>
         </div>
     </div>
-    <button id="btn-logout-app" class="btn-logout">Sair</button>
-</div>
 
-<!-- Container Duas Colunas no Desktop / Uma no Mobile -->
-<div class="app-container" id="container-app-interno">
+    <h2 style="margin-top: 0; color: #005ca9;">Acesso Restrito</h2>
+    <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Faça login com sua conta Google para solicitar acesso.</p>
     
-    <!-- Coluna Esquerda -->
-    <div class="clover-side">
-        <img src="trevo.png" alt="Trevo do Andrade" class="clover-img">
-        <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
+    <!-- CORREÇÃO: Usando onclick direto com a função global -->
+    <button id="btn-fazer-login" class="btn-google" onclick="window.fazerLogin()">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Google">
+        Entrar com o Google
+    </button>
+</div>
+
+<!-- 2. TELA PENDENTE -->
+<div id="tela-pendente" class="auth-container" style="display: none;">
+    <div style="font-size: 50px; margin-bottom: 10px;">⏳</div>
+    <h2 style="margin-top: 0; color: #f57c00;">Acesso Pendente</h2>
+    <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Seu cadastro foi recebido! Aguarde a liberação do administrador para utilizar a plataforma.</p>
+    <button id="btn-logout-pendente" class="btn-logout" style="width: 100%; padding: 12px; font-size: 14px;" onclick="window.fazerLogout()">Sair / Trocar Conta</button>
+</div>
+
+<!-- 3. TELA PRINCIPAL (APP) -->
+<div id="tela-principal" style="display: none; width: 100%;">
+    
+    <div class="cabecalho-usuario">
+        <div class="user-info">
+            <img id="user-foto" src="" alt="Foto">
+            <div>
+                <span id="user-nome" style="display: block;">Nome</span>
+                <span id="user-email" style="font-size: 11px; font-weight: normal; color: #ddd;">email@gmail.com</span>
+            </div>
+        </div>
+        <button id="btn-logout-app" class="btn-logout" onclick="window.fazerLogout()">Sair</button>
     </div>
 
-    <!-- Coluna Direita -->
-    <div class="conteudo-principal">
-        
-        <div class="painel-container">
-            <button id="btn-painel-admin" class="btn-painel-admin" onclick="abrirAdminModal()">⚙️ PAINEL DE CONTROLE (MASTER)</button>
-            <hr id="hr-admin" style="border-color: rgba(255,255,255,0.2); margin: 15px 0; display: none;">
+    <div class="app-container">
+        <!-- Lado Esquerdo / Topo -->
+        <div class="clover-side">
+            <img src="trevo.png" alt="Trevo do Andrade" class="clover-img" onerror="this.style.display='none'">
+            <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
+            <button id="btn-painel-admin" class="btn-painel-admin" onclick="abrirAdminModal()" style="margin-top: 15px;">⚙️ PAINEL MASTER</button>
+        </div>
 
-            <button class="btn btn-quina" title="Valor da aposta: R$ 3,00" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
-            <button class="btn btn-mega" title="Valor da aposta: R$ 6,00" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
-            <button class="btn btn-milionaria" title="Valor da aposta: R$ 6,00" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
-            <button class="btn btn-lotomania" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
-            <button class="btn btn-timemania" title="Valor da aposta: R$ 3,50" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
-            <button class="btn btn-dupla" title="Valor da aposta: R$ 3,00" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
-            <button class="btn btn-lotofacil" title="Valor da aposta: R$ 3,50" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
+        <!-- Lado Direito / Base -->
+        <div class="painel-container">
+            <button class="btn btn-quina" onclick="window.iniciar('Quina', 80, 5, 15)">QUINA</button>
+            <button class="btn btn-mega" onclick="window.iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
+            <button class="btn btn-milionaria" onclick="window.iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
+            <button class="btn btn-lotomania" onclick="window.iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
+            <button class="btn btn-timemania" onclick="window.iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
+            <button class="btn btn-dupla" onclick="window.iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
+            <button class="btn btn-lotofacil" onclick="window.iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
             
             <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;">
             
-            <button class="btn btn-multiplo" onclick="abrirModalMultiplo()">GERAR MÚLTIPLO</button>
-            <button class="btn btn-conf" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
-            <button class="btn btn-acao" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
+            <button class="btn btn-multiplo" onclick="window.abrirModalMultiplo()">GERAR MÚLTIPLO</button>
+            <button class="btn btn-conf" onclick="window.abrirModalConferencia()">CONFERIR JOGOS</button>
+            <button class="btn btn-acao" onclick="window.abrirModal()">GERAR COMBINAÇÕES</button>
+        </div>
+    </div>
+</div> <!-- Fim Tela Principal -->
+
+<!-- Modal Admin (Oculto) -->
+<div id="modal-admin" class="modal-overlay">
+    <div class="modal-box">
+        <span class="fechar-modal" onclick="window.fecharModal('modal-admin')">&times;</span>
+        <h2 style="margin-top:0; color:#1a1a1a;">Gerenciar Acessos</h2>
+        <div id="lista-usuarios-admin" style="text-align: left; max-height: 400px; overflow-y: auto;"></div>
+    </div>
+</div>
+
+<!-- Modal Combinações -->
+<div id="modal-combinacoes" class="modal-overlay">
+    <div class="modal-box">
+        <span class="fechar-modal" onclick="window.fecharModal('modal-combinacoes')">&times;</span>
+        <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerar Combinações</h2>
+        
+        <div class="opcoes-loteria-grid">
+            <button id="btn-mega-modal" class="btn-loteria-grid ativa" style="background:#209869" onclick="window.setLoteriaModal('MegaSena')">MEGA</button>
+            <button id="btn-quina-modal" class="btn-loteria-grid" style="background:#4a148c" onclick="window.setLoteriaModal('Quina')">QUINA</button>
+            <button id="btn-milionaria-modal" class="btn-loteria-grid" style="background:#311b92" onclick="window.setLoteriaModal('Milionaria')">+MIL</button>
+            <button id="btn-lotofacil-modal" class="btn-loteria-grid" style="background:#7b1fa2" onclick="window.setLoteriaModal('Lotofacil')">FÁCIL</button>
+        </div>
+        
+        <div style="font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold;">Dezenas Selecionadas: <span id="contador-num" style="color:#e53935; font-size: 16px;">0</span></div>
+        
+        <div class="painel-aleatorio">
+            <span style="font-size: 14px; font-weight: bold; color: #334155;">Aleatório:</span>
+            <input type="number" id="qtd-aleatoria" class="input-aleatorio" style="width: 70px; text-align: center;" placeholder="Qtd">
+            <button class="btn-acao-p" style="background: #2563eb;" onclick="window.selecionarAleatorioModal()">🎲</button>
+            <button class="btn-acao-p" style="background: #ef4444;" onclick="window.limparGridModal()">🗑️</button>
+        </div>
+        
+        <div id="grid-numeros-modal" class="grid-numeros"></div>
+
+        <div class="painel-aleatorio" style="background: #fff3e0; border-color: #ffb74d; margin-top: 10px;">
+            <span style="font-size: 13px; font-weight: bold; color: #e65100;">Qtd. Máx. Melhores Cartões:</span>
+            <input type="number" id="qtd-limite-cartoes" class="input-aleatorio" style="width: 80px; text-align: center;" placeholder="Ex: 10">
+            <p style="font-size: 11px; color: #d84315; width: 100%; margin: 5px 0 0 0;">O sistema filtrará as combinações mais equilibradas (Pares/Ímpares).</p>
+        </div>
+        
+        <button class="btn btn-multiplo" style="margin-top:15px;" onclick="window.executarCombinacoes()">GERAR JOGOS AGORA</button>
+    </div>
+</div>
+
+<!-- Tela Resultado (Oculta) -->
+<div id="tela-resultado">
+    <h2 id="titulo-res">Resultado</h2>
+    <div id="conteudo-res"></div>
+    <hr>
+    <h3 style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
+    <h3 style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
+    
+    <button id="btn-copiar" class="btn-copiar" onclick="window.copiarJogos()">📋 Copiar Jogos</button>
+    <button id="btn-voltar" class="btn-voltar" onclick="window.voltarTelaPrincipal()">Voltar</button>
+</div>
+
+<!-- SCRIPTS MÓDULO ÚNICO SEGURO -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBkjtBMGNSQ9WMJajgGHDar-vY5xnClzR0",
+        authDomain: "ia-andrade-loterias.firebaseapp.com",
+        projectId: "ia-andrade-loterias",
+        storageBucket: "ia-andrade-loterias.firebasestorage.app",
+        messagingSenderId: "558801870322",
+        appId: "1:558801870322:web:9271c9147f3c7a8f709f6b"
+    };
+    const MASTER_EMAIL = "rss.andrade@gmail.com"; 
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    const telaLogin = document.getElementById('tela-login');
+    const telaPendente = document.getElementById('tela-pendente');
+    const telaPrincipal = document.getElementById('tela-principal');
+    const btnAdmin = document.getElementById('btn-painel-admin');
+
+    // CORREÇÃO: Limpa a tela completamente antes de exibir a próxima fase
+    function ocultarTodasTelas() {
+        telaLogin.style.display = 'none';
+        telaPendente.style.display = 'none';
+        telaPrincipal.style.display = 'none';
+    }
+
+    // LÓGICA DE AUTENTICAÇÃO
+    onAuthStateChanged(auth, async (user) => {
+        ocultarTodasTelas();
+        if (user) {
+            document.getElementById('user-nome').innerText = user.displayName;
+            document.getElementById('user-email').innerText = user.email;
+            document.getElementById('user-foto').src = user.photoURL;
+
+            const userRef = doc(db, "usuarios", user.uid);
+            const userSnap = await getDoc(userRef);
+
+            if (user.email === MASTER_EMAIL) {
+                if (!userSnap.exists()) await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'master' });
+                btnAdmin.style.display = 'block';
+                telaPrincipal.style.display = 'block';
+            } else {
+                if (userSnap.exists()) {
+                    if (userSnap.data().status === 'liberado') telaPrincipal.style.display = 'block';
+                    else telaPendente.style.display = 'block';
+                } else {
+                    await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'pendente' });
+                    telaPendente.style.display = 'block';
+                }
+            }
+        } else {
+            telaLogin.style.display = 'block';
+        }
+    });
+
+    // CORREÇÃO: Função global robusta para lidar com falhas de ambiente
+    window.fazerLogin = async function() {
+        try {
+            // Se estiver rodando como arquivo local (file://), o Google Auth será bloqueado
+            if (window.location.protocol === 'file:') {
+                alert("⚠️ ALERTA: O login do Google não funciona quando o arquivo é aberto diretamente do computador (file://).\n\nVocê precisa hospedar o site (ex: Firebase Hosting, GitHub Pages) ou usar um Servidor Local (ex: Live Server no VSCode).");
+                return;
+            }
             
-            <p style="font-size: 13px; color: rgba(255,255,255,0.9); line-height: 1.5; margin-top: 15px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
-                <b>Como funciona?</b> O sistema cruza os números para gerar <b>as melhores combinações possíveis</b> e confere os acertos buscando no banco oficial da Caixa.
-            </p>
-        </div>
+            // Tenta Popup (padrão)
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            console.warn("Popup falhou, verificando erro:", error);
+            // Tratamento específico para PWA / Mobile onde pop-ups são bloqueados
+            if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+                if (confirm("O sistema bloqueou a janela de login (comum no app instalado). Deseja tentar o login via redirecionamento de tela?")) {
+                    signInWithRedirect(auth, provider);
+                }
+            } else {
+                alert("Erro ao tentar autenticar: " + error.message);
+            }
+        }
+    };
 
-        <div class="painel-resultados-wrapper" id="secao-resultados">
-            <h2 class="titulo-resultados">Resultados</h2>
-            <div class="select-container">
-                <select id="select-loteria-res" class="select-loteria" onchange="carregarVisorResultado(this.value)">
-                    <option value="" disabled selected>🔍 Selecione a loteria...</option>
-                    <option value="MegaSena">Mega-Sena</option>
-                    <option value="Quina">Quina</option>
-                    <option value="Milionaria">+Milionária</option>
-                    <option value="Lotomania">Lotomania</option>
-                    <option value="Timemania">Timemania</option>
-                    <option value="DuplaSena">Dupla Sena</option>
-                    <option value="DiaDeSorte">Dia de Sorte</option>
-                    <option value="Lotofacil">Lotofácil</option>
-                </select>
-            </div>
+    window.fazerLogout = function() {
+        signOut(auth).then(() => {
+            ocultarTodasTelas();
+            telaLogin.style.display = 'block';
+        });
+    };
 
-            <div class="visor-resultados">
-                <div id="visor-loading" class="loading-res">Selecione uma loteria no menu acima para carregar o último resultado e rateio.</div>
-                <div id="visor-conteudo" style="display: none; width: 100%;">
-                    <div class="visor-header">
-                        <div>
-                            <h3 id="visor-titulo" class="titulo-loteria-res">Nome</h3>
-                            <div id="visor-info" class="info-concurso-res">Resultado Concurso -- (--/--/----)</div>
-                        </div>
-                        <button class="btn-recolher" onclick="recolherVisor()" title="Recolher / Fechar">✕</button>
-                    </div>
-                    <div class="visor-corpo">
-                        <div id="visor-bolinhas" class="bolinhas-res-container"></div>
-                       <div class="prox-premio-res">
-                            Estimativa de prêmio do próximo concurso<br>
-                            <span id="visor-data-prox" style="font-size: 11px; color:#888;">--/--/----</span>
-                            <div id="visor-valor-prox" class="prox-premio-valor">R$ --</div>
-                        </div>
-                        <div>
-                            <div class="titulo-premiacao">Premiação</div>
-                            <ul id="visor-lista-premios" class="lista-premiacao"></ul>
-                        </div>
-                      </div>
-                </div>
-            </div>
-        </div>
-    </div> <!-- Fim Coluna Direita -->
-</div>
+    // EXPORTANDO DEMAIS FUNÇÕES GLOBAIS
+    window.fecharModal = function(id) { document.getElementById(id).style.display = 'none'; }
+    window.abrirModal = function() { document.getElementById('modal-combinacoes').style.display = 'flex'; window.setLoteriaModal('MegaSena'); }
+    window.voltarTelaPrincipal = function() { 
+        document.getElementById('tela-resultado').style.display = 'none'; 
+        document.getElementById('tela-principal').style.display = 'block'; 
+    }
 
+    const configLoterias = {
+        'MegaSena': { idGen: 'btn-mega-modal', cor: '#209869', nome: 'Mega-Sena', max: 60, minReq: 6, precoBase: 6.00 },
+        'Quina': { idGen: 'btn-quina-modal', cor: '#4a148c', nome: 'Quina', max: 80, minReq: 5, precoBase: 3.00 },
+        'Milionaria': { idGen: 'btn-milionaria-modal', cor: '#311b92', nome: '+Milionária', max: 50, minReq: 6, precoBase: 6.00 },
+        'Lotofacil': { idGen: 'btn-lotofacil-modal', cor: '#7b1fa2', nome: 'Lotofácil', max: 25, minReq: 15, precoBase: 3.50 }
+    };
 
-<button id="btn-copiar" class="btn-copiar" onclick="copiarJogos()">📋 Copiar Jogos</button>
-<button id="btn-zap" class="btn-zap" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
-<button id="btn-caixa" class="btn-caixa" onclick="abrirCaixa()">🎰 Jogar no Site da Caixa</button>
-<button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
+    let loteriaAtual = 'MegaSena';
+    let numerosEscolhidos = [];
 
+    window.setLoteriaModal = function(tipo) {
+        loteriaAtual = tipo;
+        let conf = configLoterias[tipo];
+        
+        document.querySelectorAll('.btn-loteria-grid').forEach(b => b.classList.remove('ativa'));
+        if(document.getElementById(conf.idGen)) document.getElementById(conf.idGen).classList.add('ativa');
+        
+        let grid = document.getElementById('grid-numeros-modal');
+        grid.innerHTML = '';
+        numerosEscolhidos = [];
+        window.atualizarContador();
 
-    <div class="opcoes-loteria-grid">
-        <button id="btn-mega-modal" class="btn-loteria-grid ativa" style="background:#209869" onclick="setLoteriaModal('MegaSena')">MEGA SENA</button>
-        <button id="btn-quina-modal" class="btn-loteria-grid" style="background:#4a148c" onclick="setLoteriaModal('Quina')">QUINA</button>
-        <button id="btn-milionaria-modal" class="btn-loteria-grid" style="background:#311b92" onclick="setLoteriaModal('Milionaria')">MILIONÁRIA</button>
-        <button id="btn-lotomania-modal" class="btn-loteria-grid" style="background:#ef6c00" onclick="setLoteriaModal('Lotomania')">LOTOMANIA</button>
-        <button id="btn-timemania-modal" class="btn-loteria-grid" style="background:#fbc02d; color:black;" onclick="setLoteriaModal('Timemania')">TIMEMANIA</button>
-        <button id="btn-dupla-modal" class="btn-loteria-grid" style="background:#c62828" onclick="setLoteriaModal('DuplaSena')">DUPLA SENA</button>
-       <button id="btn-lotofacil-modal" class="btn-loteria-grid" style="background:#7b1fa2" onclick="setLoteriaModal('Lotofacil')">LOTOFÁCIL</button>
-    </div>
-    
-    <div class="contador-info" style="margin-top: 10px;">Dezenas Selecionadas: <span id="contador-num" style="color:#e53935; font-size: 16px;">0</span></div>
-    
-    <div class="painel-aleatorio">
-        <span style="font-size: 14px; font-weight: bold; color: #334155; flex-shrink: 0;">Aleatório:</span>
-        <input type="number" id="qtd-aleatoria" class="input-aleatorio" style="width: 70px; text-align: center;" placeholder="Qtd">
-        <button class="btn-acao-p" style="background: #2563eb;" onclick="selecionarAleatorioModal()">🎲 Sortear</button>
-        <button class="btn-acao-p" style="background: #ef4444;" onclick="limparGridModal()">🗑️ Limpar</button>
-    </div>
+        for(let i = 1; i <= conf.max; i++) {
+            let btn = document.createElement('div');
+            btn.className = 'num-btn';
+            btn.innerText = i.toString().padStart(2, '0');
+            btn.onclick = function() {
+                let idx = numerosEscolhidos.indexOf(i);
+                if (idx > -1) { numerosEscolhidos.splice(idx, 1); btn.classList.remove('ativo'); btn.style.background = '#fff'; }
+                else { numerosEscolhidos.push(i); btn.classList.add('ativo'); btn.style.background = conf.cor; }
+                window.atualizarContador();
+            };
+            grid.appendChild(btn);
+        }
+    };
 
-    <div class="painel-aleatorio" style="background: #eff6ff; border-color: #bfdbfe; margin-top: -8px;">
-        <span style="font-size: 14px; font-weight: bold; color: #1e40af;" title="Selecione apenas as melhores combinações rankeadas">Máx. de Melhores Cartões:</span>
-        <input type="number" id="input-limite-cartoes" class="input-aleatorio" style="width: 100px; text-align: center;" placeholder="Qtd">
-    </div>
-    
-    <div id="grid-numeros-modal" class="grid-numeros"></div>
-    
-    <div id="container-time-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
-        <div class="contador-info" style="color:#b71c1c; margin-bottom: 8px;">⚽ Time do Coração:</div>
-        <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
-            <input type="text" id="input-time-coracao" class="input-aleatorio" style="flex: 1; min-width: 150px; text-align: center; font-size: 14px;" placeholder="Em branco p/ sortear">
-            <button class="btn-acao-p" style="background: #2563eb; flex-grow: 0;" onclick="sortearTimeModal()">🎲 Único</button>
-        </div>
-    </div>
+    window.atualizarContador = function() {
+        let span = document.getElementById('contador-num');
+        span.innerText = numerosEscolhidos.length;
+        span.style.color = (numerosEscolhidos.length >= configLoterias[loteriaAtual].minReq) ? '#209869' : '#e53935';
+    };
 
-    <div id="container-trevos-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
-        <div class="contador-info" style="color:#311b92;">🍀 Trevos: <span id="contador-trevos" style="color:#e53935; font-size: 16px;">0</span></div>
-        <div id="grid-trevos-modal" class="grid-numeros" style="display: flex; justify-content: center; gap: 10px; min-height: auto; overflow: hidden; padding-bottom: 0;"></div>
-    </div>
-    
-    <button class="btn btn-multiplo" style="margin-top:15px; margin-bottom: 0;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
-</div>
+    window.limparGridModal = function() {
+        window.setLoteriaModal(loteriaAtual);
+    };
 
+    window.selecionarAleatorioModal = function() {
+        let qtd = parseInt(document.getElementById('qtd-aleatoria').value);
+        let conf = configLoterias[loteriaAtual];
+        if(isNaN(qtd) || qtd < conf.minReq || qtd > conf.max) { alert("Quantidade inválida."); return; }
+        
+        window.limparGridModal();
+        while(numerosEscolhidos.length < qtd) {
+            let n = Math.floor(Math.random() * conf.max) + 1;
+            if(!numerosEscolhidos.includes(n)) numerosEscolhidos.push(n);
+        }
+        
+        let botoes = document.getElementById('grid-numeros-modal').children;
+        for(let i=0; i<botoes.length; i++) {
+            if(numerosEscolhidos.includes(i+1)) {
+                botoes[i].classList.add('ativo');
+                botoes[i].style.background = conf.cor;
+            }
+        }
+        window.atualizarContador();
+    };
 
-    <div class="opcoes-loteria-grid">
-        <button id="btn-mega-conf" class="btn-loteria-grid ativa" style="background:#209869" onclick="setLoteriaConferencia('MegaSena')">MEGA SENA</button>
-        <button id="btn-quina-conf" class="btn-loteria-grid" style="background:#4a148c" onclick="setLoteriaConferencia('Quina')">QUINA</button>
-        <button id="btn-milionaria-conf" class="btn-loteria-grid" style="background:#311b92" onclick="setLoteriaConferencia('Milionaria')">MILIONÁRIA</button>
-        <button id="btn-lotomania-conf" class="btn-loteria-grid" style="background:#ef6c00" onclick="setLoteriaConferencia('Lotomania')">LOTOMANIA</button>
-        <button id="btn-timemania-conf" class="btn-loteria-grid" style="background:#fbc02d; color:black;" onclick="setLoteriaConferencia('Timemania')">TIMEMANIA</button>
-        <button id="btn-dupla-conf" class="btn-loteria-grid" style="background:#c62828" onclick="setLoteriaConferencia('DuplaSena')">DUPLA SENA</button>
-        <button id="btn-lotofacil-conf" class="btn-loteria-grid" style="background:#7b1fa2" onclick="setLoteriaConferencia('Lotofacil')">LOTOFÁCIL</button>
-    </div>
-    
-    <div class="busca-concurso-container">
-        <span>Concurso</span>
-        <input type="number" id="input-busca-concurso" onchange="buscarConcursoEspecifico()" onkeyup="if(event.key === 'Enter') buscarConcursoEspecifico()" placeholder="Nº">
-        <span class="nav-concurso disabled" id="btn-ant-concurso" onclick="navegarConcurso(-1)">&lt; Ant</span>
-        <span class="nav-concurso disabled" id="btn-prox-concurso" onclick="navegarConcurso(1)">Próx &gt;</span>
-    </div>
-    
-    <div id="info-api" class="info-api">Buscando resultado oficial...</div>
-    
-    <div id="painel-premium" class="painel-premium">
-        <div id="bolinhas-container" class="bolinhas-container"></div>
-        <div class="premio-detalhes">
-            <div id="label-premio-texto" class="premio-texto"></div>
-            <div id="valor-estimado" class="premio-valor">R$ --</div>
-        </div>
-    </div>
-    
-    <p style="font-weight: bold; margin-bottom: 8px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos aqui:</p>
-    <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Cole (ex: 01 02 03 04 05 06 | Trevos: 01 02 | Time: Flamengo)"></textarea>
-    
-    <button class="btn btn-conf" style="margin-top:5px; margin-bottom:0;" onclick="executarConferencia()">REALIZAR CONFERÊNCIA</button>
-</div>
+    function gerarCombinacoesMatematica(arr, k) {
+        if (k > arr.length || k <= 0) return [];
+        if (k === arr.length) return [arr];
+        if (k === 1) return arr.map(n => [n]);
+        let combs = [];
+        for (let i = 0; i < arr.length - k + 1; i++) {
+            let head = arr.slice(i, i + 1);
+            let tailcombs = gerarCombinacoesMatematica(arr.slice(i + 1), k - 1);
+            for (let j = 0; j < tailcombs.length; j++) combs.push(head.concat(tailcombs[j]));
+        }
+        return combs;
+    }
 
+    function pontuarCombinacao(comb) {
+        let pares = comb.filter(n => n % 2 === 0).length;
+        let impares = comb.length - pares;
+        return Math.abs(pares - impares); 
+    }
 
-    <div id="lista-multipla" style="text-align: left; max-height: 40vh; overflow-y: auto; margin-bottom: 15px; border: 1px solid #eee; border-radius: 8px; padding: 5px;">
-        <!-- Preenchido via JS -->
-    </div>
-    
-    <button class="btn btn-multiplo" style="margin-top:5px; margin-bottom:0;" onclick="executarGeradorMultiplo()">GERAR JOGOS</button>
-</div>
+    window.executarCombinacoes = function() {
+        let conf = configLoterias[loteriaAtual];
+        let k = conf.minReq;
+        
+        if (numerosEscolhidos.length < k) { alert(`Selecione pelo menos ${k} números.`); return; }
+        
+        let todasCombs = gerarCombinacoesMatematica(numerosEscolhidos.sort((a,b)=>a-b), k);
+        
+        let limiteInput = document.getElementById('qtd-limite-cartoes').value;
+        let limite = parseInt(limiteInput);
+        
+        if (!isNaN(limite) && limite > 0 && limite < todasCombs.length) {
+            todasCombs.sort((a, b) => pontuarCombinacao(a) - pontuarCombinacao(b));
+            todasCombs = todasCombs.slice(0, limite);
+        } else if (todasCombs.length > 5000) {
+            if(!confirm(`Isso vai gerar ${todasCombs.length} cartões. Deseja continuar?`)) return;
+        }
+
+        let html = "";
+        let custo = 0;
+        let textClipboard = "";
+
+        todasCombs.forEach((jogo, i) => {
+            let str = jogo.map(n => n.toString().padStart(2, '0')).join(' - ');
+            html += `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${str}</span></div>`;
+            textClipboard += `Jogo ${i+1}: ${str}\n`;
+            custo += conf.precoBase;
+        });
+
+        document.getElementById('titulo-res').innerText = `Combinações: ${conf.nome}`;
+        document.getElementById('conteudo-res').innerHTML = html;
+        document.getElementById('total-cartoes').innerText = todasCombs.length;
+        document.getElementById('total-geral').innerText = "R$ " + custo.toFixed(2).replace('.', ',');
+        
+        window.textoCopiarGlobal = textClipboard;
+
+        window.fecharModal('modal-combinacoes');
+        document.getElementById('tela-principal').style.display = 'none';
+        document.getElementById('tela-resultado').style.display = 'block';
+    };
+
+    window.copiarJogos = function() {
+        navigator.clipboard.writeText(window.textoCopiarGlobal).then(() => {
+            alert("Copiado com sucesso!");
+        });
+    };
+</script>
