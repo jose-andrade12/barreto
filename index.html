@@ -1,499 +1,1630 @@
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#005ca9">
-<link rel="apple-touch-icon" href="trevo.png">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>IA - Inteligência do Andrade</title>
+  
+  <!-- Configurações do Aplicativo (PWA) -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#005ca9">
+  <link rel="apple-touch-icon" href="trevo.png">
+  
+  <style>
+      /* Reset Global Responsivo */
+      *, *::before, *::after {
+          box-sizing: border-box;
+      }
 
-<style>
-    /* RESET E BOX-SIZING PARA RESPONSIVIDADE */
-    * { box-sizing: border-box; }
-    
-    body { 
-        font-family: 'Segoe UI', sans-serif; 
-        background: linear-gradient(135deg, #FFDF00 0%, #D4AF37 50%, #996515 100%); 
-        color: white; 
-        text-align: center; 
-        margin: 0; 
-        padding: 20px;
-        min-height: 100vh;
-    }
-    
-    h1 { font-size: clamp(20px, 5vw, 26px); text-shadow: 2px 2px 5px rgba(0,0,0,0.7); margin-bottom: 20px; }
+      body { 
+          font-family: 'Segoe UI', sans-serif; 
+          background: linear-gradient(135deg, #FFDF00 0%, #D4AF37 50%, #996515 100%); 
+          color: white; 
+          text-align: center; 
+          margin: 0; 
+          padding: 20px;
+          min-height: 100vh;
+          overflow-x: hidden;
+      }
 
-    /* PREVINE ZOOM NO IOS */
-    input, select, textarea { font-size: 16px !important; }
+      h1 { font-size: 26px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); margin-bottom: 20px; }
 
-    /* LAYOUT ADAPTÁVEL (CELULAR -> PC) */
-    .app-container {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        max-width: 100%;
-        margin: 0 auto;
-    }
+      .app-container {
+          width: 100%;
+          max-width: 450px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 30px;
+          transition: max-width 0.3s ease;
+      }
 
-    .clover-side { width: 100%; max-width: 280px; margin: 0 auto; }
-    .painel-container { width: 100%; }
+      @media (min-width: 768px) {
+          .app-container {
+              max-width: 700px;
+          }
+          .painel-container {
+              padding: 35px;
+          }
+      }
 
-    @media (min-width: 768px) {
-        .app-container {
-            flex-direction: row;
-            align-items: flex-start;
-            max-width: 900px;
-            gap: 40px;
-        }
-        .clover-side { position: sticky; top: 20px; flex-shrink: 0; }
-        .painel-container { flex: 1; padding: 30px; background: rgba(0,0,0,0.1); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-    }
-    
-    @keyframes brilharTrevo {
-        0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px #FFDF00; transform: scale(1); }
-        100% { box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 50px #FFF; transform: scale(1.04); }
-    }
+      .clover-side { width: 100%; max-width: 280px; }
 
-    .clover-img { width: 100%; height: auto; border-radius: 20px; animation: brilharTrevo 1.5s infinite alternate ease-in-out; }
-    
-    /* BOTÕES PRINCIPAIS */
-    .btn { 
-        display: block; width: 100%; padding: 16px; margin: 12px 0; color: white; 
-        font-size: clamp(14px, 4vw, 17px); font-weight: 800; letter-spacing: 1px;
-        border: none; border-radius: 12px; cursor: pointer; 
-        box-shadow: 0 5px 12px rgba(0,0,0,0.25); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        text-transform: uppercase;
-    }
-    .btn:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 8px 20px rgba(0,0,0,0.35); filter: brightness(1.1); }
-    .btn:active { transform: translateY(1px); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+      @keyframes brilharTrevo {
+          0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px #FFDF00; transform: scale(1); }
+          100% { box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 50px #FFF; transform: scale(1.04); }
+      }
 
-    .btn-quina { background: linear-gradient(135deg, #4a148c, #6a1b9a); }
-    .btn-mega { background: linear-gradient(135deg, #209869, #26a673); }
-    .btn-milionaria { background: linear-gradient(135deg, #311b92, #4527a0); }
-    .btn-lotomania { background: linear-gradient(135deg, #ef6c00, #f57c00); }
-    .btn-timemania { background: linear-gradient(135deg, #fbc02d, #fdd835); color: #222 !important; text-shadow: 1px 1px 0px rgba(255,255,255,0.4); }
-    .btn-dupla { background: linear-gradient(135deg, #c62828, #d32f2f); }
-    .btn-lotofacil { background: linear-gradient(135deg, #7b1fa2, #8e24aa); }
-    
-    .btn-multiplo { background: linear-gradient(135deg, #004d40, #00695c); border: 2px solid #26a69a; }
-    .btn-acao { background: linear-gradient(135deg, #212121, #424242); border: 2px solid #FFDF00; color: #FFDF00; }
-    .btn-conf { background: linear-gradient(135deg, #b71c1c, #c62828); border: 2px solid #ffcdd2; }
-    .btn-install { background: #1a1a1a; border: 2px solid #25D366; color: #25D366; display: none; margin-top: 20px; box-shadow: 0 0 15px rgba(37, 211, 102, 0.5); }
-    
-    /* TELA RESULTADO */
-    #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; width: 100%; max-width: 550px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-    .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px;}
-    .numero { color: #555; font-weight: bold; padding: 2px 4px; border: 1px solid #eee; border-radius: 4px; background: #fafafa;}
-    .numero-acerto { color: white; font-weight: bold; border-radius: 5px; padding: 2px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); } 
+      .clover-img { width: 100%; height: auto; border-radius: 20px; animation: brilharTrevo 1.5s infinite alternate ease-in-out; }
 
-    .btn-zap, .btn-copiar, .btn-caixa, .btn-voltar { color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-    .btn-copiar { background: #f57c00; margin-top: 20px; }
-    .btn-zap { background: #25D366; }
-    .btn-caixa { background: #005CA9; }
-    .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; }
+      /* -------------------------------------------
+             BOTÕES MODERNIZADOS (MENU PRINCIPAL)
+      ------------------------------------------- */
+      .btn { 
+          display: block; 
+          width: 100%; 
+          padding: 16px; 
+          margin: 12px 0; 
+          color: white; 
+          font-size: 17px; 
+          font-weight: 800; 
+          letter-spacing: 1px;
+          border: none; 
+          border-radius: 12px; 
+          cursor: pointer; 
+          box-shadow: 0 5px 12px rgba(0,0,0,0.25); 
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          text-transform: uppercase;
+      }
 
-    /* MODAIS RESPONSIVOS */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; }
-    .modal-box { background: white; color: black; padding: 20px; border-radius: 15px; width: 100%; max-width: 480px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.7); display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto; }
-    .fechar-modal { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; font-weight: bold; color: #888; z-index: 10; }
-    
-    .opcoes-loteria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-bottom: 12px; margin-top: 5px; }
-    .btn-loteria-grid { padding: 10px 4px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: clamp(11px, 3vw, 13px); opacity: 0.4; transition: 0.3s; }
-    .btn-loteria-grid.ativa { opacity: 1; border: 2px solid #FFDF00; transform: scale(1.03); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-    
-    .grid-numeros { display: grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 6px; max-height: 250px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; }
-    .num-btn { background: #fff; border: 2px solid #ccc; border-radius: 50%; width: 36px; height: 36px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; margin: 0 auto; }
-    .num-btn.ativo { color: white; transform: scale(1.15); box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-color: transparent; }
-    
-    .painel-aleatorio { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px; background: #f5f7fa; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
-    .input-aleatorio { padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; font-size: 16px; color: #0f172a; outline: none; }
-    .btn-acao-p { color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+      .btn:hover { 
+          transform: translateY(-3px) scale(1.01); 
+          box-shadow: 0 8px 20px rgba(0,0,0,0.35); 
+          filter: brightness(1.1);
+      }
 
-    /* TELA DE LOGIN / CURIOSIDADE */
-    .auth-container { background: white; padding: 30px 20px; border-radius: 20px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 450px; margin: 40px auto; position: relative; overflow: hidden; }
-    .btn-google { background: #4285F4; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); position: relative; z-index: 5; }
-    .btn-google:hover { background: #357ae8; }
-    .btn-google img { width: 24px; background: white; border-radius: 50%; padding: 2px; }
-    
-    .curiosity-overlay {
-        background: linear-gradient(to bottom, #fff 0%, #f0f0f0 100%);
-        border: 2px dashed #ccc; border-radius: 12px;
-        padding: 20px; margin-bottom: 25px; text-align: center;
-        position: relative;
-    }
-    .curiosity-overlay::after {
-        content: "🔒 Painel Protegido"; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-        background: #b71c1c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;
-    }
-    .curiosity-text { font-size: 14px; color: #666; margin-bottom: 15px; }
-    .curiosity-mockup { display: flex; gap: 5px; justify-content: center; opacity: 0.5; filter: blur(2px); pointer-events: none; }
-    .mock-ball { width: 25px; height: 25px; border-radius: 50%; background: #209869; }
-    .mock-ball:nth-child(even) { background: #4a148c; }
+      .btn:active { 
+          transform: translateY(1px); 
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
+      }
 
-    .cabecalho-usuario { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 900px; margin: 0 auto 20px auto; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 12px; box-sizing: border-box; }
-    .user-info { font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
-    .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #FFDF00; }
-    .btn-logout { background: #e53935; border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
-    
-    .btn-painel-admin { background: linear-gradient(135deg, #FFDF00, #fbc02d); color: #333; border: none; padding: 12px 15px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold; display: none; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-    
-    .textarea-jogos { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; font-family: monospace; height: 110px; resize: none; margin-bottom: 10px; background: #fdfdfd;}
-</style>
+      /* Gradientes Modernos para Loterias */
+      .btn-quina { background: linear-gradient(135deg, #4a148c, #6a1b9a); }
+      .btn-mega { background: linear-gradient(135deg, #209869, #26a673); }
+      .btn-milionaria { background: linear-gradient(135deg, #311b92, #4527a0); }
+      .btn-lotomania { background: linear-gradient(135deg, #ef6c00, #f57c00); }
+      .btn-timemania { background: linear-gradient(135deg, #fbc02d, #fdd835); color: #222 !important; text-shadow: 1px 1px 0px rgba(255,255,255,0.4); }
+      .btn-dupla { background: linear-gradient(135deg, #c62828, #d32f2f); }
+      .btn-lotofacil { background: linear-gradient(135deg, #7b1fa2, #8e24aa); }
 
+      /* Gradientes para Botões de Ação */
+      .btn-multiplo { background: linear-gradient(135deg, #004d40, #00695c); border: 2px solid #26a69a; }
+      .btn-acao { background: linear-gradient(135deg, #212121, #424242); border: 2px solid #FFDF00; color: #FFDF00; }
+      .btn-conf { background: linear-gradient(135deg, #b71c1c, #c62828); border: 2px solid #ffcdd2; }
+      .btn-install { background: #1a1a1a; border: 2px solid #25D366; color: #25D366; display: none; margin-top: 20px; box-shadow: 0 0 15px rgba(37, 211, 102, 0.5); }
 
-<h1>🍀 IA - Inteligência do Andrade</h1>
+      #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; width: 100%; max-width: 550px; box-sizing: border-box; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+      .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px;}
+      .numero { color: #555; font-weight: bold; padding: 2px 4px; border: 1px solid #eee; border-radius: 4px; background: #fafafa;}
+      .numero-acerto { color: white; font-weight: bold; border-radius: 5px; padding: 2px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); } 
 
-<!-- 1. TELA DE LOGIN -->
-<div id="tela-login" class="auth-container">
-    <div class="curiosity-overlay">
-        <h3 style="margin: 0 0 10px 0; color: #333;">🎯 Aumente suas chances!</h3>
-        <div class="curiosity-text">Gere combinações inteligentes, filtre os melhores jogos, confira acertos e acompanhe resultados.</div>
-        <div class="curiosity-mockup">
-            <div class="mock-ball"></div><div class="mock-ball"></div><div class="mock-ball"></div>
-            <div class="mock-ball"></div><div class="mock-ball"></div>
-        </div>
-    </div>
+      .btn-copiar, .btn-zap, .btn-caixa, .btn-voltar {
+          border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.3s;
+      }
+      .btn-copiar { background: #f57c00; color: white; margin-top: 20px; }
+      .btn-zap { background: #25D366; color: white; }
+      .btn-caixa { background: #005CA9; color: white; }
+      .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; box-shadow: none; }
 
-    <h2 style="margin-top: 0; color: #005ca9;">Acesso Restrito</h2>
-    <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Faça login com sua conta Google para solicitar acesso.</p>
-    
-    <!-- CORREÇÃO: Usando onclick direto com a função global -->
-    <button id="btn-fazer-login" class="btn-google" onclick="window.fazerLogin()">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Google">
-        Entrar com o Google
-    </button>
-</div>
+      .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+      
+      .modal-box { background: white; color: black; padding: 20px; border-radius: 15px; width: 95%; max-width: 480px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.7); display: flex; flex-direction: column; max-height: 95vh; overflow-y: auto; box-sizing: border-box; }
+      
+      .fechar-modal { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; font-weight: bold; color: #888; z-index: 10; }
 
-<!-- 2. TELA PENDENTE -->
-<div id="tela-pendente" class="auth-container" style="display: none;">
-    <div style="font-size: 50px; margin-bottom: 10px;">⏳</div>
-    <h2 style="margin-top: 0; color: #f57c00;">Acesso Pendente</h2>
-    <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Seu cadastro foi recebido! Aguarde a liberação do administrador para utilizar a plataforma.</p>
-    <button id="btn-logout-pendente" class="btn-logout" style="width: 100%; padding: 12px; font-size: 14px;" onclick="window.fazerLogout()">Sair / Trocar Conta</button>
-</div>
+      .opcoes-loteria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 12px; margin-top: 5px; }
+      .btn-loteria-grid { padding: 10px 4px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; opacity: 0.4; transition: 0.3s; width: 100%; }
+      .btn-loteria-grid.ativa { opacity: 1; border: 2px solid #FFDF00; transform: scale(1.03); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-<!-- 3. TELA PRINCIPAL (APP) -->
-<div id="tela-principal" style="display: none; width: 100%;">
-    
-    <div class="cabecalho-usuario">
-        <div class="user-info">
-            <img id="user-foto" src="" alt="Foto">
-            <div>
-                <span id="user-nome" style="display: block;">Nome</span>
-                <span id="user-email" style="font-size: 11px; font-weight: normal; color: #ddd;">email@gmail.com</span>
-            </div>
-        </div>
-        <button id="btn-logout-app" class="btn-logout" onclick="window.fazerLogout()">Sair</button>
-    </div>
+      .grid-numeros { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; max-height: 230px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
+      .num-btn { background: #fff; border: 2px solid #ccc; border-radius: 50%; width: 38px; height: 38px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; margin: 0 auto; }
+      .num-btn.ativo { color: white; transform: scale(1.15); box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-color: transparent; }
 
-    <div class="app-container">
-        <!-- Lado Esquerdo / Topo -->
-        <div class="clover-side">
-            <img src="trevo.png" alt="Trevo do Andrade" class="clover-img" onerror="this.style.display='none'">
-            <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
-            <button id="btn-painel-admin" class="btn-painel-admin" onclick="abrirAdminModal()" style="margin-top: 15px;">⚙️ PAINEL MASTER</button>
-        </div>
+      .contador-info { font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; }
+      
+      .painel-aleatorio { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px; background: #f5f7fa; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
+      .input-aleatorio { padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; font-size: 15px; color: #0f172a; outline: none; width: 100%; box-sizing: border-box;}
+      .btn-acao-p { color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s; }
+      .btn-acao-p:active { transform: scale(0.95); }
 
-        <!-- Lado Direito / Base -->
-        <div class="painel-container">
-            <button class="btn btn-quina" onclick="window.iniciar('Quina', 80, 5, 15)">QUINA</button>
-            <button class="btn btn-mega" onclick="window.iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
-            <button class="btn btn-milionaria" onclick="window.iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
-            <button class="btn btn-lotomania" onclick="window.iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
-            <button class="btn btn-timemania" onclick="window.iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
-            <button class="btn btn-dupla" onclick="window.iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
-            <button class="btn btn-lotofacil" onclick="window.iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
-            
-            <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;">
-            
-            <button class="btn btn-multiplo" onclick="window.abrirModalMultiplo()">GERAR MÚLTIPLO</button>
-            <button class="btn btn-conf" onclick="window.abrirModalConferencia()">CONFERIR JOGOS</button>
-            <button class="btn btn-acao" onclick="window.abrirModal()">GERAR COMBINAÇÕES</button>
-        </div>
-    </div>
-</div> <!-- Fim Tela Principal -->
+      .info-api { font-size: 13px; color: #888; margin-bottom: 10px; min-height: 18px; text-align: left; padding-left: 5px;}
+      .busca-concurso-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 14.5px; color: #425f7a; flex-wrap: wrap;}
+      #input-busca-concurso { width: 75px; padding: 8px; text-align: center; border: 1px solid #c4d1db; border-radius: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); font-size: 15px; color: #555; }
+      #input-busca-concurso::-webkit-outer-spin-button, #input-busca-concurso::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+      
+      .nav-concurso { color: #0073e6; cursor: pointer; user-select: none; transition: color 0.2s; font-weight: 500;}
+      .nav-concurso.disabled { color: #ccc; cursor: not-allowed; text-decoration: none; }
 
-<!-- Modal Admin (Oculto) -->
-<div id="modal-admin" class="modal-overlay">
-    <div class="modal-box">
-        <span class="fechar-modal" onclick="window.fecharModal('modal-admin')">&times;</span>
-        <h2 style="margin-top:0; color:#1a1a1a;">Gerenciar Acessos</h2>
-        <div id="lista-usuarios-admin" style="text-align: left; max-height: 400px; overflow-y: auto;"></div>
-    </div>
-</div>
+      .painel-premium { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 20px 15px; margin-bottom: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); display: none; }
+      .bolinhas-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+      .bolinha-oficial { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 3px 6px rgba(0,0,0,0.15); font-family: 'Segoe UI', sans-serif; font-weight: bold; flex-shrink: 0;}
 
-<!-- Modal Combinações -->
-<div id="modal-combinacoes" class="modal-overlay">
-    <div class="modal-box">
-        <span class="fechar-modal" onclick="window.fecharModal('modal-combinacoes')">&times;</span>
-        <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerar Combinações</h2>
-        
-        <div class="opcoes-loteria-grid">
-            <button id="btn-mega-modal" class="btn-loteria-grid ativa" style="background:#209869" onclick="window.setLoteriaModal('MegaSena')">MEGA</button>
-            <button id="btn-quina-modal" class="btn-loteria-grid" style="background:#4a148c" onclick="window.setLoteriaModal('Quina')">QUINA</button>
-            <button id="btn-milionaria-modal" class="btn-loteria-grid" style="background:#311b92" onclick="window.setLoteriaModal('Milionaria')">+MIL</button>
-            <button id="btn-lotofacil-modal" class="btn-loteria-grid" style="background:#7b1fa2" onclick="window.setLoteriaModal('Lotofacil')">FÁCIL</button>
-        </div>
-        
-        <div style="font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold;">Dezenas Selecionadas: <span id="contador-num" style="color:#e53935; font-size: 16px;">0</span></div>
-        
-        <div class="painel-aleatorio">
-            <span style="font-size: 14px; font-weight: bold; color: #334155;">Aleatório:</span>
-            <input type="number" id="qtd-aleatoria" class="input-aleatorio" style="width: 70px; text-align: center;" placeholder="Qtd">
-            <button class="btn-acao-p" style="background: #2563eb;" onclick="window.selecionarAleatorioModal()">🎲</button>
-            <button class="btn-acao-p" style="background: #ef4444;" onclick="window.limparGridModal()">🗑️</button>
-        </div>
-        
-        <div id="grid-numeros-modal" class="grid-numeros"></div>
+      .premio-detalhes { display: flex; justify-content: space-between; align-items: center; text-align: left; border-top: 1px solid #e0e0e0; padding-top: 15px; }
+      .premio-texto { font-size: 13px; color: #5c6a79; line-height: 1.3; }
+      .premio-valor { font-size: 22px; color: #425f7a; white-space: nowrap; font-family: 'Segoe UI', sans-serif; letter-spacing: -0.5px; font-weight: bold; }
 
-        <div class="painel-aleatorio" style="background: #fff3e0; border-color: #ffb74d; margin-top: 10px;">
-            <span style="font-size: 13px; font-weight: bold; color: #e65100;">Qtd. Máx. Melhores Cartões:</span>
-            <input type="number" id="qtd-limite-cartoes" class="input-aleatorio" style="width: 80px; text-align: center;" placeholder="Ex: 10">
-            <p style="font-size: 11px; color: #d84315; width: 100%; margin: 5px 0 0 0;">O sistema filtrará as combinações mais equilibradas (Pares/Ímpares).</p>
-        </div>
-        
-        <button class="btn btn-multiplo" style="margin-top:15px;" onclick="window.executarCombinacoes()">GERAR JOGOS AGORA</button>
-    </div>
-</div>
+      .textarea-jogos { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; font-family: monospace; height: 110px; resize: none; margin-bottom: 10px; white-space: pre; background: #fdfdfd;}
+      
+      .badge-acertos { margin-left: auto; font-size: 13px; padding: 4px 8px; border-radius: 20px; background: #e0e0e0; font-weight: bold; }
+      .badge-premiado { background: #FFDF00; color: #996515; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-<!-- Tela Resultado (Oculta) -->
-<div id="tela-resultado">
-    <h2 id="titulo-res">Resultado</h2>
-    <div id="conteudo-res"></div>
-    <hr>
-    <h3 style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
-    <h3 style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
-    
-    <button id="btn-copiar" class="btn-copiar" onclick="window.copiarJogos()">📋 Copiar Jogos</button>
-    <button id="btn-voltar" class="btn-voltar" onclick="window.voltarTelaPrincipal()">Voltar</button>
-</div>
+      .popup-premiacao { background: white; color: #333; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 4px solid #FFDF00; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+      @keyframes popupAnim { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+      .popup-icone { font-size: 55px; margin-bottom: 10px; }
+      .popup-titulo { font-size: 24px; color: #b71c1c; font-weight: bold; margin-bottom: 15px; }
+      .popup-texto { font-size: 16px; margin-bottom: 25px; line-height: 1.5; color: #555; }
+      .btn-fechar-popup { background: #209869; color: white; border: none; padding: 14px 20px; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
 
-<!-- SCRIPTS MÓDULO ÚNICO SEGURO -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+      /* --- PAINEL DE RESULTADOS EM MENU LISTA --- */
+      .painel-resultados-wrapper { width: 100%; text-align: left; }
+      .titulo-resultados { font-size: 28px; color: #005ca9; margin-bottom: 15px; text-shadow: 1px 1px 0 rgba(255,255,255,0.8), -1px -1px 0 rgba(255,255,255,0.8), 1px -1px 0 rgba(255,255,255,0.8), -1px 1px 0 rgba(255,255,255,0.8); letter-spacing: -0.5px; }
+      
+      .select-container { margin-bottom: 20px; }
+      .select-loteria { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: #333; background: #fff; border: 3px solid #003f7a; border-radius: 12px; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; box-sizing: border-box; }
+      
+      .visor-resultados { width: 100%; background: #fff; border-radius: 12px; padding: 20px; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #333; }
+      .visor-header { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+      .titulo-loteria-res { font-size: 24px; font-weight: bold; margin: 0 0 5px 0; }
+      .info-concurso-res { font-size: 13px; color: #777; }
+      .btn-recolher { background: #e0e0e0; border: none; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s; }
+      .btn-recolher:hover { background: #d0d0d0; }
+      
+      .visor-corpo { display: flex; flex-direction: column; gap: 20px; }
+      .bolinhas-res-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; justify-content: center; }
+      .bolinha-res { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+      
+      .prox-premio-res { background: #f0f7ff; padding: 12px; border-radius: 8px; border-left: 4px solid #005ca9; font-size: 13px; color: #555; text-align: center; }
+      .prox-premio-valor { font-size: 20px; font-weight: bold; color: #005ca9; margin-top: 5px; }
+      
+      .titulo-premiacao { font-size: 16px; font-weight: bold; color: #005ca9; margin-bottom: 10px; border-top: 1px solid #eee; padding-top: 15px; }
+      .lista-premiacao { list-style: none; padding: 0; margin: 0; }
+      .item-premiacao { border-bottom: 1px solid #eee; padding: 8px 0; font-size: 13px; line-height: 1.4;}
+      .item-premiacao:last-child { border-bottom: none; }
+      .acertos-texto { font-weight: bold; color: #333; display: block; }
+      .ganhadores-texto { color: #666; display: block; }
+      .loading-res { font-size: 15px; color: #666; text-align: center; padding: 30px 0; font-style: italic; }
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBkjtBMGNSQ9WMJajgGHDar-vY5xnClzR0",
-        authDomain: "ia-andrade-loterias.firebaseapp.com",
-        projectId: "ia-andrade-loterias",
-        storageBucket: "ia-andrade-loterias.firebasestorage.app",
-        messagingSenderId: "558801870322",
-        appId: "1:558801870322:web:9271c9147f3c7a8f709f6b"
-    };
-    const MASTER_EMAIL = "rss.andrade@gmail.com"; 
+      /* --- ESTILO DA CHAMATIVA NA TELA INICIAL --- */
+      .chamativa-login {
+          background: linear-gradient(135deg, #fffde7, #fff9c4);
+          border: 2px solid #fbc02d;
+          padding: 18px 15px;
+          border-radius: 12px;
+          margin-bottom: 20px;
+          animation: pulsarChamativa 2s infinite alternate;
+      }
+      .chamativa-login p {
+          margin: 0;
+          color: #333;
+          font-size: 14.5px;
+          line-height: 1.4;
+      }
+      .chamativa-destaque {
+          color: #b71c1c;
+          font-size: 17px;
+          font-weight: bold;
+          display: block;
+          margin-bottom: 8px;
+      }
+      @keyframes pulsarChamativa {
+          0% { box-shadow: 0 2px 10px rgba(251, 192, 45, 0.2); transform: scale(1); }
+          100% { box-shadow: 0 5px 20px rgba(251, 192, 45, 0.6); transform: scale(1.02); border-color: #f57f17; }
+      }
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
+      /* NOVOS ESTILOS PARA AUTENTICAÇÃO E ADMIN */
+      .auth-container { background: white; padding: 40px; border-radius: 20px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 90%; max-width: 400px; margin: 0 auto; box-sizing: border-box; }
+      .btn-google { background: #4285F4; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+      .btn-google:hover { background: #357AE8; }
+      .btn-google img { width: 24px; background: white; border-radius: 50%; padding: 2px; }
 
-    const telaLogin = document.getElementById('tela-login');
-    const telaPendente = document.getElementById('tela-pendente');
-    const telaPrincipal = document.getElementById('tela-principal');
-    const btnAdmin = document.getElementById('btn-painel-admin');
+      .cabecalho-usuario { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 20px auto; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 12px; box-sizing: border-box; }
+      .user-info { font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+      .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #FFDF00; }
+      .btn-logout { background: #e53935; border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
 
-    // CORREÇÃO: Limpa a tela completamente antes de exibir a próxima fase
-    function ocultarTodasTelas() {
-        telaLogin.style.display = 'none';
-        telaPendente.style.display = 'none';
-        telaPrincipal.style.display = 'none';
-    }
+      .btn-painel-admin { background: linear-gradient(135deg, #FFDF00, #fbc02d); color: #333; border: none; padding: 12px 15px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold; display: none; margin-top: 10px; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s; }
+      .btn-painel-admin:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
 
-    // LÓGICA DE AUTENTICAÇÃO
-    onAuthStateChanged(auth, async (user) => {
-        ocultarTodasTelas();
-        if (user) {
-            document.getElementById('user-nome').innerText = user.displayName;
-            document.getElementById('user-email').innerText = user.email;
-            document.getElementById('user-foto').src = user.photoURL;
+      /* Lista Admin */
+      .admin-lista { text-align: left; max-height: 400px; overflow-y: auto; margin-top: 15px; }
+      .admin-item { background: #f9f9f9; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+      .admin-item-dados { font-size: 13px; color: #555; }
+      .admin-item-nome { font-weight: bold; color: #333; font-size: 15px; display: block;}
+      .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; margin-top: 5px; display: inline-block;}
+      .status-pendente { background: #f57c00; }
+      .status-liberado { background: #209869; }
+      .btn-toggle-status { border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; color: white; }
+  </style>
+</head>
+<body>
 
-            const userRef = doc(db, "usuarios", user.uid);
-            const userSnap = await getDoc(userRef);
+  <h1>🍀 IA - Inteligência do Andrade</h1>
 
-            if (user.email === MASTER_EMAIL) {
-                if (!userSnap.exists()) await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'master' });
-                btnAdmin.style.display = 'block';
-                telaPrincipal.style.display = 'block';
-            } else {
-                if (userSnap.exists()) {
-                    if (userSnap.data().status === 'liberado') telaPrincipal.style.display = 'block';
-                    else telaPendente.style.display = 'block';
-                } else {
-                    await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'pendente' });
-                    telaPendente.style.display = 'block';
-                }
-            }
-        } else {
-            telaLogin.style.display = 'block';
-        }
-    });
+  <!-- OVERLAY DE LOGIN COM EFEITO DE DESFOQUE (VIDRO FOSCO) -->
+  <div id="app-overlay" class="modal-overlay" style="display: flex; flex-direction: column; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 1500;">
+      
+      <!-- 1. TELA DE LOGIN -->
+      <div id="tela-login" class="auth-container" style="box-shadow: 0 15px 40px rgba(0,0,0,0.6);">
+          <!-- CHAMATIVA EM DESTAQUE -->
+          <div class="chamativa-login">
+              <span class="chamativa-destaque">🎯 Aumente suas chances!</span>
+              <p>Gere seus jogos em <strong>todas as loterias</strong>, faça combinações inteligentes e confira seus acertos na hora.</p>
+          </div>
+          <hr style="border: none; border-top: 1px dashed #ccc; margin: 20px 0;">
+          <h2 style="margin-top: 0; color: #005ca9;">Acesso Restrito</h2>
+          <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Faça login com sua conta Google para liberar o uso do sistema.</p>
+          <button id="btn-fazer-login" class="btn-google">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Google">
+              Entrar com o Google
+          </button>
+      </div>
 
-    // CORREÇÃO: Função global robusta para lidar com falhas de ambiente
-    window.fazerLogin = async function() {
-        try {
-            // Se estiver rodando como arquivo local (file://), o Google Auth será bloqueado
-            if (window.location.protocol === 'file:') {
-                alert("⚠️ ALERTA: O login do Google não funciona quando o arquivo é aberto diretamente do computador (file://).\n\nVocê precisa hospedar o site (ex: Firebase Hosting, GitHub Pages) ou usar um Servidor Local (ex: Live Server no VSCode).");
-                return;
-            }
-            
-            // Tenta Popup (padrão)
-            await signInWithPopup(auth, provider);
-        } catch (error) {
-            console.warn("Popup falhou, verificando erro:", error);
-            // Tratamento específico para PWA / Mobile onde pop-ups são bloqueados
-            if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
-                if (confirm("O sistema bloqueou a janela de login (comum no app instalado). Deseja tentar o login via redirecionamento de tela?")) {
-                    signInWithRedirect(auth, provider);
-                }
-            } else {
-                alert("Erro ao tentar autenticar: " + error.message);
-            }
-        }
-    };
+      <!-- 2. TELA PENDENTE (Aguardando Aprovação) -->
+      <div id="tela-pendente" class="auth-container" style="display: none; box-shadow: 0 15px 40px rgba(0,0,0,0.6);">
+          <div style="font-size: 50px; margin-bottom: 10px;">⏳</div>
+          <h2 style="margin-top: 0; color: #f57c00;">Acesso Pendente</h2>
+          <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Seu cadastro foi recebido! Aguarde a liberação do administrador para utilizar a plataforma.</p>
+          <button id="btn-logout-pendente" class="btn-logout" style="width: 100%; padding: 12px; font-size: 14px;">Sair / Trocar Conta</button>
+      </div>
 
-    window.fazerLogout = function() {
-        signOut(auth).then(() => {
-            ocultarTodasTelas();
-            telaLogin.style.display = 'block';
-        });
-    };
+  </div> <!-- FIM OVERLAY -->
 
-    // EXPORTANDO DEMAIS FUNÇÕES GLOBAIS
-    window.fecharModal = function(id) { document.getElementById(id).style.display = 'none'; }
-    window.abrirModal = function() { document.getElementById('modal-combinacoes').style.display = 'flex'; window.setLoteriaModal('MegaSena'); }
-    window.voltarTelaPrincipal = function() { 
-        document.getElementById('tela-resultado').style.display = 'none'; 
-        document.getElementById('tela-principal').style.display = 'block'; 
-    }
+  <!-- 3. TELA PRINCIPAL (APP COMPLETO - DESFOCADA POR PADRÃO) -->
+  <!-- A tela fica atrás, mas ilegível/inutilizável até o login para gerar a curiosidade solicitada -->
+  <div id="tela-principal" style="width: 100%; filter: blur(6px); pointer-events: none; user-select: none;">
+      
+      <!-- Cabeçalho de Autenticação -->
+      <div class="cabecalho-usuario">
+          <div class="user-info">
+              <img id="user-foto" src="" alt="Foto">
+              <div>
+                  <span id="user-nome" style="display: block;">Nome</span>
+                  <span id="user-email" style="font-size: 11px; font-weight: normal; color: #ddd;">email@gmail.com</span>
+              </div>
+          </div>
+          <button id="btn-logout-app" class="btn-logout">Sair</button>
+      </div>
 
-    const configLoterias = {
-        'MegaSena': { idGen: 'btn-mega-modal', cor: '#209869', nome: 'Mega-Sena', max: 60, minReq: 6, precoBase: 6.00 },
-        'Quina': { idGen: 'btn-quina-modal', cor: '#4a148c', nome: 'Quina', max: 80, minReq: 5, precoBase: 3.00 },
-        'Milionaria': { idGen: 'btn-milionaria-modal', cor: '#311b92', nome: '+Milionária', max: 50, minReq: 6, precoBase: 6.00 },
-        'Lotofacil': { idGen: 'btn-lotofacil-modal', cor: '#7b1fa2', nome: 'Lotofácil', max: 25, minReq: 15, precoBase: 3.50 }
-    };
+      <!-- Container Principal Unificado -->
+      <div class="app-container">
+          <div class="clover-side">
+              <img src="trevo.png" alt="Trevo do Andrade" class="clover-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1210/1210985.png'; this.style.background='white';">
+              <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
+          </div>
 
-    let loteriaAtual = 'MegaSena';
-    let numerosEscolhidos = [];
+          <div class="painel-container" style="width: 100%; box-sizing: border-box;">
+              <!-- BOTÃO EXCLUSIVO DO MASTER -->
+              <button id="btn-painel-admin" class="btn-painel-admin" onclick="abrirAdminModal()">⚙️ PAINEL DE CONTROLE (MASTER)</button>
+              <hr id="hr-admin" style="border-color: rgba(255,255,255,0.2); margin: 15px 0; display: none;">
 
-    window.setLoteriaModal = function(tipo) {
-        loteriaAtual = tipo;
-        let conf = configLoterias[tipo];
-        
-        document.querySelectorAll('.btn-loteria-grid').forEach(b => b.classList.remove('ativa'));
-        if(document.getElementById(conf.idGen)) document.getElementById(conf.idGen).classList.add('ativa');
-        
-        let grid = document.getElementById('grid-numeros-modal');
-        grid.innerHTML = '';
-        numerosEscolhidos = [];
-        window.atualizarContador();
+              <!-- Botões de Loterias -->
+              <button class="btn btn-quina" title="Valor da aposta: R$ 3,00" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
+              <button class="btn btn-mega" title="Valor da aposta: R$ 6,00" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
+              <button class="btn btn-milionaria" title="Valor da aposta: R$ 6,00" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
+              <button class="btn btn-lotomania" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
+              <button class="btn btn-timemania" title="Valor da aposta: R$ 3,50" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
+              <button class="btn btn-dupla" title="Valor da aposta: R$ 3,00" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
+              <button class="btn btn-lotofacil" title="Valor da aposta: R$ 3,50" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
 
-        for(let i = 1; i <= conf.max; i++) {
-            let btn = document.createElement('div');
-            btn.className = 'num-btn';
-            btn.innerText = i.toString().padStart(2, '0');
-            btn.onclick = function() {
-                let idx = numerosEscolhidos.indexOf(i);
-                if (idx > -1) { numerosEscolhidos.splice(idx, 1); btn.classList.remove('ativo'); btn.style.background = '#fff'; }
-                else { numerosEscolhidos.push(i); btn.classList.add('ativo'); btn.style.background = conf.cor; }
-                window.atualizarContador();
-            };
-            grid.appendChild(btn);
-        }
-    };
+              <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;">
 
-    window.atualizarContador = function() {
-        let span = document.getElementById('contador-num');
-        span.innerText = numerosEscolhidos.length;
-        span.style.color = (numerosEscolhidos.length >= configLoterias[loteriaAtual].minReq) ? '#209869' : '#e53935';
-    };
+              <!-- Botões de Ação Atualizados -->
+              <button class="btn btn-multiplo" onclick="abrirModalMultiplo()">GERAR MÚLTIPLO</button>
+              <button class="btn btn-conf" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
+              <button class="btn btn-acao" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
 
-    window.limparGridModal = function() {
-        window.setLoteriaModal(loteriaAtual);
-    };
+              <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 15px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
+                  <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> (e filtra as melhores) e confere os acertos buscando no banco oficial da Caixa.
+              </p>
+          </div>
 
-    window.selecionarAleatorioModal = function() {
-        let qtd = parseInt(document.getElementById('qtd-aleatoria').value);
-        let conf = configLoterias[loteriaAtual];
-        if(isNaN(qtd) || qtd < conf.minReq || qtd > conf.max) { alert("Quantidade inválida."); return; }
-        
-        window.limparGridModal();
-        while(numerosEscolhidos.length < qtd) {
-            let n = Math.floor(Math.random() * conf.max) + 1;
-            if(!numerosEscolhidos.includes(n)) numerosEscolhidos.push(n);
-        }
-        
-        let botoes = document.getElementById('grid-numeros-modal').children;
-        for(let i=0; i<botoes.length; i++) {
-            if(numerosEscolhidos.includes(i+1)) {
-                botoes[i].classList.add('ativo');
-                botoes[i].style.background = conf.cor;
-            }
-        }
-        window.atualizarContador();
-    };
+          <!-- Visor de Resultados -->
+          <div class="painel-resultados-wrapper" id="secao-resultados">
+              <h2 class="titulo-resultados">Resultados</h2>
+              <div class="select-container">
+                  <select id="select-loteria-res" class="select-loteria" onchange="carregarVisorResultado(this.value)">
+                      <option value="" disabled selected>🔍 Selecione a loteria para ver o resultado...</option>
+                      <option value="MegaSena">Mega-Sena</option>
+                      <option value="Quina">Quina</option>
+                      <option value="Milionaria">+Milionária</option>
+                      <option value="Lotomania">Lotomania</option>
+                      <option value="Timemania">Timemania</option>
+                      <option value="DuplaSena">Dupla Sena</option>
+                      <option value="DiaDeSorte">Dia de Sorte</option>
+                      <option value="Lotofacil">Lotofácil</option>
+                  </select>
+              </div>
 
-    function gerarCombinacoesMatematica(arr, k) {
-        if (k > arr.length || k <= 0) return [];
-        if (k === arr.length) return [arr];
-        if (k === 1) return arr.map(n => [n]);
-        let combs = [];
-        for (let i = 0; i < arr.length - k + 1; i++) {
-            let head = arr.slice(i, i + 1);
-            let tailcombs = gerarCombinacoesMatematica(arr.slice(i + 1), k - 1);
-            for (let j = 0; j < tailcombs.length; j++) combs.push(head.concat(tailcombs[j]));
-        }
-        return combs;
-    }
+              <div class="visor-resultados">
+                  <div id="visor-loading" class="loading-res">Selecione uma loteria no menu acima para carregar o último resultado e rateio.</div>
+                  <div id="visor-conteudo" style="display: none; width: 100%;">
+                      <div class="visor-header">
+                          <div>
+                              <h3 id="visor-titulo" class="titulo-loteria-res">Nome</h3>
+                              <div id="visor-info" class="info-concurso-res">Resultado Concurso -- (--/--/----)</div>
+                          </div>
+                          <button class="btn-recolher" onclick="recolherVisor()" title="Recolher / Fechar">✕</button>
+                      </div>
+                      <div class="visor-corpo">
+                          <div id="visor-bolinhas" class="bolinhas-res-container"></div>
+                          <div class="prox-premio-res">
+                              Estimativa de prêmio do próximo concurso<br>
+                              <span id="visor-data-prox" style="font-size: 11px; color:#888;">--/--/----</span>
+                              <div id="visor-valor-prox" class="prox-premio-valor">R$ --</div>
+                          </div>
+                          <div>
+                              <div class="titulo-premiacao">Premiação</div>
+                              <ul id="visor-lista-premios" class="lista-premiacao"></ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div> <!-- Fim Tela Principal -->
 
-    function pontuarCombinacao(comb) {
-        let pares = comb.filter(n => n % 2 === 0).length;
-        let impares = comb.length - pares;
-        return Math.abs(pares - impares); 
-    }
+  <!-- Modal do Painel Admin -->
+  <div id="modal-admin" class="modal-overlay">
+      <div class="modal-box">
+          <span class="fechar-modal" onclick="fecharModal('modal-admin')">&times;</span>
+          <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerenciar Acessos</h2>
+          <p style="font-size: 13px; color:#666; margin-bottom: 10px;">Libere ou bloqueie usuários para usar o sistema.</p>
+          <div id="lista-usuarios-admin" class="admin-lista">
+              <div style="text-align: center; color: #888; padding: 20px;">Carregando usuários...</div>
+          </div>
+      </div>
+  </div>
 
-    window.executarCombinacoes = function() {
-        let conf = configLoterias[loteriaAtual];
-        let k = conf.minReq;
-        
-        if (numerosEscolhidos.length < k) { alert(`Selecione pelo menos ${k} números.`); return; }
-        
-        let todasCombs = gerarCombinacoesMatematica(numerosEscolhidos.sort((a,b)=>a-b), k);
-        
-        let limiteInput = document.getElementById('qtd-limite-cartoes').value;
-        let limite = parseInt(limiteInput);
-        
-        if (!isNaN(limite) && limite > 0 && limite < todasCombs.length) {
-            todasCombs.sort((a, b) => pontuarCombinacao(a) - pontuarCombinacao(b));
-            todasCombs = todasCombs.slice(0, limite);
-        } else if (todasCombs.length > 5000) {
-            if(!confirm(`Isso vai gerar ${todasCombs.length} cartões. Deseja continuar?`)) return;
-        }
+  <!-- Resultados Geração/Conferência -->
+  <div id="tela-resultado">
+      <h2 id="titulo-res">Resultado</h2>
+      <div id="conteudo-res"></div>
+      <hr>
+      <h3 id="titulo-cartoes" style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
+      <h3 id="titulo-bolao" style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
 
-        let html = "";
-        let custo = 0;
-        let textClipboard = "";
+      <button id="btn-copiar" class="btn-copiar" onclick="copiarJogos()">📋 Copiar Jogos</button>
+      <button id="btn-zap" class="btn-zap" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
+      <button id="btn-caixa" class="btn-caixa" onclick="abrirCaixa()">🎰 Jogar no Site da Caixa</button>
+      <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
+  </div>
 
-        todasCombs.forEach((jogo, i) => {
-            let str = jogo.map(n => n.toString().padStart(2, '0')).join(' - ');
-            html += `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${str}</span></div>`;
-            textClipboard += `Jogo ${i+1}: ${str}\n`;
-            custo += conf.precoBase;
-        });
+  <!-- Modal Gerar Combinacoes -->
+  <div id="modal-combinacoes" class="modal-overlay">
+      <div class="modal-box">
+          <span class="fechar-modal" onclick="fecharModal('modal-combinacoes')">&times;</span>
+          <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerar Combinações</h2>
 
-        document.getElementById('titulo-res').innerText = `Combinações: ${conf.nome}`;
-        document.getElementById('conteudo-res').innerHTML = html;
-        document.getElementById('total-cartoes').innerText = todasCombs.length;
-        document.getElementById('total-geral').innerText = "R$ " + custo.toFixed(2).replace('.', ',');
-        
-        window.textoCopiarGlobal = textClipboard;
+          <div class="opcoes-loteria-grid">
+              <button id="btn-mega-modal" class="btn-loteria-grid ativa" style="background:#209869" onclick="setLoteriaModal('MegaSena')">MEGA SENA</button>
+              <button id="btn-quina-modal" class="btn-loteria-grid" style="background:#4a148c" onclick="setLoteriaModal('Quina')">QUINA</button>
+              <button id="btn-milionaria-modal" class="btn-loteria-grid" style="background:#311b92" onclick="setLoteriaModal('Milionaria')">MILIONÁRIA</button>
+              <button id="btn-lotomania-modal" class="btn-loteria-grid" style="background:#ef6c00" onclick="setLoteriaModal('Lotomania')">LOTOMANIA</button>
+              <button id="btn-timemania-modal" class="btn-loteria-grid" style="background:#fbc02d; color:black;" onclick="setLoteriaModal('Timemania')">TIMEMANIA</button>
+              <button id="btn-dupla-modal" class="btn-loteria-grid" style="background:#c62828" onclick="setLoteriaModal('DuplaSena')">DUPLA SENA</button>
+              <button id="btn-lotofacil-modal" class="btn-loteria-grid" style="background:#7b1fa2" onclick="setLoteriaModal('Lotofacil')">LOTOFÁCIL</button>
+          </div>
 
-        window.fecharModal('modal-combinacoes');
-        document.getElementById('tela-principal').style.display = 'none';
-        document.getElementById('tela-resultado').style.display = 'block';
-    };
+          <div class="contador-info" style="margin-top: 10px;">Dezenas Selecionadas: <span id="contador-num" style="color:#e53935; font-size: 16px;">0</span></div>
 
-    window.copiarJogos = function() {
-        navigator.clipboard.writeText(window.textoCopiarGlobal).then(() => {
-            alert("Copiado com sucesso!");
-        });
-    };
-</script>
+          <div class="painel-aleatorio">
+              <span style="font-size: 14px; font-weight: bold; color: #334155;">Aleatório:</span>
+              <input type="number" id="qtd-aleatoria" class="input-aleatorio" style="flex: 1; min-width: 50px; text-align: center;" placeholder="Qtd">
+              <button class="btn-acao-p" style="background: #2563eb;" onclick="selecionarAleatorioModal()">🎲 Sortear</button>
+              <button class="btn-acao-p" style="background: #ef4444;" onclick="limparGridModal()">🗑️ Limpar</button>
+          </div>
+
+          <div id="grid-numeros-modal" class="grid-numeros"></div>
+
+          <div id="container-time-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
+              <div class="contador-info" style="color:#b71c1c; margin-bottom: 8px;">⚽ Time do Coração:</div>
+              <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+                  <input type="text" id="input-time-coracao" class="input-aleatorio" style="flex: 1; min-width: 150px; text-align: center; font-size: 13px;" placeholder="Em branco p/ sortear">
+                  <button class="btn-acao-p" style="background: #2563eb;" onclick="sortearTimeModal()" title="Fixar um time aleatório para todos">🎲 Único</button>
+              </div>
+          </div>
+
+          <div id="container-trevos-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
+              <div class="contador-info" style="color:#311b92;">🍀 Trevos Selecionados: <span id="contador-trevos" style="color:#e53935; font-size: 16px;">0</span></div>
+              <div id="grid-trevos-modal" class="grid-numeros" style="display: flex; justify-content: center; gap: 10px; min-height: auto; overflow: hidden; padding-bottom: 0;"></div>
+          </div>
+
+          <!-- CAMPO PARA LIMITAR OS CARTÕES (Melhores Combinações) -->
+          <div style="margin-top: 15px; padding: 15px; border-radius: 8px; background: #f1f5f9; border: 1px solid #cbd5e1;">
+              <div class="contador-info" style="color:#005ca9; margin-bottom: 8px; font-size: 13.5px;">🎯 Filtro Inteligente (Melhores Cartões):</div>
+              <input type="number" id="input-limite-cartoes" class="input-aleatorio" style="width: 100%; text-align: center; border-color: #94a3b8;" placeholder="Máx. de cartões (ex: 10)">
+              <div style="font-size: 11.5px; color: #475569; margin-top: 6px; line-height: 1.3;">
+                  Se preenchido, garantimos uma seleção amplamente distribuída das melhores combinações geradas, aumentando a cobertura matemática.
+              </div>
+          </div>
+
+          <button class="btn btn-multiplo" style="margin-top:15px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
+      </div>
+  </div>
+
+  <!-- Modal Conferência -->
+  <div id="modal-conferencia" class="modal-overlay">
+      <div class="modal-box">
+          <span class="fechar-modal" onclick="fecharModal('modal-conferencia')">&times;</span>
+          <h2 style="margin-top: 0px; color:#b71c1c; font-size: 22px;">Conferir Jogos</h2>
+
+          <div class="opcoes-loteria-grid">
+              <button id="btn-mega-conf" class="btn-loteria-grid ativa" style="background:#209869" onclick="setLoteriaConferencia('MegaSena')">MEGA SENA</button>
+              <button id="btn-quina-conf" class="btn-loteria-grid" style="background:#4a148c" onclick="setLoteriaConferencia('Quina')">QUINA</button>
+              <button id="btn-milionaria-conf" class="btn-loteria-grid" style="background:#311b92" onclick="setLoteriaConferencia('Milionaria')">MILIONÁRIA</button>
+              <button id="btn-lotomania-conf" class="btn-loteria-grid" style="background:#ef6c00" onclick="setLoteriaConferencia('Lotomania')">LOTOMANIA</button>
+              <button id="btn-timemania-conf" class="btn-loteria-grid" style="background:#fbc02d; color:black;" onclick="setLoteriaConferencia('Timemania')">TIMEMANIA</button>
+              <button id="btn-dupla-conf" class="btn-loteria-grid" style="background:#c62828" onclick="setLoteriaConferencia('DuplaSena')">DUPLA SENA</button>
+              <button id="btn-lotofacil-conf" class="btn-loteria-grid" style="background:#7b1fa2" onclick="setLoteriaConferencia('Lotofacil')">LOTOFÁCIL</button>
+          </div>
+
+          <div class="busca-concurso-container">
+              <span>Buscar concurso</span>
+              <input type="number" id="input-busca-concurso" onchange="buscarConcursoEspecifico()" onkeyup="if(event.key === 'Enter') buscarConcursoEspecifico()" placeholder="Nº">
+              <span class="nav-concurso disabled" id="btn-ant-concurso" onclick="navegarConcurso(-1)">&lt; Anterior</span>
+              <span class="nav-concurso disabled" id="btn-prox-concurso" onclick="navegarConcurso(1)">Próximo &gt;</span>
+          </div>
+
+          <div id="info-api" class="info-api">Buscando resultado oficial...</div>
+
+          <div id="painel-premium" class="painel-premium">
+              <div id="bolinhas-container" class="bolinhas-container"></div>
+              <div class="premio-detalhes">
+                  <div id="label-premio-texto" class="premio-texto"></div>
+                  <div id="valor-estimado" class="premio-valor">R$ --</div>
+              </div>
+          </div>
+
+          <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos ou digite os números:</p>
+          <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Ex: 01 02 03 04 05 06 | Trevos: 01 02 | Time: Flamengo"></textarea>
+
+          <button class="btn btn-conf" style="margin-top:5px; margin-bottom:0;" onclick="executarConferencia()">REALIZAR CONFERÊNCIA</button>
+      </div>
+  </div>
+
+  <!-- Modal (Popup) de Premiação -->
+  <div id="modal-premiacao" class="modal-overlay" style="z-index: 2000;">
+      <div class="popup-premiacao">
+          <div class="popup-icone">🏆</div>
+          <div class="popup-titulo">Parabéns!</div>
+          <div id="popup-texto" class="popup-texto">Você tem jogos premiados!</div>
+          <button class="btn-fechar-popup" onclick="fecharModal('modal-premiacao')">VER RESULTADOS</button>
+      </div>
+  </div>
+
+  <!-- Modal Geração Múltipla -->
+  <div id="modal-multiplo" class="modal-overlay">
+      <div class="modal-box">
+          <span class="fechar-modal" onclick="fecharModal('modal-multiplo')">&times;</span>
+          <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerador Múltiplo</h2>
+          <p style="font-size: 13px; color:#666; margin-bottom: 15px;">Escolha quantos jogos deseja gerar para cada loteria de uma só vez (apostas simples).</p>
+          <div id="lista-multipla" style="text-align: left; max-height: 50vh; overflow-y: auto; margin-bottom: 15px; border: 1px solid #eee; border-radius: 8px; padding: 5px;">
+              <!-- Preenchido via JS -->
+          </div>
+          <button class="btn btn-multiplo" style="margin-top:5px; margin-bottom:0;" onclick="executarGeradorMultiplo()">GERAR JOGOS COMBINADOS</button>
+      </div>
+  </div>
+
+<!-- =========================================================
+         SCRIPT DO FIREBASE + SISTEMA DE LOGIN E NOTIFICAÇÃO
+    ========================================================== -->
+  <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+      import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+          apiKey: "AIzaSyBkjtBMGNSQ9WMJajgGHDar-vY5xnClzR0",
+          authDomain: "ia-andrade-loterias.firebaseapp.com",
+          projectId: "ia-andrade-loterias",
+          storageBucket: "ia-andrade-loterias.firebasestorage.app",
+          messagingSenderId: "558801870322",
+          appId: "1:558801870322:web:9271c9147f3c7a8f709f6b"
+      };
+
+      const MASTER_EMAIL = "rss.andrade@gmail.com"; 
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const provider = new GoogleAuthProvider();
+
+      const appOverlay = document.getElementById('app-overlay');
+      const telaLogin = document.getElementById('tela-login');
+      const telaPendente = document.getElementById('tela-pendente');
+      const telaPrincipal = document.getElementById('tela-principal');
+      const btnAdmin = document.getElementById('btn-painel-admin');
+      const hrAdmin = document.getElementById('hr-admin');
+
+      function registrarAcesso(user) {
+          if (!sessionStorage.getItem('sessao_notificada_' + user.uid)) {
+              sessionStorage.setItem('sessao_notificada_' + user.uid, 'true');
+              const userRef = doc(db, "usuarios", user.uid);
+              updateDoc(userRef, { ultimoAcesso: new Date().toLocaleString('pt-BR') }).catch(e => console.log(e));
+              if (user.email !== MASTER_EMAIL) { 
+                  enviarAvisoCelular(user.displayName, user.email);
+              }
+          }
+      }
+
+      function enviarAvisoCelular(nome, email) {
+          const topicoNtfy = 'COLOQUE_SEU_TOPICO_AQUI'; 
+          if(topicoNtfy === 'COLOQUE_SEU_TOPICO_AQUI') return;
+          const titulo = '🚨 Novo Acesso Autorizado';
+          const msg = `Usuário: ${nome}\nE-mail: ${email}\nData: ${new Date().toLocaleString('pt-BR')}`;
+          fetch(`https://ntfy.sh/${topicoNtfy}`, {
+              method: 'POST',
+              body: msg,
+              headers: { 'Title': titulo, 'Tags': 'rotating_light,clover' }
+          }).catch(err => console.log('Erro notificação celular:', err));
+      }
+
+      onAuthStateChanged(auth, async (user) => {
+          if (user) {
+              document.getElementById('user-nome').innerText = user.displayName;
+              document.getElementById('user-email').innerText = user.email;
+              document.getElementById('user-foto').src = user.photoURL;
+
+              const userRef = doc(db, "usuarios", user.uid);
+              const userSnap = await getDoc(userRef);
+
+              if (user.email === MASTER_EMAIL) {
+                  if (!userSnap.exists()) {
+                      await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'master' });
+                  }
+                  btnAdmin.style.display = 'block';
+                  hrAdmin.style.display = 'block';
+                  mostrarAppPrincipal();
+                  registrarAcesso(user);
+              } else {
+                  if (userSnap.exists()) {
+                      const dados = userSnap.data();
+                      if (dados.status === 'liberado') {
+                          mostrarAppPrincipal();
+                          registrarAcesso(user);
+                      } else {
+                          mostrarTelaPendente();
+                      }
+                  } else {
+                      await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'pendente' });
+                      mostrarTelaPendente();
+                  }
+              }
+          } else {
+              mostrarTelaLogin();
+          }
+      });
+
+      function mostrarAppPrincipal() {
+          appOverlay.style.display = 'none'; // Some o Overlay de bloqueio
+          telaPrincipal.style.filter = 'none'; // Tira o desfoque
+          telaPrincipal.style.pointerEvents = 'auto'; // Libera cliques
+          telaPrincipal.style.userSelect = 'auto';
+      }
+
+      function mostrarTelaPendente() {
+          appOverlay.style.display = 'flex';
+          telaLogin.style.display = 'none';
+          telaPendente.style.display = 'block';
+          telaPrincipal.style.filter = 'blur(6px)';
+          telaPrincipal.style.pointerEvents = 'none';
+      }
+
+      function mostrarTelaLogin() {
+          appOverlay.style.display = 'flex';
+          telaLogin.style.display = 'block';
+          telaPendente.style.display = 'none';
+          telaPrincipal.style.filter = 'blur(6px)';
+          telaPrincipal.style.pointerEvents = 'none';
+      }
+
+      document.getElementById('btn-fazer-login').addEventListener('click', () => {
+          signInWithPopup(auth, provider).catch(error => alert("Erro ao fazer login: " + error.message));
+      });
+
+      const btnLogoutApp = document.getElementById('btn-logout-app');
+      const btnLogoutPendente = document.getElementById('btn-logout-pendente');
+      const logoutFunc = () => signOut(auth);
+
+      btnLogoutApp.addEventListener('click', logoutFunc);
+      btnLogoutPendente.addEventListener('click', logoutFunc);
+
+      window.abrirAdminModal = async function() {
+          document.getElementById('modal-admin').style.display = 'flex';
+          const listaDiv = document.getElementById('lista-usuarios-admin');
+          listaDiv.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Carregando usuários...</div>';
+          try {
+              const querySnapshot = await getDocs(collection(db, "usuarios"));
+              let html = '';
+              querySnapshot.forEach((docSnap) => {
+                  let u = docSnap.data();
+                  if(u.email !== MASTER_EMAIL) {
+                      let isLiberado = u.status === 'liberado';
+                      let corBtn = isLiberado ? '#e53935' : '#209869';
+                      let txtBtn = isLiberado ? 'Bloquear' : 'Liberar';
+                      let novoStatus = isLiberado ? 'pendente' : 'liberado';
+
+                      html += `
+                      <div class="admin-item">
+                          <div>
+                              <span class="admin-item-nome">${u.nome}</span>
+                              <span class="admin-item-dados">${u.email}</span>
+                              ${u.ultimoAcesso ? `<span class="admin-item-dados" style="display:block; font-size:11px; margin-top:3px; font-weight:600; color:#005ca9;">⏱ Últ. acesso: ${u.ultimoAcesso}</span>` : ''}
+                              <span class="badge-status ${isLiberado ? 'status-liberado' : 'status-pendente'}">${u.status.toUpperCase()}</span>
+                          </div>
+                          <button class="btn-toggle-status" style="background-color: ${corBtn};" onclick="mudarStatusUsuario('${docSnap.id}', '${novoStatus}')">${txtBtn}</button>
+                      </div>`;
+                  }
+              });
+              if(html === '') html = '<div style="text-align: center; color: #888; padding: 20px;">Nenhum usuário cadastrado ainda.</div>';
+              listaDiv.innerHTML = html;
+          } catch(e) {
+              listaDiv.innerHTML = '<div style="color:red; text-align:center;">Erro ao carregar banco de dados. Verifique se ativou o Firestore em "Modo Teste".</div>';
+          }
+      };
+
+      window.mudarStatusUsuario = async function(uid, novoStatus) {
+          try {
+              const userRef = doc(db, "usuarios", uid);
+              await updateDoc(userRef, { status: novoStatus });
+              abrirAdminModal();
+          } catch(e) {
+              alert("Erro ao atualizar status.");
+          }
+      };
+  </script>
+
+  <!-- =========================================================
+         SCRIPT ORIGINAL (LÓGICA DAS LOTERIAS E NOVAS FUNÇÕES)
+    ========================================================== -->
+  <script>
+      const configLoterias = {
+          'MegaSena': { idGen: 'btn-mega-modal', id: 'btn-mega-conf', endp: 'megasena', cor: '#209869', txt: 'white', nome: 'Mega-Sena', max: 60, minReq: 6, precoBase: 6.00 },
+          'Quina': { idGen: 'btn-quina-modal', id: 'btn-quina-conf', endp: 'quina', cor: '#4a148c', txt: 'white', nome: 'Quina', max: 80, minReq: 5, precoBase: 3.00 },
+          'Milionaria': { idGen: 'btn-milionaria-modal', id: 'btn-milionaria-conf', endp: 'maismilionaria', cor: '#311b92', txt: 'white', nome: '+Milionária', max: 50, minReq: 6, precoBase: 6.00 },
+          'Lotomania': { idGen: 'btn-lotomania-modal', id: 'btn-lotomania-conf', endp: 'lotomania', cor: '#ef6c00', txt: 'white', nome: 'Lotomania', max: 100, minReq: 50, precoBase: 3.00 },
+          'Timemania': { idGen: 'btn-timemania-modal', id: 'btn-timemania-conf', endp: 'timemania', cor: '#fbc02d', txt: 'black', nome: 'Timemania', max: 80, minReq: 10, precoBase: 3.50 },
+          'DuplaSena': { idGen: 'btn-dupla-modal', id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white', nome: 'Dupla Sena', max: 50, minReq: 6, precoBase: 3.00 },
+          'Lotofacil': { idGen: 'btn-lotofacil-modal', id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white', nome: 'Lotofácil', max: 25, minReq: 15, precoBase: 3.50 },
+          'DiaDeSorte': { endp: 'diadesorte', cor: '#cb852b', txt: 'white', nome: 'Dia de Sorte' }
+      };
+
+      const precos = {
+          'MegaSena': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00, 13: 10296.00, 14: 18018.00, 15: 30030.00, 16: 48048.00, 17: 74256.00, 18: 111384.00, 19: 162792.00, 20: 232560.00}, 
+          'Lotofacil': {15: 3.50, 16: 56.00, 17: 476.00, 18: 2856.00, 19: 13566.00, 20: 54264.00}, 
+          'Quina': {5: 3.00, 6: 18.00, 7: 63.00, 8: 168.00, 9: 378.00, 10: 756.00, 11: 1386.00, 12: 2376.00, 13: 3861.00, 14: 6006.00, 15: 9009.00}, 
+          'DuplaSena': {6: 3.00, 7: 21.00, 8: 84.00, 9: 252.00, 10: 630.00, 11: 1386.00, 12: 2772.00, 13: 5148.00, 14: 9009.00, 15: 15015.00}
+      };
+
+      const timesTimemania = [
+          "ABC/RN", "América/MG", "América/RJ", "América/RN", "Americano/RJ", "Atlético/GO", "Atlético/MG", "Atlético/PR", 
+          "Avaí/SC", "Bahia/BA", "Bangu/RJ", "Barueri/SP", "Botafogo/PB", "Botafogo/RJ", "Bragantino/SP", "Brasiliense/DF", 
+          "Ceará/CE", "Corinthians/SP", "Coritiba/PR", "CRB/AL", "Criciúma/SC", "Cruzeiro/MG", "CSA/AL", "Desportiva/ES", 
+          "Figueirense/SC", "Flamengo/RJ", "Fluminense/RJ", "Fortaleza/CE", "Gama/DF", "Goiás/GO", "Grêmio/RS", "Guarani/SP", 
+          "Inter Limeira/SP", "Internacional/RS", "Ipatinga/MG", "Ituano/SP", "Ji-Paraná/RO", "Joinville/SC", "Juventus/SP", 
+          "Londrina/PR", "Marília/SP", "Mixto/MT", "Moto Clube/MA", "Nacional/AM", "Náutico/PE", "Olaria/RJ", "Operário/MS", 
+          "Palmeiras/SP", "Paraná/PR", "Paulista/SP", "Paysandu/PA", "Ponte Preta/SP", "Portuguesa/SP", "Remo/PA", "Rio Branco/AC", 
+          "Rio Branco/ES", "River/PI", "Roraima/RR", "Sampaio Corrêa/MA", "Santa Cruz/PE", "Santo André/SP", "Santos/SP", 
+          "São Caetano/SP", "São Paulo/SP", "São Raimundo/AM", "Sergipe/SE", "Sport/PE", "Treze/PB", "Tuna Luso/PA", "Tupi/MG", 
+          "União Barbarense/SP", "União São João/SP", "Vasco da Gama/RJ", "Vila Nova/GO", "Villa Nova/MG", "Vitória/BA", 
+          "Vitória/ES", "XV de Piracicaba/SP", "Ypiranga/AP", "Palmas/TO"
+      ];
+
+      let textoParaWhatsApp = "";
+      let textoParaCopiar = ""; 
+      let loteriaSelecionadaModal = 'MegaSena'; 
+      let loteriaSelecionadaConf = 'MegaSena';
+      let numerosEscolhidosArray = [];
+      let trevosEscolhidosArray = []; 
+      let concursoCarregado = null;
+      let ultimoConcursoDisponivel = null;
+      let dezenasSorteadasConferencia = [];
+      let trevosSorteadosConferencia = [];
+      let timeCoracaoSorteado = "";
+
+      function formatarPremiacoes(arr) {
+          if (!arr || !Array.isArray(arr)) return [];
+          return arr.map(p => ({
+              descricao: p.descricaoFaixa || p.descricao || p.acertos || "Premiação",
+              ganhadores: p.numeroGanhadores !== undefined ? p.numeroGanhadores : (p.ganhadores !== undefined ? p.ganhadores : (p.vencedores !== undefined ? p.vencedores : 0)),
+              premio: p.valorPremio !== undefined ? p.valorPremio : (p.premio !== undefined ? p.premio : 0)
+          }));
+      }
+
+      function recolherVisor() {
+          document.getElementById('select-loteria-res').value = "";
+          document.getElementById('visor-conteudo').style.display = 'none';
+          document.getElementById('visor-loading').style.display = 'block';
+          document.getElementById('visor-loading').innerText = "Selecione uma loteria no menu acima para carregar o último resultado e rateio.";
+          document.getElementById('visor-loading').style.color = '#666';
+      }
+
+      async function buscarDadosLoteria(tipo, concursoNum = null) {
+          let conf = configLoterias[tipo];
+          try {
+              let urlHeroku = concursoNum 
+                  ? `https://loteriascaixa-api.herokuapp.com/api/${conf.endp}/${concursoNum}`
+                  : `https://loteriascaixa-api.herokuapp.com/api/${conf.endp}/latest`;
+              let res = await fetch(urlHeroku);
+              if(res.ok) {
+                  let data = await res.json();
+                  return {
+                      concurso: data.concurso || data.numero,
+                      data: data.data || data.dataApuracao,
+                      dezenas: data.dezenas || data.listaDezenas,
+                      trevos: data.trevos || data.listaTrevosSorteados,
+                      mesSorte: data.mesSorte || data.nomeMesSorte,
+                      timeCoracao: data.timeCoracao || data.nomeTimeCoracao,
+                      dataProximoConcurso: data.dataProximoConcurso,
+                      valorEstimadoProximoConcurso: data.valorEstimadoProximoConcurso,
+                      acumulou: data.acumulou,
+                      premiacoes: formatarPremiacoes(data.premiacoes || data.listaRateioPremio)
+                  };
+              }
+          } catch(e) {
+              console.warn("API principal indisponível, usando API oficial da Caixa...");
+          }
+          let urlCaixa = concursoNum
+              ? `https://corsproxy.io/?https://servicebus.caixa.gov.br/portaldeloterias/api/${conf.endp}/${concursoNum}`
+              : `https://corsproxy.io/?https://servicebus.caixa.gov.br/portaldeloterias/api/${conf.endp}`;
+          let resCaixa = await fetch(urlCaixa);
+          if(!resCaixa.ok) throw new Error('Falha ao buscar dados nas fontes oficiais.');
+          let dataC = await resCaixa.json();
+          return {
+              concurso: dataC.numero || dataC.concurso,
+              data: dataC.dataApuracao || dataC.data,
+              dezenas: dataC.listaDezenas || dataC.dezenas,
+              trevos: dataC.listaTrevosSorteados || dataC.trevos,
+              mesSorte: dataC.nomeMesSorte || dataC.mesSorte,
+              timeCoracao: dataC.nomeTimeCoracao || dataC.timeCoracao,
+              dataProximoConcurso: dataC.dataProximoConcurso,
+              valorEstimadoProximoConcurso: dataC.valorEstimadoProximoConcurso,
+              acumulou: dataC.acumulado !== undefined ? dataC.acumulado : dataC.acumulou,
+              premiacoes: formatarPremiacoes(dataC.listaRateioPremio || dataC.premiacoes)
+          };
+      }
+
+      async function carregarVisorResultado(tipo) {
+          if(!tipo) return;
+          let loadingDiv = document.getElementById('visor-loading');
+          let conteudoDiv = document.getElementById('visor-conteudo');
+          loadingDiv.style.display = 'block';
+          loadingDiv.innerText = `Buscando resultados da ${configLoterias[tipo].nome}...`;
+          loadingDiv.style.color = '#333';
+          conteudoDiv.style.display = 'none';
+
+          try {
+              let conf = configLoterias[tipo];
+              let data = await buscarDadosLoteria(tipo);
+
+              document.getElementById('visor-titulo').innerText = conf.nome;
+              document.getElementById('visor-titulo').style.color = conf.cor;
+              let dataSorteio = data.data || '--/--/----';
+              document.getElementById('visor-info').innerHTML = `Resultado Concurso <b>${data.concurso}</b> (${dataSorteio})`;
+              let containerBolinhas = document.getElementById('visor-bolinhas');
+              containerBolinhas.innerHTML = '';
+              if(data.dezenas) {
+                  data.dezenas.forEach(dezena => {
+                      let bola = document.createElement('div');
+                      bola.className = 'bolinha-res';
+                      bola.style.backgroundColor = conf.cor;
+                      bola.style.color = conf.txt;
+                      bola.innerText = dezena;
+                      containerBolinhas.appendChild(bola);
+                  });
+              }
+              if (tipo === 'Milionaria' && data.trevos) {
+                  let spanTxt = document.createElement('span');
+                  spanTxt.innerText = "+";
+                  spanTxt.style.cssText = "font-size: 24px; color: #888; font-weight: bold; margin: 2px 5px;";
+                  containerBolinhas.appendChild(spanTxt);
+                  data.trevos.forEach(trevo => {
+                      let bola = document.createElement('div');
+                      bola.className = 'bolinha-res';
+                      bola.style.backgroundColor = '#fbc02d'; 
+                      bola.style.color = '#311b92';
+                      bola.innerText = trevo;
+                      containerBolinhas.appendChild(bola);
+                  });
+              } else if (tipo === 'DiaDeSorte' && data.mesSorte) {
+                  let badge = document.createElement('div');
+                  badge.style.cssText = "background: #fbc02d; color:#333; font-weight:bold; padding: 8px 12px; border-radius: 20px; font-size:13px; margin-top:5px; flex-basis: 100%; text-align:center;";
+                  badge.innerText = `Mês da Sorte: ${data.mesSorte}`;
+                  containerBolinhas.appendChild(badge);
+              } else if (tipo === 'Timemania' && data.timeCoracao) {
+                  let badge = document.createElement('div');
+                  badge.style.cssText = "background: #fbc02d; color:#333; font-weight:bold; padding: 8px 12px; border-radius: 20px; font-size:13px; margin-top:5px; flex-basis: 100%; text-align:center;";
+                  badge.innerText = `Time do Coração: ${data.timeCoracao}`;
+                  containerBolinhas.appendChild(badge);
+              }
+              document.getElementById('visor-data-prox').innerText = data.dataProximoConcurso || 'Data a definir';
+              if(data.valorEstimadoProximoConcurso) {
+                  document.getElementById('visor-valor-prox').innerText = data.valorEstimadoProximoConcurso.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+              } else {
+                  document.getElementById('visor-valor-prox').innerText = 'Apurando...';
+              }
+              let listaPremios = document.getElementById('visor-lista-premios');
+              listaPremios.innerHTML = '';
+              if(data.premiacoes && data.premiacoes.length > 0) {
+                  data.premiacoes.forEach(premio => {
+                      let li = document.createElement('li');
+                      li.className = 'item-premiacao';
+                      let txtAcertos = `<span class="acertos-texto">${premio.descricao}</span>`;
+                      let txtGanhadores = '';
+                      if(premio.ganhadores === 0) {
+                          txtGanhadores = `<span class="ganhadores-texto">Acumulou!</span>`;
+                      } else {
+                          let valorSt = (typeof premio.premio === 'number') 
+                              ? premio.premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) 
+                              : 'Apurando...';
+                          txtGanhadores = `<span class="ganhadores-texto">${premio.ganhadores} aposta(s) ganhadora(s) &bull; <strong style="color:#005ca9;">${valorSt}</strong></span>`;
+                      }
+                      li.innerHTML = txtAcertos + txtGanhadores;
+                      listaPremios.appendChild(li);
+                  });
+              } else {
+                  listaPremios.innerHTML = '<li class="item-premiacao">Rateio não disponível no momento.</li>';
+              }
+              loadingDiv.style.display = 'none';
+              conteudoDiv.style.display = 'block';
+          } catch(e) {
+              loadingDiv.innerText = "⚠️ Erro ao buscar resultado. A base de dados da Caixa pode estar em atualização. Tente novamente em instantes.";
+              loadingDiv.style.color = '#e53935';
+          }
+      }
+
+      function gerarNumeros(max, qtd, offset = 1) {
+          let nums = [];
+          while(nums.length < qtd) {
+              let n = Math.floor(Math.random() * max) + offset;
+              if(!nums.includes(n)) nums.push(n);
+          }
+          return nums.sort((a,b) => a-b);
+      }
+
+      function calcularCombinacoesPossiveis(n, k) {
+          if (k > n) return 0;
+          if (k === 0 || k === n) return 1;
+          let result = 1;
+          for (let i = 1; i <= k; i++) {
+              result = result * (n - i + 1) / i;
+          }
+          return Math.round(result);
+      }
+
+      function gerarCombinacoes(arr, k) {
+          if (k > arr.length || k <= 0) return [];
+          if (k === arr.length) return [arr];
+          if (k === 1) return arr.map(n => [n]);
+          let combs = [];
+          for (let i = 0; i < arr.length - k + 1; i++) {
+              let head = arr.slice(i, i + 1);
+              let tailcombs = gerarCombinacoes(arr.slice(i + 1), k - 1);
+              for (let j = 0; j < tailcombs.length; j++) {
+                  combs.push(head.concat(tailcombs[j]));
+              }
+          }
+          return combs;
+      }
+
+      function renderizarGridNumeros(maxDezenas, corTema) {
+          let grid = document.getElementById('grid-numeros-modal');
+          grid.innerHTML = '';
+          numerosEscolhidosArray = []; 
+          atualizarContadorGrid();
+          for(let i = 1; i <= maxDezenas; i++) {
+              let btn = document.createElement('div');
+              btn.className = 'num-btn';
+              btn.innerText = (i === 100 ? 0 : i).toString().padStart(2, '0');
+              btn.onclick = function() {
+                  let val = i === 100 ? 0 : i;
+                  let index = numerosEscolhidosArray.indexOf(val);
+                  if (index > -1) {
+                      numerosEscolhidosArray.splice(index, 1);
+                      btn.classList.remove('ativo');
+                      btn.style.background = '#fff';
+                  } else {
+                      numerosEscolhidosArray.push(val);
+                      btn.classList.add('ativo');
+                      btn.style.background = corTema;
+                  }
+                  atualizarContadorGrid();
+              };
+              grid.appendChild(btn);
+          }
+      }
+
+      function renderizarGridTrevos() {
+          let grid = document.getElementById('grid-trevos-modal');
+          grid.innerHTML = '';
+          trevosEscolhidosArray = [];
+          document.getElementById('contador-trevos').innerText = '0';
+          for(let i = 1; i <= 6; i++) {
+              let btn = document.createElement('div');
+              btn.className = 'num-btn';
+              btn.innerText = i.toString().padStart(2, '0');
+              btn.onclick = function() {
+                  let index = trevosEscolhidosArray.indexOf(i);
+                  if (index > -1) {
+                      trevosEscolhidosArray.splice(index, 1);
+                      btn.classList.remove('ativo');
+                      btn.style.background = '#fff';
+                  } else {
+                      trevosEscolhidosArray.push(i);
+                      btn.classList.add('ativo');
+                      btn.style.background = '#311b92'; 
+                  }
+                  document.getElementById('contador-trevos').innerText = trevosEscolhidosArray.length;
+                  if(trevosEscolhidosArray.length >= 2) document.getElementById('contador-trevos').style.color = '#209869';
+                  else document.getElementById('contador-trevos').style.color = '#e53935';
+              };
+              grid.appendChild(btn);
+          }
+      }
+
+      function atualizarContadorGrid() {
+          let contadorSpan = document.getElementById('contador-num');
+          contadorSpan.innerText = numerosEscolhidosArray.length;
+          let conf = configLoterias[loteriaSelecionadaModal];
+          if (numerosEscolhidosArray.length >= conf.minReq) contadorSpan.style.color = '#209869';
+          else contadorSpan.style.color = '#e53935'; 
+      }
+
+      function limparGridModal() {
+          numerosEscolhidosArray = [];
+          trevosEscolhidosArray = [];
+          let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
+          for (let btn of botoes) { btn.classList.remove('ativo'); btn.style.background = '#fff'; }
+          let botoesTrevos = document.getElementById('grid-trevos-modal').getElementsByClassName('num-btn');
+          for (let btn of botoesTrevos) { btn.classList.remove('ativo'); btn.style.background = '#fff'; }
+          document.getElementById('input-time-coracao').value = '';
+          atualizarContadorGrid();
+          document.getElementById('contador-trevos').innerText = '0';
+          document.getElementById('contador-trevos').style.color = '#e53935';
+      }
+
+      function sortearTimeModal() {
+          let timeSorteado = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+          document.getElementById('input-time-coracao').value = timeSorteado;
+      }
+
+      function selecionarAleatorioModal() {
+          let inputQtd = document.getElementById('qtd-aleatoria').value;
+          let qtd = parseInt(inputQtd, 10);
+          let conf = configLoterias[loteriaSelecionadaModal];
+          if (isNaN(qtd) || qtd < conf.minReq || qtd > conf.max) {
+              alert(`Por favor, insira uma quantidade válida (entre ${conf.minReq} e ${conf.max}).`);
+              return;
+          }
+          limparGridModal(); 
+          while(numerosEscolhidosArray.length < qtd) {
+              let n = Math.floor(Math.random() * conf.max) + (loteriaSelecionadaModal === 'Lotomania' ? 0 : 1);
+              if(!numerosEscolhidosArray.includes(n)) numerosEscolhidosArray.push(n);
+          }
+          let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
+          for (let i = 0; i < botoes.length; i++) {
+              let numBtn = (i+1 === 100 && loteriaSelecionadaModal === 'Lotomania') ? 0 : i+1;
+              if (numerosEscolhidosArray.includes(numBtn)) {
+                  botoes[i].classList.add('ativo');
+                  botoes[i].style.background = conf.cor;
+              }
+          }
+          atualizarContadorGrid();
+          if (loteriaSelecionadaModal === 'Milionaria') {
+              while(trevosEscolhidosArray.length < 2) {
+                  let n = Math.floor(Math.random() * 6) + 1;
+                  if(!trevosEscolhidosArray.includes(n)) trevosEscolhidosArray.push(n);
+              }
+              let bTrevos = document.getElementById('grid-trevos-modal').getElementsByClassName('num-btn');
+              for (let i = 0; i < bTrevos.length; i++) {
+                  if (trevosEscolhidosArray.includes(i+1)) {
+                      bTrevos[i].classList.add('ativo'); bTrevos[i].style.background = '#311b92';
+                  }
+              }
+              document.getElementById('contador-trevos').innerText = '2';
+              document.getElementById('contador-trevos').style.color = '#209869';
+          }
+      }
+
+      function abrirModal() {
+          document.getElementById('modal-combinacoes').style.display = 'flex';
+          setLoteriaModal('MegaSena'); 
+      }
+
+      function fecharModal(idModal) {
+          document.getElementById(idModal).style.display = 'none';
+      }
+
+      function setLoteriaModal(tipo) {
+          loteriaSelecionadaModal = tipo;
+          let conf = configLoterias[tipo];
+          for (const key in configLoterias) {
+              if(document.getElementById(configLoterias[key].idGen)) {
+                  document.getElementById(configLoterias[key].idGen).classList.remove('ativa');
+              }
+          }
+          document.getElementById(conf.idGen).classList.add('ativa');
+          renderizarGridNumeros(conf.max, conf.cor);
+          document.getElementById('qtd-aleatoria').value = '';
+
+          if (tipo === 'Milionaria') {
+              document.getElementById('container-trevos-modal').style.display = 'block';
+              document.getElementById('container-time-modal').style.display = 'none';
+              renderizarGridTrevos();
+          } else if (tipo === 'Timemania') {
+              document.getElementById('container-trevos-modal').style.display = 'none';
+              document.getElementById('container-time-modal').style.display = 'block';
+              document.getElementById('input-time-coracao').value = ''; 
+          } else {
+              document.getElementById('container-trevos-modal').style.display = 'none';
+              document.getElementById('container-time-modal').style.display = 'none';
+          }
+      }
+
+      function executarCombinacoes() {
+          let tipo = loteriaSelecionadaModal;
+          let conf = configLoterias[tipo];
+          let tamanhoJogo = conf.minReq; 
+          let numerosEscolhidos = [...numerosEscolhidosArray].sort((a,b) => a-b);
+          let precoBase = conf.precoBase;
+
+          if (numerosEscolhidos.length < tamanhoJogo) {
+              alert(`Para a loteria ${conf.nome}, você precisa selecionar pelo menos ${tamanhoJogo} dezenas.`);
+              return;
+          }
+
+          let arrayJogosFinal = [];
+          let timeEscolhido = null;
+          let isTimeAleatorio = false;
+
+          if (tipo === 'Timemania') {
+              timeEscolhido = document.getElementById('input-time-coracao').value.trim();
+              if(!timeEscolhido) {
+                  isTimeAleatorio = true;
+              }
+          }
+
+          if (tipo === 'Milionaria') {
+              let trevosEscolhidos = [...trevosEscolhidosArray].sort((a,b) => a-b);
+              if(trevosEscolhidos.length < 2) { alert(`⚠️ Para a +Milionária, selecione pelo menos 2 Trevos.`); return; }
+              
+              let combNumeros = gerarCombinacoes(numerosEscolhidos, 6);
+              let combTrevos = gerarCombinacoes(trevosEscolhidos, 2);
+              let totalComb = combNumeros.length * combTrevos.length;
+
+              if (totalComb > 50000) { alert(`⚠️ Vai gerar ${totalComb.toLocaleString()} cartões e pode travar!`); return; }
+              if (totalComb > 3000 && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
+
+              for(let nums of combNumeros) {
+                  for(let trevs of combTrevos) {
+                      arrayJogosFinal.push({ numeros: nums, trevos: trevs, time: null });
+                  }
+              }
+          } else {
+              let totalComb = calcularCombinacoesPossiveis(numerosEscolhidos.length, tamanhoJogo);
+              if (totalComb > 50000) { alert(`⚠️ Vai gerar ${totalComb.toLocaleString()} cartões e pode travar!`); return; }
+              if (totalComb > 3000 && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
+
+              let combNumeros = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
+              arrayJogosFinal = combNumeros.map(nums => {
+                  let timeDoCartao = timeEscolhido;
+                  if (isTimeAleatorio) {
+                      timeDoCartao = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+                  }
+                  return { numeros: nums, trevos: null, time: timeDoCartao };
+              });
+          }
+
+          // ===== NOVO: FILTRO INTELIGENTE / LIMITADOR =====
+          let inputLimite = document.getElementById('input-limite-cartoes').value;
+          let limite = parseInt(inputLimite, 10);
+          
+          if (!isNaN(limite) && limite > 0 && limite < arrayJogosFinal.length) {
+              // Pega cartões uniformemente espaçados para gerar a MELHOR cobertura dezenas
+              let step = arrayJogosFinal.length / limite;
+              let melhoresJogos = [];
+              for (let j = 0; j < limite; j++) {
+                  let index = Math.floor(j * step);
+                  melhoresJogos.push(arrayJogosFinal[index]);
+              }
+              arrayJogosFinal = melhoresJogos;
+          }
+
+          let dezenasText = `${numerosEscolhidos.length} dz`;
+          if (tipo === 'Milionaria') dezenasText += ` e ${trevosEscolhidosArray.length} trevos`;
+          if (tipo === 'Timemania') dezenasText += ` e ${isTimeAleatorio ? 'times sorteados' : '1 time'}`;
+
+          exibirResultados(arrayJogosFinal, tipo, precoBase, `Combinações: ${conf.nome} (${dezenasText})`);
+          fecharModal('modal-combinacoes'); 
+      }
+
+      // --- MÓDULO DE GERAÇÃO MÚLTIPLA ---
+      window.abrirModalMultiplo = function() {
+          document.getElementById('modal-multiplo').style.display = 'flex';
+          let lista = document.getElementById('lista-multipla');
+          lista.innerHTML = '';
+          for (const key in configLoterias) {
+              if (key === 'DiaDeSorte') continue;
+              let conf = configLoterias[key];
+              let precoFormatado = conf.precoBase.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+              lista.innerHTML += `
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0;">
+                      <div>
+                          <div style="font-weight: bold; color: ${conf.cor}; font-size: 16px;">${conf.nome}</div>
+                          <div style="font-size: 11px; color: #888;">${precoFormatado} / jogo simples</div>
+                      </div>
+                      <div>
+                          <input type="number" id="qtd-mult-${key}" min="0" max="100" value="0" style="width: 50px; padding: 8px; text-align: center; border: 2px solid #ccc; border-radius: 8px; font-weight: bold; font-size: 15px; outline: none;">
+                      </div>
+                  </div>
+              `;
+          }
+      };
+
+      window.executarGeradorMultiplo = function() {
+          let jogosGerados = [];
+          let custoTotal = 0;
+
+          for (const key in configLoterias) {
+              if (key === 'DiaDeSorte') continue;
+              let input = document.getElementById(`qtd-mult-${key}`);
+              if(input) {
+                  let qtd = parseInt(input.value) || 0;
+                  let conf = configLoterias[key];
+
+                  for(let i = 0; i < qtd; i++) {
+                      let offset = (key === 'Lotomania') ? 0 : 1;
+                      let nums = gerarNumeros(conf.max, conf.minReq, offset);
+                      let trevs = (key === 'Milionaria') ? gerarNumeros(6, 2, 1) : null;
+                      let timeDoCartao = (key === 'Timemania') ? timesTimemania[Math.floor(Math.random() * timesTimemania.length)] : null;
+
+                      jogosGerados.push({
+                          loteriaKey: key, loteriaNome: conf.nome, cor: conf.cor,
+                          numeros: nums, trevos: trevs, time: timeDoCartao, preco: conf.precoBase
+                      });
+                      custoTotal += conf.precoBase;
+                  }
+              }
+          }
+
+          if(jogosGerados.length === 0) {
+              alert("Selecione a quantidade para pelo menos uma loteria.");
+              return;
+          }
+          exibirResultadosMultiplos(jogosGerados, custoTotal, "Múltiplas Loterias (Gerador Combinado)");
+          fecharModal('modal-multiplo');
+      };
+
+      window.exibirResultadosMultiplos = function(arrayJogos, custoTotal, titulo) {
+          let html = "";
+          textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
+          textoParaCopiar = ""; 
+
+          let grupos = {};
+          arrayJogos.forEach(jogo => {
+              if(!grupos[jogo.loteriaNome]) grupos[jogo.loteriaNome] = [];
+              grupos[jogo.loteriaNome].push(jogo);
+          });
+
+          for (const nomeLoteria in grupos) {
+              let jogosDaLoteria = grupos[nomeLoteria];
+              let corLoteria = jogosDaLoteria[0].cor;
+
+              html += `<h4 style="margin: 20px 0 10px 0; color: ${corLoteria}; border-bottom: 2px solid ${corLoteria}; padding-bottom: 5px; text-align: left; font-size: 18px;">${nomeLoteria.toUpperCase()}</h4>`;
+              textoParaWhatsApp += `\n*${nomeLoteria.toUpperCase()}*\n`;
+              textoParaCopiar += `\n[ ${nomeLoteria.toUpperCase()} ]\n`;
+
+              for(let i = 0; i < jogosDaLoteria.length; i++) {
+                  let jogo = jogosDaLoteria[i];
+                  let numsFormatados = jogo.numeros.map(n => n.toString().padStart(2, '0')).join(' - ');
+                  let linhaHtml = `<div class="linha-jogo"><span style="color:#555; font-weight:bold; width: 55px; display:inline-block;">Jogo ${i+1}:</span> <span class="numero">${numsFormatados}</span>`;
+                  let linhaTexto = `Jogo ${i+1}: ${numsFormatados}`;
+
+                  if (jogo.trevos) {
+                      let trevsFormatados = jogo.trevos.map(n => n.toString().padStart(2, '0')).join(' - ');
+                      linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Trevos: <span style="color:#311b92;">${trevsFormatados}</span></span>`;
+                      linhaTexto += ` | Trevos: ${trevsFormatados}`;
+                  }
+                  if (jogo.time) {
+                      linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Time: <span style="color:#b71c1c;">${jogo.time.toUpperCase()}</span></span>`;
+                      linhaTexto += ` | Time: ${jogo.time.toUpperCase()}`;
+                  }
+                  linhaHtml += `</div>`;
+                  html += linhaHtml;
+                  textoParaWhatsApp += `*${linhaTexto}*\n`;
+                  textoParaCopiar += `${linhaTexto}\n`;
+              }
+          }
+
+          let totalFormatado = "R$ " + custoTotal.toFixed(2).replace('.', ',');
+          textoParaWhatsApp += `\n🏷️ *Total de Cartões: ${arrayJogos.length}*\n💰 *Total do Bolão: ${totalFormatado}*\n\n🌐 *Gere seus jogos acessando:*\n${window.location.href}`;
+
+          document.getElementById('titulo-res').innerText = titulo;
+          document.getElementById('conteudo-res').innerHTML = html;
+          document.getElementById('total-cartoes').innerText = arrayJogos.length;
+          document.getElementById('total-geral').innerText = totalFormatado;
+
+          document.querySelector('.app-container').style.display = 'none';
+          document.getElementById('tela-resultado').style.display = 'block';
+      };
+
+      // --- CONFERÊNCIA ---
+      function abrirModalConferencia() {
+          document.getElementById('modal-conferencia').style.display = 'flex';
+          setLoteriaConferencia('MegaSena');
+          document.getElementById('textarea-jogos').value = '';
+      }
+
+      function setLoteriaConferencia(tipo) {
+          loteriaSelecionadaConf = tipo;
+          for (const key in configLoterias) {
+              if(document.getElementById(configLoterias[key].id)) {
+                  document.getElementById(configLoterias[key].id).classList.remove('ativa');
+              }
+          }
+          document.getElementById(configLoterias[tipo].id).classList.add('ativa');
+          buscarUltimoResultadoAPIAntiga(tipo);
+      }
+
+      function prepararBuscaAPI() {
+          let infoDiv = document.getElementById('info-api');
+          let painelPremium = document.getElementById('painel-premium');
+          infoDiv.innerText = "Buscando dados do concurso...";
+          infoDiv.style.color = '#888';
+          painelPremium.style.display = 'none';
+      }
+
+      function falhaBuscaAPI(num) {
+          document.getElementById('info-api').innerText = `⚠️ Falha ao buscar concurso ${num || ''}.`;
+          document.getElementById('info-api').style.color = '#e53935';
+      }
+
+      function processarDadosAPI(data, isLatest) {
+          let conf = configLoterias[loteriaSelecionadaConf];
+          let infoDiv = document.getElementById('info-api');
+          let painelPremium = document.getElementById('painel-premium');
+
+          if (isLatest) ultimoConcursoDisponivel = data.concurso;
+          concursoCarregado = data.concurso;
+          dezenasSorteadasConferencia = data.dezenas.map(n => parseInt(n, 10));
+          trevosSorteadosConferencia = data.trevos ? data.trevos.map(n => parseInt(n, 10)) : [];
+          timeCoracaoSorteado = data.timeCoracao || "";
+
+          document.getElementById('input-busca-concurso').value = concursoCarregado;
+          atualizarBotoesNavegacao();
+
+          infoDiv.innerText = `✔️ Concurso: ${data.concurso} realizado em ${data.data}`;
+          infoDiv.style.color = '#555';
+
+          let containerBolinhas = document.getElementById('bolinhas-container');
+          containerBolinhas.innerHTML = '';
+          data.dezenas.forEach(dezena => {
+              let bola = document.createElement('div');
+              bola.className = 'bolinha-oficial';
+              bola.style.backgroundColor = conf.cor;
+              bola.style.color = conf.txt;
+              bola.innerText = dezena;
+              if(data.dezenas.length > 10) { bola.style.width = '32px'; bola.style.height = '32px'; bola.style.fontSize = '14px'; }
+              containerBolinhas.appendChild(bola);
+          });
+
+          if (loteriaSelecionadaConf === 'Milionaria' && data.trevos) {
+              let spanTxt = document.createElement('span');
+              spanTxt.innerText = "+";
+              spanTxt.style.cssText = "font-size: 24px; color: #888; font-weight: bold; margin: 5px;";
+              containerBolinhas.appendChild(spanTxt);
+              data.trevos.forEach(trevo => {
+                  let bola = document.createElement('div');
+                  bola.className = 'bolinha-oficial';
+                  bola.style.backgroundColor = '#fbc02d'; 
+                  bola.style.color = '#311b92';
+                  bola.innerText = trevo;
+                  containerBolinhas.appendChild(bola);
+              });
+          } else if (loteriaSelecionadaConf === 'Timemania' && timeCoracaoSorteado) {
+              let badge = document.createElement('div');
+              badge.style.cssText = "background: #fbc02d; color:#333; font-weight:bold; padding: 6px 12px; border-radius: 20px; font-size:14px; margin-top:5px; flex-basis: 100%; text-align:center;";
+              badge.innerText = `Time Sorteado: ${timeCoracaoSorteado}`;
+              containerBolinhas.appendChild(badge);
+          }
+
+          let labelPremio = document.getElementById('label-premio-texto');
+          if (concursoCarregado === ultimoConcursoDisponivel) {
+              labelPremio.innerHTML = `Estimativa de prêmio<br>concurso <span style="font-weight: bold;">${data.dataProximoConcurso || '--/--/----'}</span>`;
+              let valorProx = data.valorEstimadoProximoConcurso ? data.valorEstimadoProximoConcurso.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : 'Aguardando Rateio';
+              document.getElementById('valor-estimado').innerText = valorProx;
+          } else {
+              labelPremio.innerHTML = `Prêmio deste concurso<br><span style="font-weight: bold;">Finalizado</span>`;
+              let valorPrize = "Apurado";
+              if(data.acumulou) { valorPrize = "Acumulou!"; } 
+              else if(data.premiacoes && data.premiacoes.length > 0) { valorPrize = data.premiacoes[0].premio ? data.premiacoes[0].premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : 'Apurado'; }
+              document.getElementById('valor-estimado').innerText = valorPrize;
+          }
+          painelPremium.style.display = 'block';
+      }
+
+      async function buscarUltimoResultadoAPIAntiga(tipo) {
+          prepararBuscaAPI();
+          try {
+              let data = await buscarDadosLoteria(tipo);
+              processarDadosAPI(data, true);
+          } catch (error) { falhaBuscaAPI(); }
+      }
+
+      async function buscarConcursoEspecifico() {
+          let num = parseInt(document.getElementById('input-busca-concurso').value, 10);
+          if(isNaN(num) || num < 1 || num === concursoCarregado) return;
+          if(ultimoConcursoDisponivel && num > ultimoConcursoDisponivel) {
+             num = ultimoConcursoDisponivel; document.getElementById('input-busca-concurso').value = num;
+          }
+          prepararBuscaAPI();
+          try {
+              let data = await buscarDadosLoteria(loteriaSelecionadaConf, num);
+              processarDadosAPI(data, false);
+          } catch (error) { falhaBuscaAPI(num); }
+      }
+
+      function navegarConcurso(dir) {
+          if(!concursoCarregado) return;
+          let num = concursoCarregado + dir;
+          if(num < 1 || (ultimoConcursoDisponivel && num > ultimoConcursoDisponivel)) return;
+          document.getElementById('input-busca-concurso').value = num;
+          buscarConcursoEspecifico();
+      }
+
+      function atualizarBotoesNavegacao() {
+           let btnAnt = document.getElementById('btn-ant-concurso');
+           let btnProx = document.getElementById('btn-prox-concurso');
+           if(concursoCarregado <= 1) btnAnt.classList.add('disabled'); else btnAnt.classList.remove('disabled');
+           if(ultimoConcursoDisponivel && concursoCarregado >= ultimoConcursoDisponivel) btnProx.classList.add('disabled');
+             else btnProx.classList.remove('disabled');
+      }
+
+      function executarConferencia() {
+          let textareaJogos = document.getElementById('textarea-jogos').value;
+          if(dezenasSorteadasConferencia.length === 0) { alert("Aguarde o carregamento do concurso."); return; }
+          if(!textareaJogos.trim()) { alert("Insira ou cole seus jogos."); return; }
+          let linhas = textareaJogos.split('\n');
+          let conf = configLoterias[loteriaSelecionadaConf];
+          let totalJogosPremiados = 0;
+          let contagemPremios = {}; 
+          let jogosAvaliados = []; 
+
+          for(let i = 0; i < linhas.length; i++) {
+              let linha = linhas[i].trim();
+              if(linha === "") continue;
+              let linhaLimpa = linha.replace(/Jogo \d+:/gi, '');
+              let partes = linhaLimpa.split('|');
+              let numerosJogo = partes[0].match(/\d+/g); 
+              let trevosJogo = [];
+              let timeJogo = "";
+
+              for (let p = 1; p < partes.length; p++) {
+                  if (partes[p].toUpperCase().includes('TREVOS:')) {
+                      trevosJogo = partes[p].match(/\d+/g) || [];
+                  } else if (partes[p].toUpperCase().includes('TIME:')) {
+                      timeJogo = partes[p].toUpperCase().split('TIME:')[1].trim();
+                  }
+              }
+
+              if(!numerosJogo) continue;
+              let acertos = 0;
+              let acertosTrevos = 0;
+              let acertosTime = 0;
+              let linhaHtml = `<div class="linha-jogo">Jogo ${i+1}: `;
+
+              for(let n of numerosJogo) {
+                  let numInt = parseInt(n, 10);
+                  if(dezenasSorteadasConferencia.includes(numInt)) {
+                      linhaHtml += `<span class="numero-acerto" style="background-color:${conf.cor}; color:${conf.txt}">${n.padStart(2, '0')}</span>`;
+                      acertos++;
+                  } else {
+                      linhaHtml += `<span class="numero">${n.padStart(2, '0')}</span>`;
+                  }
+              }
+
+              if (loteriaSelecionadaConf === 'Milionaria' && trevosJogo.length > 0) {
+                  linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 8px;">| Trevos: </span>`;
+                  for(let t of trevosJogo) {
+                      let tInt = parseInt(t, 10);
+                      if(trevosSorteadosConferencia.includes(tInt)) {
+                          linhaHtml += `<span class="numero-acerto" style="background-color:#311b92; color:white;">${t.padStart(2, '0')}</span>`;
+                          acertosTrevos++;
+                      } else {
+                          linhaHtml += `<span class="numero">${t.padStart(2, '0')}</span>`;
+                      }
+                  }
+              } else if (loteriaSelecionadaConf === 'Timemania' && timeJogo && timeCoracaoSorteado) {
+                  let timeApiClean = timeCoracaoSorteado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().split('/')[0].trim();
+                  let timeJogoClean = timeJogo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+                  if (timeApiClean.includes(timeJogoClean) || timeJogoClean.includes(timeApiClean)) {
+                      acertosTime = 1;
+                  }
+                  linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 8px;">| Time: </span>`;
+                  if (acertosTime === 1) {
+                      linhaHtml += `<span class="numero-acerto" style="background-color:#fbc02d; color:#333;">${timeJogo}</span>`;
+                  } else {
+                      linhaHtml += `<span class="numero">${timeJogo}</span>`;
+                  }
+              }
+
+              let premiado = false;
+              let textoBadge = `Acertos: ${acertos}`;
+
+              if (loteriaSelecionadaConf === 'MegaSena' && acertos >= 4) { premiado = true; if(acertos===4) textoBadge="QUADRA!"; if(acertos===5) textoBadge="QUINA!"; if(acertos===6) textoBadge="SENA!"; }
+              else if (loteriaSelecionadaConf === 'Quina' && acertos >= 2) { premiado = true; if(acertos===2) textoBadge="DUQUE!"; if(acertos===3) textoBadge="TERNO!"; if(acertos===4) textoBadge="QUADRA!"; if(acertos===5) textoBadge="QUINA!"; }
+              else if (loteriaSelecionadaConf === 'Lotofacil' && acertos >= 11) { premiado = true; textoBadge = `${acertos} ACERTOS!`; }
+              else if (loteriaSelecionadaConf === 'Lotomania' && (acertos >= 15 || acertos === 0)) { premiado = true; textoBadge = `${acertos} ACERTOS!`; }
+              else if (loteriaSelecionadaConf === 'DuplaSena' && acertos >= 3) { premiado = true; if(acertos===3) textoBadge="TERNO!"; if(acertos===4) textoBadge="QUADRA!"; if(acertos===5) textoBadge="QUINA!"; if(acertos===6) textoBadge="SENA!"; }
+              else if (loteriaSelecionadaConf === 'Milionaria') {
+                  if (acertos >= 2) {
+                      if (acertos === 6 && acertosTrevos === 2) textoBadge = "PRÊMIO MÁXIMO!";
+                      else textoBadge = `${acertos} Acertos + ${acertosTrevos} Trevo(s)`;
+                      if ((acertos >= 2 && acertosTrevos >= 1) || acertos >= 6) premiado = true;
+                  } else {
+                      textoBadge = `Acertos: ${acertos} e ${acertosTrevos}T`;
+                  }
+              } else if (loteriaSelecionadaConf === 'Timemania') {
+                  let badgeParts = [];
+                  if (acertos >= 3) badgeParts.push(`${acertos} Acertos`);
+                  if (acertosTime === 1) badgeParts.push(`Time!`);
+                  if (badgeParts.length > 0) {
+                      premiado = true;
+                      textoBadge = badgeParts.join(" + ");
+                  } else {
+                      textoBadge = `Acertos: ${acertos}`;
+                  }
+              }
+
+              if (premiado) {
+                  totalJogosPremiados++;
+                  contagemPremios[textoBadge] = (contagemPremios[textoBadge] || 0) + 1;
+              }
+
+              let badgeClass = "badge-acertos" + (premiado ? " badge-premiado" : "");
+              linhaHtml += `<span class="${badgeClass}" style="margin-left: auto;">${textoBadge}</span></div>`;
+
+              let pesoOrdem = acertos + (acertosTrevos * 0.1) + (acertosTime * 0.05);
+              jogosAvaliados.push({ peso: pesoOrdem, html: linhaHtml });
+          }
+
+          jogosAvaliados.sort((a, b) => b.peso - a.peso);
+          let htmlFinal = jogosAvaliados.map(jogo => jogo.html).join('');
+
+          document.getElementById('titulo-res').innerText = `Conferência: ${conf.nome} (Concurso ${concursoCarregado})`;
+          document.getElementById('conteudo-res').innerHTML = htmlFinal;
+
+          document.querySelector('.app-container').style.display = 'none';
+          document.getElementById('tela-resultado').style.display = 'block';
+
+          if (totalJogosPremiados > 0) {
+              let msgPremio = `Detectamos <b>${totalJogosPremiados}</b> jogo(s) premiado(s)!<br><br>`;
+              for (let tipoPremio in contagemPremios) {
+                  msgPremio += `<span style="color:#209869; font-weight:bold; font-size:18px;">${contagemPremios[tipoPremio]}x ${tipoPremio}</span><br>`;
+              }
+              document.getElementById('popup-texto').innerHTML = msgPremio;
+              document.getElementById('modal-premiacao').style.display = 'flex';
+          }
+      }
+
+      function exibirResultados(arrayJogos, tipo, precoBase, titulo) {
+          let html = "", soma = 0;
+          textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
+          textoParaCopiar = ""; 
+
+          for(let i = 0; i < arrayJogos.length; i++) {
+              let jogo = arrayJogos[i];
+              let numsFormatados = jogo.numeros.map(n => n.toString().padStart(2, '0')).join(' - ');
+              let linhaHtml = `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${numsFormatados}</span>`;
+              let linhaTexto = `Jogo ${i+1}: ${numsFormatados}`;
+
+              if (jogo.trevos) {
+                  let trevsFormatados = jogo.trevos.map(n => n.toString().padStart(2, '0')).join(' - ');
+                  linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Trevos: <span style="color:#311b92;">${trevsFormatados}</span></span>`;
+                  linhaTexto += ` | Trevos: ${trevsFormatados}`;
+              }
+              if (jogo.time) {
+                  linhaHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Time: <span style="color:#b71c1c;">${jogo.time.toUpperCase()}</span></span>`;
+                  linhaTexto += ` | Time: ${jogo.time.toUpperCase()}`;
+              }
+              linhaHtml += `</div>`;
+              html += linhaHtml;
+              textoParaWhatsApp += `*${linhaTexto}*\n`;
+              textoParaCopiar += `${linhaTexto}\n`;
+              soma += precoBase;
+          }
+
+          let totalFormatado = "R$ " + soma.toFixed(2).replace('.', ',');
+          textoParaWhatsApp += `\n🏷️ *Total de Cartões: ${arrayJogos.length}*\n💰 *Total do Bolão: ${totalFormatado}*\n\n🌐 *Gere seus jogos acessando:*\n${window.location.href}`;
+
+          document.getElementById('titulo-res').innerText = titulo;
+          document.getElementById('conteudo-res').innerHTML = html;
+          document.getElementById('total-cartoes').innerText = arrayJogos.length;
+          document.getElementById('total-geral').innerText = totalFormatado;
+
+          document.querySelector('.app-container').style.display = 'none';
+          document.getElementById('tela-resultado').style.display = 'block';
+      }
+
+      function copiarJogos() {
+          if(!textoParaCopiar) return;
+          navigator.clipboard.writeText(textoParaCopiar).then(() => {
+              let btn = document.getElementById('btn-copiar');
+              let textoOriginal = btn.innerText;
+              btn.innerText = "✅ Copiados!";
+              btn.style.background = "#209869"; 
+              setTimeout(() => { btn.innerText = textoOriginal; btn.style.background = "#f57c00"; }, 2000);
+          }).catch(err => { alert("Erro: " + err); });
+      }
+
+      function iniciar(tipo, max, minQtd, maxQtd) {
+          let qtdJogos = prompt(`Quantos jogos de ${configLoterias[tipo].nome} deseja gerar?`, "5");
+          if (!qtdJogos) return;
+          let qtdNum = minQtd;
+          if (tipo !== 'Lotomania') {
+              qtdNum = prompt(`Quantas dezenas por jogo? (${minQtd} a ${maxQtd})`, minQtd);
+              if (!qtdNum) return;
+          }
+
+          let qtdTrevos = 2;
+          if (tipo === 'Milionaria') {
+              let strTrevos = prompt(`Quantos TREVOS por jogo na +Milionária? (2 a 6)`, "2");
+              if (!strTrevos) return;
+              qtdTrevos = parseInt(strTrevos);
+              if (qtdTrevos < 2 || qtdTrevos > 6) { alert("Trevos inválidos!"); return; }
+          }
+
+          let timeEscolhido = null;
+          let isTimeAleatorio = false;
+
+          if (tipo === 'Timemania') {
+              let respTime = prompt(`Qual o seu Time do Coração?\n(Deixe em branco para sortear times diferentes para cada cartão)`, "");
+              if (respTime === null) return; 
+              if (respTime.trim() === "") {
+                  isTimeAleatorio = true;
+              } else {
+                  timeEscolhido = respTime.trim();
+              }
+          }
+
+          let arrayJogos = [];
+          for(let i = 0; i < qtdJogos; i++) {
+              let offset = (tipo === 'Lotomania') ? 0 : 1;
+              let nums = gerarNumeros(max, parseInt(qtdNum), offset);
+              let trevs = (tipo === 'Milionaria') ? gerarNumeros(6, qtdTrevos, 1) : null;
+              let timeDoCartao = timeEscolhido;
+              if (isTimeAleatorio) {
+                  timeDoCartao = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+              }
+              arrayJogos.push({ numeros: nums, trevos: trevs, time: timeDoCartao });
+          }
+
+          let prc = precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : configLoterias[tipo].precoBase;
+          if (tipo === 'Milionaria') prc = prc * calcularCombinacoesPossiveis(qtdTrevos, 2);
+
+          exibirResultados(arrayJogos, tipo, prc, `Resultado Automático ${configLoterias[tipo].nome}`);
+      }
+
+      function enviarWhatsApp() { let textoCodificado = encodeURIComponent(textoParaWhatsApp); window.open(`https://wa.me/?text=${textoCodificado}`, '_blank'); }
+      function abrirCaixa() { window.open('https://www.loteriasonline.caixa.gov.br/', '_blank'); }
+      function voltar() { document.querySelector('.app-container').style.display = 'flex'; document.getElementById('tela-resultado').style.display = 'none'; }
+
+      // --- INICIALIZAÇÃO PWA ---
+      let deferredPrompt;
+      const installBtn = document.getElementById('btn-install');
+      window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'block'; });
+      installBtn.addEventListener('click', async () => { if (deferredPrompt !== null) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') { installBtn.style.display = 'none'; } deferredPrompt = null; } });
+      if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Erro:', err)); }); }
+  </script>
+</body>
+</html>
