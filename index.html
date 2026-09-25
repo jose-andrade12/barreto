@@ -395,7 +395,6 @@
       <h3 id="titulo-cartoes" style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
       <h3 id="titulo-bolao" style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
 
-      <!-- NOVO BOTÃO AQUI -->
       <button id="btn-regerar" class="btn-regerar" onclick="regerarAnimado()" style="display: none;">🎲 Combinar Novamente</button>
       
       <button id="btn-copiar" class="btn-copiar" onclick="copiarJogos()">📋 Copiar Jogos</button>
@@ -519,7 +518,7 @@
       </div>
   </div>
 
-  <!-- FIREBASE SCRIPTS ... (permanecem intactos) ... -->
+  <!-- FIREBASE SCRIPTS ... -->
   <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -1129,7 +1128,6 @@
                   if (hasLimit && limite < arrayJogosFinal.length) {
                       let step = arrayJogosFinal.length / limite;
                       let melhoresJogos = [];
-                      // A MÁGICA ESTÁ AQUI: Deslocamento aleatório para "Combinar Novamente" trazer jogos novos
                       let offsetRandom = Math.floor(Math.random() * step); 
                       for (let j = 0; j < limite; j++) {
                           let index = Math.floor(j * step) + offsetRandom;
@@ -1172,7 +1170,6 @@
                   if (hasLimit && limite < arrayJogosFinal.length) {
                       let step = arrayJogosFinal.length / limite;
                       let melhoresJogos = [];
-                      // A MÁGICA ESTÁ AQUI: Deslocamento aleatório para "Combinar Novamente" trazer jogos novos
                       let offsetRandom = Math.floor(Math.random() * step);
                       for (let j = 0; j < limite; j++) {
                           let index = Math.floor(j * step) + offsetRandom;
@@ -1188,7 +1185,6 @@
           if (tipo === 'Milionaria') dezenasText += ` e ${trevosEscolhidosArray.length} trevos`;
           if (tipo === 'Timemania') dezenasText += ` e ${isTimeAleatorio ? 'times sorteados' : '1 time'}`;
 
-          // Passando 'true' no último parâmetro para habilitar o botão de regerar
           exibirResultados(arrayJogosFinal, tipo, precoBase, `Combinações: ${conf.nome} (${dezenasText})`, true);
           fecharModal('modal-combinacoes'); 
       }
@@ -1205,7 +1201,7 @@
                   <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0;">
                       <div>
                           <div style="font-weight: bold; color: ${conf.cor}; font-size: 16px;">${conf.nome}</div>
-                          <div style="font-size: 11px; color: #888;">${precoFormatado} / jogo simple</div>
+                          <div style="font-size: 11px; color: #888;">${precoFormatado} / jogo simples</div>
                       </div>
                       <div>
                           <input type="number" id="qtd-mult-${key}" min="0" max="100" value="0" style="width: 50px; padding: 8px; text-align: center; border: 2px solid #ccc; border-radius: 8px; font-weight: bold; font-size: 15px; outline: none;">
@@ -1440,6 +1436,10 @@
           let textareaJogos = document.getElementById('textarea-jogos').value;
           if(dezenasSorteadasConferencia.length === 0) { alert("Aguarde o carregamento do concurso."); return; }
           if(!textareaJogos.trim()) { alert("Insira ou cole seus jogos."); return; }
+          
+          // O AJUSTE ESTÁ AQUI: Fechar o modal imediatamente
+          fecharModal('modal-conferencia');
+
           let linhas = textareaJogos.split('\n');
           let conf = configLoterias[loteriaSelecionadaConf];
           let totalJogosPremiados = 0;
@@ -1600,7 +1600,6 @@
           document.getElementById('total-cartoes').innerText = arrayJogos.length;
           document.getElementById('total-geral').innerText = totalFormatado;
 
-          // Exibe ou esconde o botão regerar
           document.getElementById('btn-regerar').style.display = podeRegerar ? 'block' : 'none';
 
           document.querySelector('.app-container').style.display = 'none';
@@ -1663,7 +1662,6 @@
           let prc = precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : configLoterias[tipo].precoBase;
           if (tipo === 'Milionaria') prc = prc * calcularCombinacoesPossiveis(qtdTrevos, 2);
 
-          // Passa 'false' no final pois os automáticos geram dezenas aleatórias totais
           exibirResultados(arrayJogos, tipo, prc, `Resultado Automático ${configLoterias[tipo].nome}`, false);
       }
 
