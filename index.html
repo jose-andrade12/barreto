@@ -12,9 +12,7 @@
   
   <style>
       /* Reset Global Responsivo */
-      *, *::before, *::after {
-          box-sizing: border-box;
-      }
+      *, *::before, *::after { box-sizing: border-box; }
 
       body { 
           font-family: 'Segoe UI', sans-serif; 
@@ -36,17 +34,13 @@
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 30px;
+          gap: 15px;
           transition: max-width 0.3s ease;
       }
 
       @media (min-width: 768px) {
-          .app-container {
-              max-width: 700px;
-          }
-          .painel-container {
-              padding: 35px;
-          }
+          .app-container { max-width: 700px; }
+          .painel-container { padding: 35px; }
       }
 
       .clover-side { width: 100%; max-width: 280px; }
@@ -55,50 +49,113 @@
           0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px #FFDF00; transform: scale(1); }
           100% { box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 50px #FFF; transform: scale(1.04); }
       }
-
       .clover-img { width: 100%; height: auto; border-radius: 20px; animation: brilharTrevo 1.5s infinite alternate ease-in-out; }
 
-      /* -------------------------------------------
-             BOTÕES MODERNIZADOS (MENU PRINCIPAL)
-      ------------------------------------------- */
+      /* ========================================================
+         NOVO LAYOUT DE BOTÕES (GRID E AÇÕES PRINCIPAIS)
+         ======================================================== */
+      
+      .grid-loterias-main {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+          width: 100%;
+          margin-top: 10px;
+          margin-bottom: 15px;
+      }
+
+      .btn-card-loteria {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          padding: 14px 12px;
+          border-radius: 16px;
+          border: 2px solid #222; 
+          box-shadow: inset 0 8px 10px rgba(255,255,255,0.25), inset 0 -4px 10px rgba(0,0,0,0.3), 0 6px 10px rgba(0,0,0,0.4);
+          cursor: pointer;
+          transition: transform 0.15s, box-shadow 0.15s;
+          text-align: left;
+          position: relative;
+          overflow: hidden;
+      }
+      
+      .btn-card-loteria:active {
+          transform: scale(0.96) translateY(2px);
+          box-shadow: inset 0 4px 6px rgba(255,255,255,0.1), inset 0 -2px 5px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.4);
+      }
+
+      .icon-trevo {
+          width: 28px;
+          height: 28px;
+          margin-bottom: 6px;
+          filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5));
+      }
+
+      .btn-card-loteria .texto-gerar {
+          font-size: 11px;
+          font-weight: 800;
+          line-height: 1;
+          margin-bottom: 4px;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+      }
+
+      .btn-card-loteria .texto-nome {
+          font-size: 17.5px;
+          font-weight: 900;
+          line-height: 1;
+          letter-spacing: -0.5px;
+          text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+      }
+
+      /* Cores Modernas das Loterias */
+      .btn-card-mega { background: linear-gradient(180deg, #26a673, #157347); color: white; }
+      .btn-card-quina { background: linear-gradient(180deg, #7b1fa2, #4a148c); color: white; }
+      .btn-card-milionaria { background: linear-gradient(180deg, #4527a0, #281165); color: white; }
+      .btn-card-lotofacil { background: linear-gradient(180deg, #ab47bc, #6a1b9a); color: white; }
+      .btn-card-timemania { background: linear-gradient(180deg, #ffee58, #fbc02d); color: #111; }
+      .btn-card-timemania .texto-gerar, .btn-card-timemania .texto-nome { text-shadow: none; }
+      .btn-card-dupla { background: linear-gradient(180deg, #e53935, #b71c1c); color: white; }
+      .btn-card-lotomania { background: linear-gradient(180deg, #ff9800, #e65100); color: white; }
+      .btn-card-supersete { background: linear-gradient(180deg, #c6ff00, #93c100); color: #111; }
+      .btn-card-supersete .texto-gerar, .btn-card-supersete .texto-nome { text-shadow: none; }
+
+      /* Botões de Ação na Tela Principal */
+      .stack-acoes-main {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+          margin-bottom: 10px;
+      }
+
+      .btn-acao-main {
+          width: 100%;
+          padding: 14px;
+          font-size: 14px;
+          font-weight: 900;
+          text-transform: uppercase;
+          border-radius: 8px;
+          border: 2px solid #222;
+          cursor: pointer;
+          transition: transform 0.15s;
+          box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -3px 5px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.4);
+      }
+      
+      .btn-acao-main:active { transform: scale(0.97) translateY(2px); }
+
+      .bg-multiplo { background: #004d40; color: white; border-color: #00251a; }
+      .bg-conf { background: #b71c1c; color: white; border-color: #7f0000; }
+      .bg-comb { background: #333333; color: #FFDF00; border-color: #111; }
+
+      /* ========================================================
+         REGRAS ANTIGAS MANTIDAS PARA MODAIS E SECUNDÁRIOS
+         ======================================================== */
       .btn { 
-          display: block; 
-          width: 100%; 
-          padding: 16px; 
-          margin: 12px 0; 
-          color: white; 
-          font-size: 17px; 
-          font-weight: 800; 
-          letter-spacing: 1px;
-          border: none; 
-          border-radius: 12px; 
-          cursor: pointer; 
-          box-shadow: 0 5px 12px rgba(0,0,0,0.25); 
-          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          display: block; width: 100%; padding: 16px; margin: 12px 0; color: white; font-size: 17px; 
+          font-weight: 800; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 5px 12px rgba(0,0,0,0.25); 
           text-transform: uppercase;
       }
-
-      .btn:hover { 
-          transform: translateY(-3px) scale(1.01); 
-          box-shadow: 0 8px 20px rgba(0,0,0,0.35); 
-          filter: brightness(1.1);
-      }
-
-      .btn:active { 
-          transform: translateY(1px); 
-          box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
-      }
-
-      /* Gradientes Modernos para Loterias */
-      .btn-quina { background: linear-gradient(135deg, #4a148c, #6a1b9a); }
-      .btn-mega { background: linear-gradient(135deg, #209869, #26a673); }
-      .btn-milionaria { background: linear-gradient(135deg, #311b92, #4527a0); }
-      .btn-lotomania { background: linear-gradient(135deg, #ef6c00, #f57c00); }
-      .btn-timemania { background: linear-gradient(135deg, #fbc02d, #fdd835); color: #222 !important; text-shadow: 1px 1px 0px rgba(255,255,255,0.4); }
-      .btn-dupla { background: linear-gradient(135deg, #c62828, #d32f2f); }
-      .btn-lotofacil { background: linear-gradient(135deg, #7b1fa2, #8e24aa); }
-
-      /* Gradientes para Botões de Ação */
       .btn-multiplo { background: linear-gradient(135deg, #004d40, #00695c); border: 2px solid #26a69a; }
       .btn-acao { background: linear-gradient(135deg, #212121, #424242); border: 2px solid #FFDF00; color: #FFDF00; }
       .btn-conf { background: linear-gradient(135deg, #b71c1c, #c62828); border: 2px solid #ffcdd2; }
@@ -198,7 +255,7 @@
       .ganhadores-texto { color: #666; display: block; }
       .loading-res { font-size: 15px; color: #666; text-align: center; padding: 30px 0; font-style: italic; }
 
-      /* --- ESTILO DA CHAMATIVA NA TELA INICIAL --- */
+      /* --- AUTENTICAÇÃO E ADMIN --- */
       .chamativa-login {
           background: linear-gradient(135deg, #fffde7, #fff9c4);
           border: 2px solid #fbc02d;
@@ -207,39 +264,26 @@
           margin-bottom: 20px;
           animation: pulsarChamativa 2s infinite alternate;
       }
-      .chamativa-login p {
-          margin: 0;
-          color: #333;
-          font-size: 14.5px;
-          line-height: 1.4;
-      }
-      .chamativa-destaque {
-          color: #b71c1c;
-          font-size: 17px;
-          font-weight: bold;
-          display: block;
-          margin-bottom: 8px;
-      }
+      .chamativa-login p { margin: 0; color: #333; font-size: 14.5px; line-height: 1.4; }
+      .chamativa-destaque { color: #b71c1c; font-size: 17px; font-weight: bold; display: block; margin-bottom: 8px; }
       @keyframes pulsarChamativa {
           0% { box-shadow: 0 2px 10px rgba(251, 192, 45, 0.2); transform: scale(1); }
           100% { box-shadow: 0 5px 20px rgba(251, 192, 45, 0.6); transform: scale(1.02); border-color: #f57f17; }
       }
 
-      /* NOVOS ESTILOS PARA AUTENTICAÇÃO E ADMIN */
       .auth-container { background: white; padding: 40px; border-radius: 20px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 90%; max-width: 400px; margin: 0 auto; box-sizing: border-box; }
       .btn-google { background: #4285F4; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
       .btn-google:hover { background: #357AE8; }
       .btn-google img { width: 24px; background: white; border-radius: 50%; padding: 2px; }
 
-      .cabecalho-usuario { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 20px auto; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 12px; box-sizing: border-box; }
+      .cabecalho-usuario { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 10px auto; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 12px; box-sizing: border-box; }
       .user-info { font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
       .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #FFDF00; }
       .btn-logout { background: #e53935; border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
 
-      .btn-painel-admin { background: linear-gradient(135deg, #FFDF00, #fbc02d); color: #333; border: none; padding: 12px 15px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold; display: none; margin-top: 10px; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s; }
+      .btn-painel-admin { background: linear-gradient(135deg, #FFDF00, #fbc02d); color: #333; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; display: none; margin-bottom: 5px; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s; }
       .btn-painel-admin:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
 
-      /* Lista Admin */
       .admin-lista { text-align: left; max-height: 400px; overflow-y: auto; margin-top: 15px; }
       .admin-item { background: #f9f9f9; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
       .admin-item-dados { font-size: 13px; color: #555; }
@@ -272,17 +316,16 @@
           </button>
       </div>
 
-      <!-- 2. TELA PENDENTE (Aguardando Aprovação) -->
+      <!-- 2. TELA PENDENTE -->
       <div id="tela-pendente" class="auth-container" style="display: none; box-shadow: 0 15px 40px rgba(0,0,0,0.6);">
           <div style="font-size: 50px; margin-bottom: 10px;">⏳</div>
           <h2 style="margin-top: 0; color: #f57c00;">Acesso Pendente</h2>
           <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Seu cadastro foi recebido! Aguarde a liberação do administrador para utilizar a plataforma.</p>
           <button id="btn-logout-pendente" class="btn-logout" style="width: 100%; padding: 12px; font-size: 14px;">Sair / Trocar Conta</button>
       </div>
+  </div>
 
-  </div> <!-- FIM OVERLAY -->
-
-  <!-- 3. TELA PRINCIPAL (APP COMPLETO - DESFOCADA POR PADRÃO) -->
+  <!-- 3. TELA PRINCIPAL (APP COMPLETO) -->
   <div id="tela-principal" style="width: 100%; filter: blur(6px); pointer-events: none; user-select: none;">
       
       <!-- Cabeçalho de Autenticação -->
@@ -297,35 +340,70 @@
           <button id="btn-logout-app" class="btn-logout">Sair</button>
       </div>
 
-      <!-- Container Principal Unificado -->
+      <!-- Container Principal -->
       <div class="app-container">
           <div class="clover-side">
               <img src="trevo.png" alt="Trevo do Andrade" class="clover-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1210/1210985.png'; this.style.background='white';">
               <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
           </div>
 
-          <div class="painel-container" style="width: 100%; box-sizing: border-box;">
+          <div class="painel-container" style="width: 100%; box-sizing: border-box; padding: 10px 0;">
+              
               <!-- BOTÃO EXCLUSIVO DO MASTER -->
               <button id="btn-painel-admin" class="btn-painel-admin" onclick="abrirAdminModal()">⚙️ PAINEL DE CONTROLE (MASTER)</button>
-              <hr id="hr-admin" style="border-color: rgba(255,255,255,0.2); margin: 15px 0; display: none;">
 
-              <!-- Botões de Loterias -->
-              <button class="btn btn-quina" title="Valor da aposta: R$ 3,00" onclick="iniciar('Quina', 80, 5, 15)">QUINA</button>
-              <button class="btn btn-mega" title="Valor da aposta: R$ 6,00" onclick="iniciar('MegaSena', 60, 6, 20)">MEGA SENA</button>
-              <button class="btn btn-milionaria" title="Valor da aposta: R$ 6,00" onclick="iniciar('Milionaria', 50, 6, 12)">MILIONÁRIA</button>
-              <button class="btn btn-lotomania" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotomania', 100, 50, 50)">LOTOMANIA</button>
-              <button class="btn btn-timemania" title="Valor da aposta: R$ 3,50" onclick="iniciar('Timemania', 80, 10, 10)">TIMEMANIA</button>
-              <button class="btn btn-dupla" title="Valor da aposta: R$ 3,00" onclick="iniciar('DuplaSena', 50, 6, 15)">DUPLA SENA</button>
-              <button class="btn btn-lotofacil" title="Valor da aposta: R$ 3,50" onclick="iniciar('Lotofacil', 25, 15, 20)">LOTOFÁCIL</button>
+              <!-- NOVA GRID DE LOTERIAS (2 COLUNAS 3D) -->
+              <div class="grid-loterias-main">
+                  <button class="btn-card-loteria btn-card-mega" title="Valor da aposta: R$ 6,00" onclick="iniciar('MegaSena', 60, 6, 20)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo"><path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/><path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#ffffff"/><path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#ffffff"/><path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#ffffff"/></svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Mega Sena</span>
+                  </button>
+                  <button class="btn-card-loteria btn-card-quina" title="Valor da aposta: R$ 3,00" onclick="iniciar('Quina', 80, 5, 15)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo"><path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/><path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/><path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/><path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/></svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Quina</span>
+                  </button>
+                  <button class="btn-card-loteria btn-card-milionaria" title="Valor da aposta: R$ 6,00" onclick="iniciar('Milionaria', 50, 6, 12)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo"><path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/><path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/><path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/><path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/></svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">+Milionária</span>
+                  </button>
+                  <button class="btn-card-loteria btn-card-lotofacil" title="Valor da aposta: R$ 3,50" onclick="iniciar('Lotofacil', 25, 15, 20)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo"><path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/><path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/><path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/><path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/></svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Lotofácil</span>
+                  </button>
+                  <button class="btn-card-loteria btn-card-timemania" title="Valor da aposta: R$ 3,50" onclick="iniciar('Timemania', 80, 10, 10)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo"><path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#005ca9"/><path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/><path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/><path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/></svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Timemania</span>
+                  </button>
+                  <button class="btn-card-loteria btn-card-dupla" title="Valor da aposta: R$ 3,00" onclick="iniciar('DuplaSena', 50, 6, 15)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo"><path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/><path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/><path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/><path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/></svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Dupla Sena</span>
+                  </button>
+                  <button class="btn-card-loteria btn-card-lotomania" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotomania', 100, 50, 50)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo"><path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#005ca9"/><path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/><path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/><path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/></svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Lotomania</span>
+                  </button>
+                  <button class="btn-card-loteria btn-card-supersete" title="Em breve!" onclick="alert('Funcionalidade Super Sete em desenvolvimento!')">
+                      <svg viewBox="0 0 24 24" class="icon-trevo"><path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#005ca9"/><path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/><path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/><path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/></svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Super Sete</span>
+                  </button>
+              </div>
 
-              <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;">
+              <!-- NOVOS BOTÕES DE AÇÃO EMPILHADOS -->
+              <div class="stack-acoes-main">
+                  <button class="btn-acao-main bg-multiplo" onclick="abrirModalMultiplo()">GERAR MÚLTIPLO</button>
+                  <button class="btn-acao-main bg-conf" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
+                  <button class="btn-acao-main bg-comb" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
+              </div>
 
-              <!-- Botões de Ação Atualizados -->
-              <button class="btn btn-multiplo" onclick="abrirModalMultiplo()">GERAR MÚLTIPLO</button>
-              <button class="btn btn-conf" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
-              <button class="btn btn-acao" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
-
-              <p style="font-size: 12.5px; color: rgba(255,255,255,0.9); line-height: 1.4; margin-top: 15px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
+              <p style="font-size: 11.5px; color: rgba(255,255,255,0.8); line-height: 1.4; margin-top: 5px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
                   <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> (e filtra as melhores) e confere os acertos buscando no banco oficial da Caixa.
               </p>
           </div>
@@ -544,7 +622,6 @@
       const telaPendente = document.getElementById('tela-pendente');
       const telaPrincipal = document.getElementById('tela-principal');
       const btnAdmin = document.getElementById('btn-painel-admin');
-      const hrAdmin = document.getElementById('hr-admin');
 
       function registrarAcesso(user) {
           if (!sessionStorage.getItem('sessao_notificada_' + user.uid)) {
@@ -568,7 +645,6 @@
                       await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'master' });
                   }
                   btnAdmin.style.display = 'block';
-                  hrAdmin.style.display = 'block';
                   mostrarAppPrincipal();
                   registrarAcesso(user);
               } else {
@@ -1437,7 +1513,6 @@
           if(dezenasSorteadasConferencia.length === 0) { alert("Aguarde o carregamento do concurso."); return; }
           if(!textareaJogos.trim()) { alert("Insira ou cole seus jogos."); return; }
           
-          // O AJUSTE ESTÁ AQUI: Fechar o modal imediatamente
           fecharModal('modal-conferencia');
 
           let linhas = textareaJogos.split('\n');
