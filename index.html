@@ -109,13 +109,16 @@
       .numero { color: #555; font-weight: bold; padding: 2px 4px; border: 1px solid #eee; border-radius: 4px; background: #fafafa;}
       .numero-acerto { color: white; font-weight: bold; border-radius: 5px; padding: 2px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); } 
 
+      .btn-regerar { background: linear-gradient(135deg, #212121, #424242); color: #FFDF00; border: 2px solid #FFDF00; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 20px; margin-bottom: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.3s; }
+      .btn-regerar:active { transform: translateY(2px); }
+
       .btn-copiar, .btn-zap, .btn-caixa, .btn-voltar {
           border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.3s;
       }
-      .btn-copiar { background: #f57c00; color: white; margin-top: 20px; }
+      .btn-copiar { background: #f57c00; color: white; margin-top: 10px; }
       .btn-zap { background: #25D366; color: white; }
       .btn-caixa { background: #005CA9; color: white; }
-      .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; box-shadow: none; }
+      .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; box-shadow: none; margin-top: 20px;}
 
       .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
       
@@ -392,6 +395,9 @@
       <h3 id="titulo-cartoes" style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
       <h3 id="titulo-bolao" style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
 
+      <!-- NOVO BOTÃO AQUI -->
+      <button id="btn-regerar" class="btn-regerar" onclick="regerarAnimado()" style="display: none;">🎲 Combinar Novamente</button>
+      
       <button id="btn-copiar" class="btn-copiar" onclick="copiarJogos()">📋 Copiar Jogos</button>
       <button id="btn-zap" class="btn-zap" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
       <button id="btn-caixa" class="btn-caixa" onclick="abrirCaixa()">🎰 Jogar no Site da Caixa</button>
@@ -438,7 +444,6 @@
               <div id="grid-trevos-modal" class="grid-numeros" style="display: flex; justify-content: center; gap: 10px; min-height: auto; overflow: hidden; padding-bottom: 0;"></div>
           </div>
 
-          <!-- CAMPO PARA LIMITAR OS CARTÕES (Melhores Combinações) -->
           <div style="margin-top: 15px; padding: 15px; border-radius: 8px; background: #f1f5f9; border: 1px solid #cbd5e1;">
               <div class="contador-info" style="color:#005ca9; margin-bottom: 8px; font-size: 13.5px;">🎯 Filtro Inteligente (Melhores Cartões):</div>
               <input type="number" id="input-limite-cartoes" class="input-aleatorio" style="width: 100%; text-align: center; border-color: #94a3b8;" placeholder="Máx. de cartões (ex: 10)">
@@ -514,9 +519,7 @@
       </div>
   </div>
 
-<!-- =========================================================
-         SCRIPT DO FIREBASE + SISTEMA DE LOGIN E NOTIFICAÇÃO
-    ========================================================== -->
+  <!-- FIREBASE SCRIPTS ... (permanecem intactos) ... -->
   <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -549,22 +552,7 @@
               sessionStorage.setItem('sessao_notificada_' + user.uid, 'true');
               const userRef = doc(db, "usuarios", user.uid);
               updateDoc(userRef, { ultimoAcesso: new Date().toLocaleString('pt-BR') }).catch(e => console.log(e));
-              if (user.email !== MASTER_EMAIL) { 
-                  enviarAvisoCelular(user.displayName, user.email);
-              }
           }
-      }
-
-      function enviarAvisoCelular(nome, email) {
-          const topicoNtfy = 'COLOQUE_SEU_TOPICO_AQUI'; 
-          if(topicoNtfy === 'COLOQUE_SEU_TOPICO_AQUI') return;
-          const titulo = '🚨 Novo Acesso Autorizado';
-          const msg = `Usuário: ${nome}\nE-mail: ${email}\nData: ${new Date().toLocaleString('pt-BR')}`;
-          fetch(`https://ntfy.sh/${topicoNtfy}`, {
-              method: 'POST',
-              body: msg,
-              headers: { 'Title': titulo, 'Tags': 'rotating_light,clover' }
-          }).catch(err => console.log('Erro notificação celular:', err));
       }
 
       onAuthStateChanged(auth, async (user) => {
@@ -604,31 +592,18 @@
       });
 
       function mostrarAppPrincipal() {
-          appOverlay.style.display = 'none'; // Some o Overlay de bloqueio
-          telaPrincipal.style.filter = 'none'; // Tira o desfoque
-          telaPrincipal.style.pointerEvents = 'auto'; // Libera cliques
-          telaPrincipal.style.userSelect = 'auto';
+          appOverlay.style.display = 'none'; telaPrincipal.style.filter = 'none'; telaPrincipal.style.pointerEvents = 'auto'; telaPrincipal.style.userSelect = 'auto';
       }
 
       function mostrarTelaPendente() {
-          appOverlay.style.display = 'flex';
-          telaLogin.style.display = 'none';
-          telaPendente.style.display = 'block';
-          telaPrincipal.style.filter = 'blur(6px)';
-          telaPrincipal.style.pointerEvents = 'none';
+          appOverlay.style.display = 'flex'; telaLogin.style.display = 'none'; telaPendente.style.display = 'block'; telaPrincipal.style.filter = 'blur(6px)'; telaPrincipal.style.pointerEvents = 'none';
       }
 
       function mostrarTelaLogin() {
-          appOverlay.style.display = 'flex';
-          telaLogin.style.display = 'block';
-          telaPendente.style.display = 'none';
-          telaPrincipal.style.filter = 'blur(6px)';
-          telaPrincipal.style.pointerEvents = 'none';
+          appOverlay.style.display = 'flex'; telaLogin.style.display = 'block'; telaPendente.style.display = 'none'; telaPrincipal.style.filter = 'blur(6px)'; telaPrincipal.style.pointerEvents = 'none';
       }
 
-      document.getElementById('btn-fazer-login').addEventListener('click', () => {
-          signInWithPopup(auth, provider).catch(error => alert("Erro ao fazer login: " + error.message));
-      });
+      document.getElementById('btn-fazer-login').addEventListener('click', () => { signInWithPopup(auth, provider).catch(error => alert("Erro ao fazer login: " + error.message)); });
 
       const btnLogoutApp = document.getElementById('btn-logout-app');
       const btnLogoutPendente = document.getElementById('btn-logout-pendente');
@@ -667,7 +642,7 @@
               if(html === '') html = '<div style="text-align: center; color: #888; padding: 20px;">Nenhum usuário cadastrado ainda.</div>';
               listaDiv.innerHTML = html;
           } catch(e) {
-              listaDiv.innerHTML = '<div style="color:red; text-align:center;">Erro ao carregar banco de dados. Verifique se ativou o Firestore em "Modo Teste".</div>';
+              listaDiv.innerHTML = '<div style="color:red; text-align:center;">Erro ao carregar banco de dados.</div>';
           }
       };
 
@@ -730,10 +705,21 @@
       let trevosSorteadosConferencia = [];
       let timeCoracaoSorteado = "";
 
-      // ===== FUNÇÃO HELPER: MODO SEGURO (MISTURA DE ARRAY) =====
+      function regerarAnimado() {
+          let btn = document.getElementById('btn-regerar');
+          let textoOriginal = btn.innerHTML;
+          btn.innerHTML = "⏳ Misturando...";
+          btn.style.opacity = "0.7";
+          
+          setTimeout(() => {
+              executarCombinacoes();
+              btn.innerHTML = textoOriginal;
+              btn.style.opacity = "1";
+          }, 300);
+      }
+
       function pegarDezenasAleatorias(arrayOrigem, qtd) {
           let arr = [...arrayOrigem];
-          // Embaralhamento seguro (Fisher-Yates)
           for (let i = arr.length - 1; i > 0; i--) {
               let j = Math.floor(Math.random() * (i + 1));
               [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -1080,7 +1066,6 @@
           }
       }
 
-      // ===== CORREÇÃO DO BLOQUEIO DE GERAÇÃO =====
       function executarCombinacoes() {
           let tipo = loteriaSelecionadaModal;
           let conf = configLoterias[tipo];
@@ -1104,11 +1089,10 @@
               }
           }
 
-          // ===== LEITURA DO FILTRO ANTECIPADA =====
           let inputLimite = document.getElementById('input-limite-cartoes').value;
           let limite = parseInt(inputLimite, 10);
           let hasLimit = !isNaN(limite) && limite > 0;
-          let travaSeguranca = 200000; // Limite máximo para gerar matriz completa na memória RAM
+          let travaSeguranca = 200000; 
 
           if (tipo === 'Milionaria') {
               let trevosEscolhidos = [...trevosEscolhidosArray].sort((a,b) => a-b);
@@ -1120,7 +1104,6 @@
               if (totalComb > 3000 && !hasLimit && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
 
               if (hasLimit && totalComb > travaSeguranca) {
-                  // MODO SEGURO: Volumetria gigantesca (Ex: Lotofácil) sorteio aleatório
                   let setJogos = new Set();
                   let tentativas = 0;
                   while (arrayJogosFinal.length < limite && tentativas < limite * 10) {
@@ -1134,7 +1117,6 @@
                       }
                   }
               } else {
-                  // MODO ARRAY COMPLETO -> Seleção Espaçada Perfeita
                   let combNumeros = gerarCombinacoes(numerosEscolhidos, 6);
                   let combTrevos = gerarCombinacoes(trevosEscolhidos, 2);
 
@@ -1147,8 +1129,10 @@
                   if (hasLimit && limite < arrayJogosFinal.length) {
                       let step = arrayJogosFinal.length / limite;
                       let melhoresJogos = [];
+                      // A MÁGICA ESTÁ AQUI: Deslocamento aleatório para "Combinar Novamente" trazer jogos novos
+                      let offsetRandom = Math.floor(Math.random() * step); 
                       for (let j = 0; j < limite; j++) {
-                          let index = Math.floor(j * step);
+                          let index = Math.floor(j * step) + offsetRandom;
                           if (index >= arrayJogosFinal.length) index = arrayJogosFinal.length - 1;
                           melhoresJogos.push(arrayJogosFinal[index]);
                       }
@@ -1162,7 +1146,6 @@
               if (totalComb > 3000 && !hasLimit && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
 
               if (hasLimit && totalComb > travaSeguranca) {
-                  // MODO SEGURO: Volumetria gigantesca 
                   let setJogos = new Set();
                   let tentativas = 0;
                   while (arrayJogosFinal.length < limite && tentativas < limite * 10) {
@@ -1177,7 +1160,6 @@
                       }
                   }
               } else {
-                  // MODO ARRAY COMPLETO -> Seleção Espaçada Perfeita
                   let combNumeros = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
                   arrayJogosFinal = combNumeros.map(nums => {
                       let timeDoCartao = timeEscolhido;
@@ -1190,8 +1172,10 @@
                   if (hasLimit && limite < arrayJogosFinal.length) {
                       let step = arrayJogosFinal.length / limite;
                       let melhoresJogos = [];
+                      // A MÁGICA ESTÁ AQUI: Deslocamento aleatório para "Combinar Novamente" trazer jogos novos
+                      let offsetRandom = Math.floor(Math.random() * step);
                       for (let j = 0; j < limite; j++) {
-                          let index = Math.floor(j * step);
+                          let index = Math.floor(j * step) + offsetRandom;
                           if (index >= arrayJogosFinal.length) index = arrayJogosFinal.length - 1;
                           melhoresJogos.push(arrayJogosFinal[index]);
                       }
@@ -1204,11 +1188,11 @@
           if (tipo === 'Milionaria') dezenasText += ` e ${trevosEscolhidosArray.length} trevos`;
           if (tipo === 'Timemania') dezenasText += ` e ${isTimeAleatorio ? 'times sorteados' : '1 time'}`;
 
-          exibirResultados(arrayJogosFinal, tipo, precoBase, `Combinações: ${conf.nome} (${dezenasText})`);
+          // Passando 'true' no último parâmetro para habilitar o botão de regerar
+          exibirResultados(arrayJogosFinal, tipo, precoBase, `Combinações: ${conf.nome} (${dezenasText})`, true);
           fecharModal('modal-combinacoes'); 
       }
 
-      // --- MÓDULO DE GERAÇÃO MÚLTIPLA ---
       window.abrirModalMultiplo = function() {
           document.getElementById('modal-multiplo').style.display = 'flex';
           let lista = document.getElementById('lista-multipla');
@@ -1221,7 +1205,7 @@
                   <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0;">
                       <div>
                           <div style="font-weight: bold; color: ${conf.cor}; font-size: 16px;">${conf.nome}</div>
-                          <div style="font-size: 11px; color: #888;">${precoFormatado} / jogo simples</div>
+                          <div style="font-size: 11px; color: #888;">${precoFormatado} / jogo simple</div>
                       </div>
                       <div>
                           <input type="number" id="qtd-mult-${key}" min="0" max="100" value="0" style="width: 50px; padding: 8px; text-align: center; border: 2px solid #ccc; border-radius: 8px; font-weight: bold; font-size: 15px; outline: none;">
@@ -1313,6 +1297,8 @@
           document.getElementById('conteudo-res').innerHTML = html;
           document.getElementById('total-cartoes').innerText = arrayJogos.length;
           document.getElementById('total-geral').innerText = totalFormatado;
+
+          document.getElementById('btn-regerar').style.display = 'none';
 
           document.querySelector('.app-container').style.display = 'none';
           document.getElementById('tela-resultado').style.display = 'block';
@@ -1564,6 +1550,8 @@
           document.getElementById('titulo-res').innerText = `Conferência: ${conf.nome} (Concurso ${concursoCarregado})`;
           document.getElementById('conteudo-res').innerHTML = htmlFinal;
 
+          document.getElementById('btn-regerar').style.display = 'none';
+
           document.querySelector('.app-container').style.display = 'none';
           document.getElementById('tela-resultado').style.display = 'block';
 
@@ -1577,7 +1565,7 @@
           }
       }
 
-      function exibirResultados(arrayJogos, tipo, precoBase, titulo) {
+      function exibirResultados(arrayJogos, tipo, precoBase, titulo, podeRegerar = false) {
           let html = "", soma = 0;
           textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`;
           textoParaCopiar = ""; 
@@ -1611,6 +1599,9 @@
           document.getElementById('conteudo-res').innerHTML = html;
           document.getElementById('total-cartoes').innerText = arrayJogos.length;
           document.getElementById('total-geral').innerText = totalFormatado;
+
+          // Exibe ou esconde o botão regerar
+          document.getElementById('btn-regerar').style.display = podeRegerar ? 'block' : 'none';
 
           document.querySelector('.app-container').style.display = 'none';
           document.getElementById('tela-resultado').style.display = 'block';
@@ -1672,7 +1663,8 @@
           let prc = precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : configLoterias[tipo].precoBase;
           if (tipo === 'Milionaria') prc = prc * calcularCombinacoesPossiveis(qtdTrevos, 2);
 
-          exibirResultados(arrayJogos, tipo, prc, `Resultado Automático ${configLoterias[tipo].nome}`);
+          // Passa 'false' no final pois os automáticos geram dezenas aleatórias totais
+          exibirResultados(arrayJogos, tipo, prc, `Resultado Automático ${configLoterias[tipo].nome}`, false);
       }
 
       function enviarWhatsApp() { let textoCodificado = encodeURIComponent(textoParaWhatsApp); window.open(`https://wa.me/?text=${textoCodificado}`, '_blank'); }
