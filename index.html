@@ -251,12 +251,11 @@
 
   <h1>🍀 IA - Inteligência do Andrade</h1>
 
-  <!-- OVERLAY DE LOGIN COM EFEITO DE DESFOQUE (VIDRO FOSCO) -->
+  <!-- OVERLAY DE LOGIN COM EFEITO DE DESFOQUE -->
   <div id="app-overlay" class="modal-overlay" style="display: flex; flex-direction: column; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 1500;">
       
       <!-- 1. TELA DE LOGIN -->
       <div id="tela-login" class="auth-container" style="box-shadow: 0 15px 40px rgba(0,0,0,0.6);">
-          <!-- CHAMATIVA EM DESTAQUE -->
           <div class="chamativa-login">
               <span class="chamativa-destaque">🎯 Aumente suas chances!</span>
               <p>Gere seus jogos em <strong>todas as loterias</strong>, faça combinações inteligentes e confira seus acertos na hora.</p>
@@ -281,7 +280,6 @@
   </div> <!-- FIM OVERLAY -->
 
   <!-- 3. TELA PRINCIPAL (APP COMPLETO - DESFOCADA POR PADRÃO) -->
-  <!-- A tela fica atrás, mas ilegível/inutilizável até o login para gerar a curiosidade solicitada -->
   <div id="tela-principal" style="width: 100%; filter: blur(6px); pointer-events: none; user-select: none;">
       
       <!-- Cabeçalho de Autenticação -->
@@ -732,6 +730,17 @@
       let trevosSorteadosConferencia = [];
       let timeCoracaoSorteado = "";
 
+      // ===== FUNÇÃO HELPER: MODO SEGURO (MISTURA DE ARRAY) =====
+      function pegarDezenasAleatorias(arrayOrigem, qtd) {
+          let arr = [...arrayOrigem];
+          // Embaralhamento seguro (Fisher-Yates)
+          for (let i = arr.length - 1; i > 0; i--) {
+              let j = Math.floor(Math.random() * (i + 1));
+              [arr[i], arr[j]] = [arr[j], arr[i]];
+          }
+          return arr.slice(0, qtd).sort((a,b) => a-b);
+      }
+
       function formatarPremiacoes(arr) {
           if (!arr || !Array.isArray(arr)) return [];
           return arr.map(p => ({
@@ -1071,6 +1080,7 @@
           }
       }
 
+      // ===== CORREÇÃO DO BLOQUEIO DE GERAÇÃO =====
       function executarCombinacoes() {
           let tipo = loteriaSelecionadaModal;
           let conf = configLoterias[tipo];
@@ -1094,50 +1104,100 @@
               }
           }
 
+          // ===== LEITURA DO FILTRO ANTECIPADA =====
+          let inputLimite = document.getElementById('input-limite-cartoes').value;
+          let limite = parseInt(inputLimite, 10);
+          let hasLimit = !isNaN(limite) && limite > 0;
+          let travaSeguranca = 200000; // Limite máximo para gerar matriz completa na memória RAM
+
           if (tipo === 'Milionaria') {
               let trevosEscolhidos = [...trevosEscolhidosArray].sort((a,b) => a-b);
               if(trevosEscolhidos.length < 2) { alert(`⚠️ Para a +Milionária, selecione pelo menos 2 Trevos.`); return; }
               
-              let combNumeros = gerarCombinacoes(numerosEscolhidos, 6);
-              let combTrevos = gerarCombinacoes(trevosEscolhidos, 2);
-              let totalComb = combNumeros.length * combTrevos.length;
+              let totalComb = calcularCombinacoesPossiveis(numerosEscolhidos.length, 6) * calcularCombinacoesPossiveis(trevosEscolhidos.length, 2);
 
-              if (totalComb > 50000) { alert(`⚠️ Vai gerar ${totalComb.toLocaleString()} cartões e pode travar!`); return; }
-              if (totalComb > 3000 && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
+              if (totalComb > 50000 && !hasLimit) { alert(`⚠️ Vai gerar ${totalComb.toLocaleString()} cartões e pode travar!\n\nPor favor, digite uma quantidade no campo "Filtro Inteligente".`); return; }
+              if (totalComb > 3000 && !hasLimit && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
 
-              for(let nums of combNumeros) {
-                  for(let trevs of combTrevos) {
-                      arrayJogosFinal.push({ numeros: nums, trevos: trevs, time: null });
+              if (hasLimit && totalComb > travaSeguranca) {
+                  // MODO SEGURO: Volumetria gigantesca (Ex: Lotofácil) sorteio aleatório
+                  let setJogos = new Set();
+                  let tentativas = 0;
+                  while (arrayJogosFinal.length < limite && tentativas < limite * 10) {
+                      tentativas++;
+                      let nums = pegarDezenasAleatorias(numerosEscolhidos, 6);
+                      let trevs = pegarDezenasAleatorias(trevosEscolhidos, 2);
+                      let hash = nums.join('-') + '|' + trevs.join('-');
+                      if (!setJogos.has(hash)) {
+                          setJogos.add(hash);
+                          arrayJogosFinal.push({ numeros: nums, trevos: trevs, time: null });
+                      }
+                  }
+              } else {
+                  // MODO ARRAY COMPLETO -> Seleção Espaçada Perfeita
+                  let combNumeros = gerarCombinacoes(numerosEscolhidos, 6);
+                  let combTrevos = gerarCombinacoes(trevosEscolhidos, 2);
+
+                  for(let nums of combNumeros) {
+                      for(let trevs of combTrevos) {
+                          arrayJogosFinal.push({ numeros: nums, trevos: trevs, time: null });
+                      }
+                  }
+
+                  if (hasLimit && limite < arrayJogosFinal.length) {
+                      let step = arrayJogosFinal.length / limite;
+                      let melhoresJogos = [];
+                      for (let j = 0; j < limite; j++) {
+                          let index = Math.floor(j * step);
+                          if (index >= arrayJogosFinal.length) index = arrayJogosFinal.length - 1;
+                          melhoresJogos.push(arrayJogosFinal[index]);
+                      }
+                      arrayJogosFinal = melhoresJogos;
                   }
               }
           } else {
               let totalComb = calcularCombinacoesPossiveis(numerosEscolhidos.length, tamanhoJogo);
-              if (totalComb > 50000) { alert(`⚠️ Vai gerar ${totalComb.toLocaleString()} cartões e pode travar!`); return; }
-              if (totalComb > 3000 && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
+              
+              if (totalComb > 50000 && !hasLimit) { alert(`⚠️ Vai gerar ${totalComb.toLocaleString()} cartões e pode travar!\n\nPor favor, digite uma quantidade no campo "Filtro Inteligente".`); return; }
+              if (totalComb > 3000 && !hasLimit && !confirm(`Gerar ${totalComb.toLocaleString()} cartões. Continuar?`)) return;
 
-              let combNumeros = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
-              arrayJogosFinal = combNumeros.map(nums => {
-                  let timeDoCartao = timeEscolhido;
-                  if (isTimeAleatorio) {
-                      timeDoCartao = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+              if (hasLimit && totalComb > travaSeguranca) {
+                  // MODO SEGURO: Volumetria gigantesca 
+                  let setJogos = new Set();
+                  let tentativas = 0;
+                  while (arrayJogosFinal.length < limite && tentativas < limite * 10) {
+                      tentativas++;
+                      let nums = pegarDezenasAleatorias(numerosEscolhidos, tamanhoJogo);
+                      let hash = nums.join('-');
+                      if (!setJogos.has(hash)) {
+                          setJogos.add(hash);
+                          let timeDoCartao = timeEscolhido;
+                          if (isTimeAleatorio) timeDoCartao = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+                          arrayJogosFinal.push({ numeros: nums, trevos: null, time: timeDoCartao });
+                      }
                   }
-                  return { numeros: nums, trevos: null, time: timeDoCartao };
-              });
-          }
+              } else {
+                  // MODO ARRAY COMPLETO -> Seleção Espaçada Perfeita
+                  let combNumeros = gerarCombinacoes(numerosEscolhidos, tamanhoJogo);
+                  arrayJogosFinal = combNumeros.map(nums => {
+                      let timeDoCartao = timeEscolhido;
+                      if (isTimeAleatorio) {
+                          timeDoCartao = timesTimemania[Math.floor(Math.random() * timesTimemania.length)];
+                      }
+                      return { numeros: nums, trevos: null, time: timeDoCartao };
+                  });
 
-          // ===== NOVO: FILTRO INTELIGENTE / LIMITADOR =====
-          let inputLimite = document.getElementById('input-limite-cartoes').value;
-          let limite = parseInt(inputLimite, 10);
-          
-          if (!isNaN(limite) && limite > 0 && limite < arrayJogosFinal.length) {
-              // Pega cartões uniformemente espaçados para gerar a MELHOR cobertura dezenas
-              let step = arrayJogosFinal.length / limite;
-              let melhoresJogos = [];
-              for (let j = 0; j < limite; j++) {
-                  let index = Math.floor(j * step);
-                  melhoresJogos.push(arrayJogosFinal[index]);
+                  if (hasLimit && limite < arrayJogosFinal.length) {
+                      let step = arrayJogosFinal.length / limite;
+                      let melhoresJogos = [];
+                      for (let j = 0; j < limite; j++) {
+                          let index = Math.floor(j * step);
+                          if (index >= arrayJogosFinal.length) index = arrayJogosFinal.length - 1;
+                          melhoresJogos.push(arrayJogosFinal[index]);
+                      }
+                      arrayJogosFinal = melhoresJogos;
+                  }
               }
-              arrayJogosFinal = melhoresJogos;
           }
 
           let dezenasText = `${numerosEscolhidos.length} dz`;
