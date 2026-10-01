@@ -2,1146 +2,1078 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Treino Diário</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- Forçando a não utilização de cache antigo pelo navegador -->
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   
-  <!-- PWA / App no Celular -->
+  <title>IA - Inteligência do Andrade</title>
+  
   <link rel="manifest" href="manifest.json">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Meu Treino">
+  <meta name="theme-color" content="#005ca9">
+  <link rel="apple-touch-icon" href="trevo.png">
   
-  <!-- Ícone do App -->
-  <link rel="apple-touch-icon" href="minha-foto.jpg">
-  <link rel="icon" type="image/jpeg" href="minha-foto.jpg">
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Firebase App, Database & Auth -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-
   <style>
-    .status-active { background-color: #facc15; font-weight: bold; color: #000; }
-    .status-x { background-color: #e5e7eb; color: #6b7280; }
-    .status-weekend { background-color: #d1fae5; color: #065f46; }
-    .status-n { background-color: #f3f4f6; color: #d1d5db; pointer-events: none; }
-    
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      *, *::before, *::after { box-sizing: border-box; }
+
+      body { 
+          font-family: 'Segoe UI', sans-serif; 
+          background: linear-gradient(135deg, #FFDF00 0%, #D4AF37 50%, #996515 100%); 
+          color: white; 
+          text-align: center; 
+          margin: 0; 
+          padding: 20px;
+          min-height: 100vh;
+          overflow-x: hidden;
+      }
+
+      h1 { font-size: 26px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); margin-bottom: 20px; }
+
+      .app-container {
+          width: 100%;
+          max-width: 450px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 15px;
+          transition: max-width 0.3s ease;
+      }
+
+      @media (min-width: 768px) {
+          .app-container { max-width: 700px; }
+          .painel-container { padding: 35px; }
+      }
+
+      .clover-side { width: 100%; max-width: 280px; }
+
+      @keyframes brilharTrevo {
+          0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px #FFDF00; transform: scale(1); }
+          100% { box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 50px #FFF; transform: scale(1.04); }
+      }
+      .clover-img { width: 100%; height: auto; border-radius: 20px; animation: brilharTrevo 1.5s infinite alternate ease-in-out; }
+
+      /* ========================================================
+         LAYOUT DE BOTÕES (GRID E AÇÕES PRINCIPAIS)
+         ======================================================== */
+      
+      .grid-loterias-main {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+          width: 100%;
+          margin-top: 10px;
+          margin-bottom: 15px;
+      }
+
+      .btn-card-loteria {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          padding: 14px 12px;
+          border-radius: 16px;
+          border: 2px solid #222; 
+          box-shadow: inset 0 8px 10px rgba(255,255,255,0.25), inset 0 -4px 10px rgba(0,0,0,0.3), 0 6px 10px rgba(0,0,0,0.4);
+          cursor: pointer;
+          transition: transform 0.15s, box-shadow 0.15s;
+          text-align: left;
+          position: relative;
+          overflow: hidden;
+      }
+      
+      .btn-card-loteria:active {
+          transform: scale(0.96) translateY(2px);
+          box-shadow: inset 0 4px 6px rgba(255,255,255,0.1), inset 0 -2px 5px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.4);
+      }
+
+      .icon-trevo { width: 28px; height: 28px; margin-bottom: 6px; filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5)); }
+      .btn-card-loteria .texto-gerar { font-size: 11px; font-weight: 800; line-height: 1; margin-bottom: 4px; text-shadow: 1px 1px 2px rgba(0,0,0,0.6); }
+      .btn-card-loteria .texto-nome { font-size: 17.5px; font-weight: 900; line-height: 1; letter-spacing: -0.5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); }
+
+      /* Cores Modernas das Loterias */
+      .btn-card-mega { background: linear-gradient(180deg, #26a673, #157347); color: white; }
+      .btn-card-quina { background: linear-gradient(180deg, #7b1fa2, #4a148c); color: white; }
+      .btn-card-milionaria { background: linear-gradient(180deg, #4527a0, #281165); color: white; }
+      .btn-card-lotofacil { background: linear-gradient(180deg, #ab47bc, #6a1b9a); color: white; }
+      .btn-card-timemania { background: linear-gradient(180deg, #ffee58, #fbc02d); color: #111; }
+      .btn-card-timemania .texto-gerar, .btn-card-timemania .texto-nome { text-shadow: none; }
+      .btn-card-dupla { background: linear-gradient(180deg, #e53935, #b71c1c); color: white; }
+      .btn-card-lotomania { background: linear-gradient(180deg, #ff9800, #e65100); color: white; }
+      .btn-card-supersete { background: linear-gradient(180deg, #c6ff00, #93c100); color: #111; }
+      .btn-card-supersete .texto-gerar, .btn-card-supersete .texto-nome { text-shadow: none; }
+
+      .stack-acoes-main { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 10px; }
+      .btn-acao-main { width: 100%; padding: 14px; font-size: 14px; font-weight: 900; text-transform: uppercase; border-radius: 8px; border: 2px solid #222; cursor: pointer; transition: transform 0.15s; box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -3px 5px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.4); }
+      .btn-acao-main:active { transform: scale(0.97) translateY(2px); }
+
+      .bg-multiplo { background: #004d40; color: white; border-color: #00251a; }
+      .bg-conf { background: #b71c1c; color: white; border-color: #7f0000; }
+      .bg-comb { background: #333333; color: #FFDF00; border-color: #111; }
+
+      /* Modais, Botoes secundários e Componentes  */
+      .btn { display: block; width: 100%; padding: 16px; margin: 12px 0; color: white; font-size: 17px; font-weight: 800; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 5px 12px rgba(0,0,0,0.25); text-transform: uppercase; }
+      .btn-multiplo { background: linear-gradient(135deg, #004d40, #00695c); border: 2px solid #26a69a; }
+      .btn-conf { background: linear-gradient(135deg, #b71c1c, #c62828); border: 2px solid #ffcdd2; }
+      .btn-install { background: #1a1a1a; border: 2px solid #25D366; color: #25D366; display: none; margin-top: 20px; box-shadow: 0 0 15px rgba(37, 211, 102, 0.5); }
+
+      #tela-resultado { display: none; background: white; color: black; padding: 20px; border-radius: 15px; margin-top: 20px; text-align: left; width: 100%; max-width: 550px; box-sizing: border-box; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+      .linha-jogo { border-bottom: 1px solid #ddd; padding: 8px; font-family: monospace; font-size: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px;}
+      .numero { color: #555; font-weight: bold; padding: 2px 4px; border: 1px solid #eee; border-radius: 4px; background: #fafafa;}
+      .numero-acerto { color: white; font-weight: bold; border-radius: 5px; padding: 2px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); } 
+
+      .btn-regerar { background: linear-gradient(135deg, #212121, #424242); color: #FFDF00; border: 2px solid #FFDF00; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 20px; margin-bottom: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.3s; }
+      .btn-regerar:active { transform: translateY(2px); }
+
+      .btn-copiar, .btn-zap, .btn-caixa, .btn-voltar { border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.3s; }
+      .btn-copiar { background: #f57c00; color: white; margin-top: 10px; }
+      .btn-zap { background: #25D366; color: white; }
+      .btn-caixa { background: #005CA9; color: white; }
+      .btn-voltar { background: #eee; color: #333; border: 1px solid #ccc; box-shadow: none; margin-top: 20px;}
+
+      .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+      .modal-box { background: white; color: black; padding: 20px; border-radius: 15px; width: 95%; max-width: 480px; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.7); display: flex; flex-direction: column; max-height: 95vh; overflow-y: auto; box-sizing: border-box; }
+      .fechar-modal { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; font-weight: bold; color: #888; z-index: 10; }
+
+      .opcoes-loteria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-bottom: 12px; margin-top: 5px; }
+      .btn-loteria-grid { padding: 10px 4px; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; opacity: 0.4; transition: 0.3s; width: 100%; }
+      .btn-loteria-grid.ativa { opacity: 1; border: 2px solid #FFDF00; transform: scale(1.03); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+      .grid-numeros { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; max-height: 230px; overflow-y: auto; padding: 10px 5px; margin-bottom: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
+      .num-btn { background: #fff; border: 2px solid #ccc; border-radius: 50%; width: 38px; height: 38px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; margin: 0 auto; }
+      .num-btn.ativo { color: white; transform: scale(1.15); box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-color: transparent; }
+
+      .contador-info { font-size: 14px; color: #555; margin-bottom: 5px; font-weight: bold; }
+      .painel-aleatorio { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px; background: #f5f7fa; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
+      .input-aleatorio { padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; font-size: 15px; color: #0f172a; outline: none; width: 100%; box-sizing: border-box;}
+      .btn-acao-p { color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s; }
+      .btn-acao-p:active { transform: scale(0.95); }
+
+      .info-api { font-size: 13px; color: #888; margin-bottom: 10px; min-height: 18px; text-align: left; padding-left: 5px;}
+      .busca-concurso-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; font-size: 14.5px; color: #425f7a; flex-wrap: wrap;}
+      #input-busca-concurso { width: 75px; padding: 8px; text-align: center; border: 1px solid #c4d1db; border-radius: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); font-size: 15px; color: #555; }
+      #input-busca-concurso::-webkit-outer-spin-button, #input-busca-concurso::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+      
+      .nav-concurso { color: #0073e6; cursor: pointer; user-select: none; transition: color 0.2s; font-weight: 500;}
+      .nav-concurso.disabled { color: #ccc; cursor: not-allowed; text-decoration: none; }
+
+      .painel-premium { background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 20px 15px; margin-bottom: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); display: none; }
+      .bolinhas-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+      .bolinha-oficial { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 3px 6px rgba(0,0,0,0.15); font-family: 'Segoe UI', sans-serif; font-weight: bold; flex-shrink: 0;}
+
+      .textarea-jogos { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; font-family: monospace; height: 110px; resize: none; margin-bottom: 10px; white-space: pre; background: #fdfdfd;}
+      
+      .badge-acertos { margin-left: auto; font-size: 13px; padding: 4px 8px; border-radius: 20px; background: #e0e0e0; font-weight: bold; }
+      .badge-premiado { background: #FFDF00; color: #996515; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
+      .popup-premiacao { background: white; color: #333; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 4px solid #FFDF00; animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+      @keyframes popupAnim { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+      .popup-icone { font-size: 55px; margin-bottom: 10px; }
+      .popup-titulo { font-size: 24px; color: #b71c1c; font-weight: bold; margin-bottom: 15px; }
+      .popup-texto { font-size: 16px; margin-bottom: 25px; line-height: 1.5; color: #555; }
+      .btn-fechar-popup { background: #209869; color: white; border: none; padding: 14px 20px; font-size: 16px; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+
+      /* PAINEL DE RESULTADOS EM MENU LISTA */
+      .painel-resultados-wrapper { width: 100%; text-align: left; }
+      .titulo-resultados { font-size: 28px; color: #005ca9; margin-bottom: 15px; text-shadow: 1px 1px 0 rgba(255,255,255,0.8), -1px -1px 0 rgba(255,255,255,0.8), 1px -1px 0 rgba(255,255,255,0.8), -1px 1px 0 rgba(255,255,255,0.8); letter-spacing: -0.5px; }
+      .select-container { margin-bottom: 20px; }
+      .select-loteria { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: #333; background: #fff; border: 3px solid #003f7a; border-radius: 12px; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; box-sizing: border-box; }
+      
+      .visor-resultados { width: 100%; background: #fff; border-radius: 12px; padding: 20px; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #333; }
+      .visor-header { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+      .titulo-loteria-res { font-size: 24px; font-weight: bold; margin: 0 0 5px 0; }
+      .info-concurso-res { font-size: 13px; color: #777; }
+      .btn-recolher { background: #e0e0e0; border: none; border-radius: 50%; width: 34px; height: 34px; font-weight: bold; cursor: pointer; color: #333; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s; }
+      .btn-recolher:hover { background: #d0d0d0; }
+      
+      .visor-corpo { display: flex; flex-direction: column; gap: 20px; }
+      .bolinhas-res-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; justify-content: center; }
+      .bolinha-res { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+      
+      .prox-premio-res { background: #f0f7ff; padding: 12px; border-radius: 8px; border-left: 4px solid #005ca9; font-size: 13px; color: #555; text-align: center; }
+      .prox-premio-valor { font-size: 20px; font-weight: bold; color: #005ca9; margin-top: 5px; }
+      .titulo-premiacao { font-size: 16px; font-weight: bold; color: #005ca9; margin-bottom: 10px; border-top: 1px solid #eee; padding-top: 15px; }
+      .lista-premiacao { list-style: none; padding: 0; margin: 0; }
+      .item-premiacao { border-bottom: 1px solid #eee; padding: 8px 0; font-size: 13px; line-height: 1.4;}
+      .item-premiacao:last-child { border-bottom: none; }
+      .acertos-texto { font-weight: bold; color: #333; display: block; }
+      .ganhadores-texto { color: #666; display: block; }
+      .loading-res { font-size: 15px; color: #666; text-align: center; padding: 30px 0; font-style: italic; }
+
+      /* AUTENTICAÇÃO E ADMIN */
+      .chamativa-login { background: linear-gradient(135deg, #fffde7, #fff9c4); border: 2px solid #fbc02d; padding: 18px 15px; border-radius: 12px; margin-bottom: 20px; animation: pulsarChamativa 2s infinite alternate; }
+      .chamativa-login p { margin: 0; color: #333; font-size: 14.5px; line-height: 1.4; }
+      .chamativa-destaque { color: #b71c1c; font-size: 17px; font-weight: bold; display: block; margin-bottom: 8px; }
+      @keyframes pulsarChamativa { 0% { box-shadow: 0 2px 10px rgba(251, 192, 45, 0.2); transform: scale(1); } 100% { box-shadow: 0 5px 20px rgba(251, 192, 45, 0.6); transform: scale(1.02); border-color: #f57f17; } }
+
+      .auth-container { background: white; padding: 40px; border-radius: 20px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 90%; max-width: 400px; margin: 0 auto; box-sizing: border-box; }
+      .btn-google { background: #4285F4; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+      .btn-google:hover { background: #357AE8; }
+      .btn-google img { width: 24px; background: white; border-radius: 50%; padding: 2px; }
+
+      .cabecalho-usuario { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 10px auto; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 12px; box-sizing: border-box; }
+      .user-info { font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+      .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #FFDF00; }
+      .btn-logout { background: #e53935; border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+
+      .btn-painel-admin { background: linear-gradient(135deg, #FFDF00, #fbc02d); color: #333; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; display: none; margin-bottom: 5px; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s; }
+      .admin-lista { text-align: left; max-height: 400px; overflow-y: auto; margin-top: 15px; }
+      .admin-item { background: #f9f9f9; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+      .admin-item-nome { font-weight: bold; color: #333; font-size: 15px; display: block;}
+      .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; margin-top: 5px; display: inline-block;}
+      .status-pendente { background: #f57c00; }
+      .status-liberado { background: #209869; }
+      .btn-toggle-status { border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; color: white; }
   </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 font-sans p-2 sm:p-4 md:p-8">
+<body>
 
-  <div class="max-w-7xl mx-auto space-y-6">
-    
-    <!-- CABEÇALHO -->
-    <header class="bg-white p-4 sm:p-6 rounded-xl shadow-md border border-slate-200">
-      <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 text-center md:text-left">
-        
-        <div class="flex flex-col sm:flex-row items-center gap-4">
-          <img id="user-avatar" src="minha-foto.jpg" onerror="this.src='https://i.imgur.com/8Q96Slx.png'" alt="Foto do Perfil" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-full border-4 border-blue-600 shadow-md">
-          <div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Meu Controle de Treinos</h1>
-            <p class="text-xs text-slate-500">Gerenciamento diário e mensal de performance</p>
-          </div>
-        </div>
-        
-        <div class="flex items-center gap-3 flex-wrap justify-center">
-          <!-- STATUS NUVEM -->
-          <div id="cloud-status" class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-xs font-bold text-slate-500 border border-slate-300">
-            <span class="w-2 h-2 rounded-full bg-slate-400" id="cloud-indicator"></span>
-            <span id="cloud-text">Conectando...</span>
-          </div>
+  <h1>🍀 IA - Inteligência do Andrade</h1>
 
-          <!-- BOTÃO LOGIN GOOGLE -->
-          <button onclick="handleGoogleAuth()" id="auth-btn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold border border-slate-300 transition-all shadow-sm cursor-pointer">
-            <svg class="w-4 h-4" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
-              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.21 0 10.05 0 12s.47 3.79 1.29 5.42l3.99-3.15z"/>
-              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-            </svg>
-            <span id="auth-btn-text">Entrar com Google</span>
+  <div id="app-overlay" class="modal-overlay" style="display: flex; flex-direction: column; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 1500;">
+      <!-- TELA DE LOGIN -->
+      <div id="tela-login" class="auth-container" style="box-shadow: 0 15px 40px rgba(0,0,0,0.6);">
+          <div class="chamativa-login">
+              <span class="chamativa-destaque">🎯 Aumente suas chances!</span>
+              <p>Gere seus jogos em <strong>todas as loterias</strong>, faça combinações inteligentes e confira seus acertos na hora.</p>
+          </div>
+          <hr style="border: none; border-top: 1px dashed #ccc; margin: 20px 0;">
+          <h2 style="margin-top: 0; color: #005ca9;">Acesso Restrito</h2>
+          <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Faça login com sua conta Google para liberar o uso do sistema.</p>
+          <button id="btn-fazer-login" class="btn-google">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Google">
+              Entrar com o Google
           </button>
-        </div>
       </div>
 
-      <!-- PAINEL MASTER DE SOLICITAÇÕES PENDENTES DE APROVAÇÃO -->
-      <div id="master-pending-box" class="hidden bg-amber-50 border border-amber-300 p-4 rounded-xl shadow-sm space-y-3">
-        <h3 class="font-bold text-amber-900 text-sm flex items-center gap-2">
-          <span>🔔</span> Perfis Aguardando Sua Aprovação:
-        </h3>
-        <div id="pending-list" class="space-y-2"></div>
+      <!-- TELA PENDENTE -->
+      <div id="tela-pendente" class="auth-container" style="display: none; box-shadow: 0 15px 40px rgba(0,0,0,0.6);">
+          <div style="font-size: 50px; margin-bottom: 10px;">⏳</div>
+          <h2 style="margin-top: 0; color: #f57c00;">Acesso Pendente</h2>
+          <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Seu cadastro foi recebido! Aguarde a liberação do administrador para utilizar a plataforma.</p>
+          <button id="btn-logout-pendente" class="btn-logout" style="width: 100%; padding: 12px; font-size: 14px;">Sair / Trocar Conta</button>
       </div>
+  </div>
+
+  <div id="tela-principal" style="width: 100%; filter: blur(6px); pointer-events: none; user-select: none;">
       
-      <!-- CONTROLES DE PERFIL, ANO E NÍVEL (SOMENTE LOGADO) -->
-      <div id="controls-bar" class="hidden space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200 items-center">
-          
-          <!-- SELETOR DE PERFIL + EXCLUIR + ADICIONAR + BADGE EMAIL -->
-          <div class="flex items-center gap-2 justify-center md:justify-start flex-wrap">
-            <span class="font-bold text-slate-700 text-sm">Perfil:</span>
-            <select id="athlete-selector" class="border border-blue-300 rounded p-1.5 font-bold text-blue-800 bg-blue-50 cursor-pointer text-sm" onchange="changeAthlete()">
-            </select>
-            <button onclick="addNewAthlete()" id="add-athlete-btn" class="hidden px-2 py-1.5 bg-blue-600 text-white text-xs font-bold rounded shadow hover:bg-blue-700 transition cursor-pointer" title="Adicionar Novo Perfil">＋</button>
-            <button onclick="deleteCurrentAthlete()" id="delete-athlete-btn" class="hidden px-2 py-1.5 bg-red-500 text-white text-xs font-bold rounded shadow hover:bg-red-600 transition cursor-pointer" title="Excluir Perfil Atual">🗑️</button>
-            
-            <!-- EXIBIÇÃO DE E-MAIL DO PERFIL ATUAL -->
-            <span id="current-athlete-email" class="hidden items-center gap-1 px-2 py-1.5 bg-slate-100 text-slate-500 text-[10px] sm:text-xs font-medium rounded border border-slate-200 truncate max-w-[200px]"></span>
+      <div class="cabecalho-usuario">
+          <div class="user-info">
+              <img id="user-foto" src="" alt="Foto">
+              <div>
+                  <span id="user-nome" style="display: block;">Nome</span>
+                  <span id="user-email" style="font-size: 11px; font-weight: normal; color: #ddd;">email@gmail.com</span>
+              </div>
           </div>
-
-          <div class="flex items-center gap-3 justify-center">
-            <span class="font-bold text-slate-700 text-sm">Ano:</span>
-            <select id="year-selector" class="border border-slate-300 rounded p-1.5 font-bold text-slate-700 bg-white cursor-pointer text-sm" onchange="changeYear()">
-            </select>
-          </div>
-
-          <div class="flex items-center gap-2 flex-wrap justify-center md:justify-end">
-            <span class="font-bold text-slate-700 text-sm mr-1">Nível:</span>
-            <div class="flex flex-wrap gap-1.5 justify-center" id="level-container"></div>
-          </div>
-        </div>
-
-        <!-- CARD DE DADOS DO ATLETA -->
-        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-200 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-xs">
-          <div>
-            <label class="block font-bold text-slate-600 mb-1">Data de Nascimento:</label>
-            <div class="flex items-center gap-1">
-              <input type="date" id="bio-dob" onchange="updateBioData()" class="w-full border border-slate-300 rounded p-1 bg-white font-medium">
-              <span id="bio-age" class="font-bold text-blue-700 whitespace-nowrap"></span>
-            </div>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-600 mb-1">Gênero:</label>
-            <select id="bio-gender" onchange="updateBioData()" class="w-full border border-slate-300 rounded p-1 bg-white font-medium">
-              <option value="">Selecione</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Feminino">Feminino</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-600 mb-1">Altura (m):</label>
-            <input type="text" id="bio-height" placeholder="Ex: 1.75" oninput="updateBioData()" class="w-full border border-slate-300 rounded p-1 bg-white font-medium text-center">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-600 mb-1">Peso (kg):</label>
-            <input type="text" id="bio-weight" placeholder="Ex: 75.5" oninput="updateBioData()" class="w-full border border-slate-300 rounded p-1 bg-white font-medium text-center">
-          </div>
-          <div class="col-span-2 sm:col-span-1 flex items-end">
-            <div id="bio-status" class="w-full text-center text-[11px] font-bold text-green-700 bg-green-100 py-1 rounded border border-green-200 hidden">Dados Salvos!</div>
-          </div>
-        </div>
+          <button id="btn-logout-app" class="btn-logout">Sair</button>
       </div>
-    </header>
 
-    <!-- TELA DE BOAS-VINDAS / DESLOGADO -->
-    <div id="logged-out-card" class="bg-white p-8 sm:p-12 rounded-xl shadow-md border border-slate-200 text-center space-y-4">
-      <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">🔒</div>
-      <h2 class="text-xl sm:text-2xl font-bold text-slate-800">Acesso Restrito ao Controle de Treinos</h2>
-      <p class="text-sm text-slate-500 max-w-md mx-auto">Para preservar a privacidade das informações e a identidade dos atletas, faça login com sua conta do Google para visualizar o seu plano de treinos.</p>
-      <button onclick="handleGoogleAuth()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all cursor-pointer">
-        <svg class="w-5 h-5 bg-white rounded-full p-0.5" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
-          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.21 0 10.05 0 12s.47 3.79 1.29 5.42l3.99-3.15z"/>
-          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-        </svg>
-        Entrar com minha conta Google
-      </button>
-    </div>
-
-    <!-- TELA DE AGUARDANDO APROVAÇÃO (USUÁRIO PENDENTE) -->
-    <div id="pending-card" class="hidden bg-white p-8 sm:p-12 rounded-xl shadow-md border border-amber-200 text-center space-y-4">
-      <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-3xl shadow-inner">⌛</div>
-      <h2 class="text-xl sm:text-2xl font-bold text-slate-800">Aguardando Aprovação do Administrador</h2>
-      <p class="text-sm text-slate-600 max-w-md mx-auto">
-        Olá! Seu cadastro foi realizado com sucesso. Por motivos de segurança, o <span class="font-bold text-slate-800">Administrador Master</span> precisa aprovar seu perfil antes que você possa acessar e preencher os treinos.
-      </p>
-      <div class="pt-2">
-        <button onclick="handleGoogleAuth()" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg transition">Sair da conta</button>
-      </div>
-    </div>
-
-    <!-- ÁREA PRINCIPAL DO TREINO -->
-    <div id="main-content" class="hidden space-y-6">
-
-      <!-- CALENDÁRIO DIÁRIO -->
-      <section class="bg-white p-4 sm:p-6 rounded-xl shadow-md border border-slate-200">
-        <h2 class="text-lg sm:text-xl font-bold text-slate-800 mb-1">📅 Controle Diário (<span id="calendar-athlete-name">Atleta</span>)</h2>
-        <p class="text-xs text-slate-500 mb-4">Toque nas células para alternar: A - B - C - SAB - DOM - X = NÃO REALIZADO - F = FERIADO</p>
-
-        <div class="overflow-x-auto scrollbar-hide pb-2">
-          <div class="min-w-[850px]">
-            <div class="grid grid-cols-[90px_repeat(31,1fr)] gap-1 text-center font-bold text-[11px] mb-2 text-slate-500">
-              <div class="text-left pl-2">Mês</div>
-              <script>
-                for(let i=1; i<=31; i++) document.write(`<div>${i.toString().padStart(2, '0')}</div>`);
-              </script>
-            </div>
-            <div id="calendar-grid" class="space-y-1 text-xs"></div>
+      <div class="app-container">
+          <div class="clover-side">
+              <img src="trevo.png" alt="Trevo do Andrade" class="clover-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1210/1210985.png'; this.style.background='white';">
+              <button id="btn-install" class="btn btn-install">📱 Instalar Aplicativo</button>
           </div>
-        </div>
-      </section>
 
-      <!-- EXERCÍCIOS, FICHA E FILTRO -->
-      <section>
-        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          
-          <!-- Título, Seletor de Mês e Botão de Copiar Mês Anterior -->
-          <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full xl:w-auto">
-            <h2 class="text-lg sm:text-xl font-bold text-slate-800 whitespace-nowrap">
-              📋 Ficha de Exercícios: <span id="exercise-athlete-name" class="text-blue-600">Atleta</span>
-            </h2>
-            <div class="flex items-center gap-2 w-full sm:w-auto">
-              <span class="text-xs font-bold text-slate-500 uppercase hidden sm:block">Mês:</span>
-              <select id="exercise-month-selector" class="border border-blue-300 rounded p-1.5 font-bold text-blue-800 bg-blue-50 cursor-pointer text-sm flex-1 sm:flex-none" onchange="changeExerciseMonth()">
-              </select>
+          <div class="painel-container" style="width: 100%; box-sizing: border-box; padding: 10px 0;">
               
-              <!-- BOTÃO: COPIAR MÊS ANTERIOR -->
-              <button onclick="copyPreviousMonth()" id="btn-copy-month" class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 text-xs font-bold rounded-md shadow-sm transition-all cursor-pointer whitespace-nowrap" title="Copiar treinos do mês anterior">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>
-                <span class="hidden sm:inline">Copiar Mês Anterior</span>
-              </button>
-            </div>
+              <button id="btn-painel-admin" class="btn-painel-admin" onclick="abrirAdminModal()">⚙️ PAINEL DE CONTROLE (MASTER)</button>
+
+              <div class="grid-loterias-main">
+                  <!-- MEGA SENA -->
+                  <button class="btn-card-loteria btn-card-mega" title="Valor da aposta: R$ 6,00" onclick="iniciar('MegaSena', 60, 6, 20)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo">
+                          <path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/>
+                          <path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/>
+                          <path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/>
+                          <path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/>
+                      </svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Mega Sena</span>
+                  </button>
+                  <!-- QUINA -->
+                  <button class="btn-card-loteria btn-card-quina" title="Valor da aposta: R$ 3,00" onclick="iniciar('Quina', 80, 5, 15)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo">
+                          <path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/>
+                          <path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/>
+                          <path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/>
+                          <path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/>
+                      </svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Quina</span>
+                  </button>
+                  <!-- MILIONARIA -->
+                  <button class="btn-card-loteria btn-card-milionaria" title="Valor da aposta: R$ 6,00" onclick="iniciar('Milionaria', 50, 6, 12)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo">
+                          <path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/>
+                          <path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/>
+                          <path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/>
+                          <path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/>
+                      </svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">+Milionária</span>
+                  </button>
+                  <!-- LOTOFÁCIL -->
+                  <button class="btn-card-loteria btn-card-lotofacil" title="Valor da aposta: R$ 3,50" onclick="iniciar('Lotofacil', 25, 15, 20)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo">
+                          <path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/>
+                          <path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/>
+                          <path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/>
+                          <path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/>
+                      </svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Lotofácil</span>
+                  </button>
+                  <!-- TIMEMANIA -->
+                  <button class="btn-card-loteria btn-card-timemania" title="Valor da aposta: R$ 3,50" onclick="iniciar('Timemania', 80, 10, 10)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo">
+                          <path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/>
+                          <path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/>
+                          <path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/>
+                          <path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/>
+                      </svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Timemania</span>
+                  </button>
+                  <!-- DUPLA SENA -->
+                  <button class="btn-card-loteria btn-card-dupla" title="Valor da aposta: R$ 3,00" onclick="iniciar('DuplaSena', 50, 6, 15)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo">
+                          <path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/>
+                          <path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/>
+                          <path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/>
+                          <path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/>
+                      </svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Dupla Sena</span>
+                  </button>
+                  <!-- LOTOMANIA -->
+                  <button class="btn-card-loteria btn-card-lotomania" title="Valor da aposta: R$ 3,00" onclick="iniciar('Lotomania', 100, 50, 50)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo">
+                          <path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/>
+                          <path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/>
+                          <path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/>
+                          <path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/>
+                      </svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Lotomania</span>
+                  </button>
+                  <!-- SUPER SETE (NOVO) -->
+                  <button class="btn-card-loteria btn-card-supersete" title="Valor da aposta: R$ 2,50" onclick="iniciar('SuperSete', 10, 7, 21)">
+                      <svg viewBox="0 0 24 24" class="icon-trevo">
+                          <path d="M11 11H5C3.34 11 2 9.66 2 8C2 6.34 3.34 5 5 5H11V11Z" fill="#f57c00"/>
+                          <path d="M11 13H5C3.34 13 2 14.34 2 16C2 17.66 3.34 19 5 19H11V13Z" fill="#005ca9"/>
+                          <path d="M13 11H19C20.66 11 22 9.66 22 8C22 6.34 20.66 5 19 5H13V11Z" fill="#005ca9"/>
+                          <path d="M13 13H19C20.66 13 22 14.34 22 16C22 17.66 20.66 19 19 19H13V13Z" fill="#005ca9"/>
+                      </svg>
+                      <span class="texto-gerar">Gerar Jogo</span>
+                      <span class="texto-nome">Super Sete</span>
+                  </button>
+              </div>
+
+              <div class="stack-acoes-main">
+                  <button class="btn-acao-main bg-multiplo" onclick="abrirModalMultiplo()">GERAR MÚLTIPLO</button>
+                  <button class="btn-acao-main bg-conf" onclick="abrirModalConferencia()">CONFERIR JOGOS</button>
+                  <button class="btn-acao-main bg-comb" onclick="abrirModal()">GERAR COMBINAÇÕES</button>
+              </div>
+
+              <p style="font-size: 11.5px; color: rgba(255,255,255,0.8); line-height: 1.4; margin-top: 5px; margin-bottom: 0; text-align: justify; padding: 0 5px;">
+                  <b>Como funciona?</b> O sistema cruza os números para gerar <b>todas as combinações possíveis</b> (e filtra as melhores) e confere os acertos buscando no banco oficial da Caixa.
+              </p>
           </div>
-          
-          <!-- FILTROS -->
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full xl:w-auto">
-            <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-lg border border-slate-200 overflow-x-auto scrollbar-hide w-full sm:w-auto">
-              <span class="text-[10px] sm:text-xs font-bold text-slate-500 ml-2 uppercase tracking-wider whitespace-nowrap">Filtrar:</span>
-              <button onclick="applyFilter('ALL')" id="btn-filter-ALL" class="filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-blue-600 text-white shadow-md transition-all whitespace-nowrap cursor-pointer">Todos</button>
-              <button onclick="applyFilter('A')" id="btn-filter-A" class="filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white text-slate-500 hover:bg-slate-200 transition-all whitespace-nowrap cursor-pointer">Treino A</button>
-              <button onclick="applyFilter('B')" id="btn-filter-B" class="filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white text-slate-500 hover:bg-slate-200 transition-all whitespace-nowrap cursor-pointer">Treino B</button>
-              <button onclick="applyFilter('C')" id="btn-filter-C" class="filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white text-slate-500 hover:bg-slate-200 transition-all whitespace-nowrap cursor-pointer">Treino C</button>
-              <button onclick="applyFilter('PREFILLED')" id="btn-filter-PREFILLED" class="filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white text-slate-500 hover:bg-slate-200 transition-all whitespace-nowrap cursor-pointer">Preenchidos</button>
-            </div>
+
+          <!-- Visor de Resultados -->
+          <div class="painel-resultados-wrapper" id="secao-resultados">
+              <h2 class="titulo-resultados">Resultados</h2>
+              <div class="select-container">
+                  <select id="select-loteria-res" class="select-loteria" onchange="carregarVisorResultado(this.value)">
+                      <option value="" disabled selected>🔍 Selecione a loteria para ver o resultado...</option>
+                      <option value="MegaSena">Mega-Sena</option>
+                      <option value="Quina">Quina</option>
+                      <option value="Milionaria">+Milionária</option>
+                      <option value="Lotomania">Lotomania</option>
+                      <option value="Timemania">Timemania</option>
+                      <option value="DuplaSena">Dupla Sena</option>
+                      <option value="SuperSete">Super Sete</option>
+                      <option value="Lotofacil">Lotofácil</option>
+                      <option value="DiaDeSorte">Dia de Sorte</option>
+                  </select>
+              </div>
+
+              <div class="visor-resultados">
+                  <div id="visor-loading" class="loading-res">Selecione uma loteria no menu acima para carregar o último resultado e rateio.</div>
+                  <div id="visor-conteudo" style="display: none; width: 100%;">
+                      <div class="visor-header">
+                          <div>
+                              <h3 id="visor-titulo" class="titulo-loteria-res">Nome</h3>
+                              <div id="visor-info" class="info-concurso-res">Resultado Concurso -- (--/--/----)</div>
+                          </div>
+                          <button class="btn-recolher" onclick="recolherVisor()" title="Recolher / Fechar">✕</button>
+                      </div>
+                      <div class="visor-corpo">
+                          <div id="visor-bolinhas" class="bolinhas-res-container"></div>
+                          <div class="prox-premio-res">
+                              Estimativa de prêmio do próximo concurso<br>
+                              <span id="visor-data-prox" style="font-size: 11px; color:#888;">--/--/----</span>
+                              <div id="visor-valor-prox" class="prox-premio-valor">R$ --</div>
+                          </div>
+                          <div>
+                              <div class="titulo-premiacao">Premiação</div>
+                              <ul id="visor-lista-premios" class="lista-premiacao"></ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
           </div>
-        </div>
-
-        <!-- Container das Tabelas de Exercícios -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="categories-container"></div>
-        
-        <!-- BOTÃO WHATSAPP -->
-        <div class="mt-8 flex justify-center sm:justify-end">
-          <button onclick="shareWhatsApp()" class="flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold rounded-xl bg-green-500 hover:bg-green-600 text-white shadow-md transition-all whitespace-nowrap cursor-pointer w-full sm:w-auto">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
-            </svg>
-            <span class="inline">Compartilhar Treino no WhatsApp</span>
-          </button>
-        </div>
-      </section>
-
-    </div>
-  </div>
-
-  <!-- MODAL DE GIFS (FICA ESCONDIDO ATÉ O CLIQUE) -->
-  <div id="gif-modal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm transition-all">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl relative transform scale-100 transition-all">
-      <button onclick="closeGifModal()" class="absolute -top-3 -right-3 w-10 h-10 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg border-2 border-white transition-transform hover:scale-110 cursor-pointer">X</button>
-      
-      <h3 id="modal-title" class="text-lg font-extrabold text-slate-800 mb-4 border-b pb-2">Nome do Exercício</h3>
-      
-      <div id="modal-content" class="min-h-[180px] flex items-center justify-center">
-        <!-- O GIF será injetado aqui via JavaScript -->
       </div>
-    </div>
   </div>
 
+  <!-- Modais -->
+  <div id="modal-admin" class="modal-overlay">
+      <div class="modal-box">
+          <span class="fechar-modal" onclick="fecharModal('modal-admin')">&times;</span>
+          <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerenciar Acessos</h2>
+          <div id="lista-usuarios-admin" class="admin-lista"><div style="text-align: center; color: #888; padding: 20px;">Carregando...</div></div>
+      </div>
+  </div>
+
+  <!-- Resultados -->
+  <div id="tela-resultado">
+      <h2 id="titulo-res">Resultado</h2>
+      <div id="conteudo-res"></div>
+      <hr>
+      <h3 id="titulo-cartoes" style="margin-bottom: 5px;">Total de Cartões: <span id="total-cartoes" style="color:#005ca9"></span></h3>
+      <h3 id="titulo-bolao" style="margin-top: 5px;">Total do Bolão: <span id="total-geral" style="color:green"></span></h3>
+
+      <button id="btn-regerar" class="btn-regerar" onclick="regerarAnimado()" style="display: none;">🎲 Combinar Novamente</button>
+      <button id="btn-copiar" class="btn-copiar" onclick="copiarJogos()">📋 Copiar Jogos</button>
+      <button id="btn-zap" class="btn-zap" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
+      <button id="btn-caixa" class="btn-caixa" onclick="abrirCaixa()">🎰 Jogar no Site da Caixa</button>
+      <button class="btn-voltar" onclick="voltar()">Voltar para Loterias</button>
+  </div>
+
+  <!-- Modal Gerar Combinacoes -->
+  <div id="modal-combinacoes" class="modal-overlay">
+      <div class="modal-box">
+          <span class="fechar-modal" onclick="fecharModal('modal-combinacoes')">&times;</span>
+          <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerar Combinações</h2>
+
+          <div class="opcoes-loteria-grid">
+              <button id="btn-mega-modal" class="btn-loteria-grid ativa" style="background:#209869" onclick="setLoteriaModal('MegaSena')">MEGA SENA</button>
+              <button id="btn-quina-modal" class="btn-loteria-grid" style="background:#4a148c" onclick="setLoteriaModal('Quina')">QUINA</button>
+              <button id="btn-milionaria-modal" class="btn-loteria-grid" style="background:#311b92" onclick="setLoteriaModal('Milionaria')">MILIONÁRIA</button>
+              <button id="btn-lotomania-modal" class="btn-loteria-grid" style="background:#ef6c00" onclick="setLoteriaModal('Lotomania')">LOTOMANIA</button>
+              <button id="btn-timemania-modal" class="btn-loteria-grid" style="background:#fbc02d; color:black;" onclick="setLoteriaModal('Timemania')">TIMEMANIA</button>
+              <button id="btn-dupla-modal" class="btn-loteria-grid" style="background:#c62828" onclick="setLoteriaModal('DuplaSena')">DUPLA SENA</button>
+              <button id="btn-lotofacil-modal" class="btn-loteria-grid" style="background:#7b1fa2" onclick="setLoteriaModal('Lotofacil')">LOTOFÁCIL</button>
+              <button id="btn-supersete-modal" class="btn-loteria-grid" style="background:linear-gradient(180deg, #c6ff00, #93c100); color:black;" onclick="setLoteriaModal('SuperSete')">SUPER SETE</button>
+          </div>
+
+          <div class="contador-info" style="margin-top: 10px;">Dezenas Selecionadas: <span id="contador-num" style="color:#e53935; font-size: 16px;">0</span></div>
+
+          <div class="painel-aleatorio">
+              <span style="font-size: 14px; font-weight: bold; color: #334155;">Aleatório:</span>
+              <input type="number" id="qtd-aleatoria" class="input-aleatorio" style="flex: 1; min-width: 50px; text-align: center;" placeholder="Qtd">
+              <button class="btn-acao-p" style="background: #2563eb;" onclick="selecionarAleatorioModal()">🎲 Sortear</button>
+              <button class="btn-acao-p" style="background: #ef4444;" onclick="limparGridModal()">🗑️ Limpar</button>
+          </div>
+
+          <div id="grid-numeros-modal" class="grid-numeros"></div>
+
+          <div id="container-time-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
+              <div class="contador-info" style="color:#b71c1c; margin-bottom: 8px;">⚽ Time do Coração:</div>
+              <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+                  <input type="text" id="input-time-coracao" class="input-aleatorio" style="flex: 1; min-width: 150px; text-align: center; font-size: 13px;" placeholder="Em branco p/ sortear">
+                  <button class="btn-acao-p" style="background: #2563eb;" onclick="sortearTimeModal()" title="Fixar um time aleatório para todos">🎲 Único</button>
+              </div>
+          </div>
+
+          <div id="container-trevos-modal" style="display: none; margin-top: 5px; padding-top: 10px; border-top: 2px dashed #ddd;">
+              <div class="contador-info" style="color:#311b92;">🍀 Trevos Selecionados: <span id="contador-trevos" style="color:#e53935; font-size: 16px;">0</span></div>
+              <div id="grid-trevos-modal" class="grid-numeros" style="display: flex; justify-content: center; gap: 10px; min-height: auto; overflow: hidden; padding-bottom: 0;"></div>
+          </div>
+
+          <div style="margin-top: 15px; padding: 15px; border-radius: 8px; background: #f1f5f9; border: 1px solid #cbd5e1;">
+              <div class="contador-info" style="color:#005ca9; margin-bottom: 8px; font-size: 13.5px;">🎯 Filtro Inteligente (Melhores Cartões):</div>
+              <input type="number" id="input-limite-cartoes" class="input-aleatorio" style="width: 100%; text-align: center; border-color: #94a3b8;" placeholder="Máx. de cartões (ex: 10)">
+          </div>
+
+          <button class="btn btn-multiplo" style="margin-top:15px;" onclick="executarCombinacoes()">GERAR JOGOS AGORA</button>
+      </div>
+  </div>
+
+  <!-- Modal Conferência -->
+  <div id="modal-conferencia" class="modal-overlay">
+      <div class="modal-box">
+          <span class="fechar-modal" onclick="fecharModal('modal-conferencia')">&times;</span>
+          <h2 style="margin-top: 0px; color:#b71c1c; font-size: 22px;">Conferir Jogos</h2>
+
+          <div class="opcoes-loteria-grid">
+              <button id="btn-mega-conf" class="btn-loteria-grid ativa" style="background:#209869" onclick="setLoteriaConferencia('MegaSena')">MEGA SENA</button>
+              <button id="btn-quina-conf" class="btn-loteria-grid" style="background:#4a148c" onclick="setLoteriaConferencia('Quina')">QUINA</button>
+              <button id="btn-milionaria-conf" class="btn-loteria-grid" style="background:#311b92" onclick="setLoteriaConferencia('Milionaria')">MILIONÁRIA</button>
+              <button id="btn-lotomania-conf" class="btn-loteria-grid" style="background:#ef6c00" onclick="setLoteriaConferencia('Lotomania')">LOTOMANIA</button>
+              <button id="btn-timemania-conf" class="btn-loteria-grid" style="background:#fbc02d; color:black;" onclick="setLoteriaConferencia('Timemania')">TIMEMANIA</button>
+              <button id="btn-dupla-conf" class="btn-loteria-grid" style="background:#c62828" onclick="setLoteriaConferencia('DuplaSena')">DUPLA SENA</button>
+              <button id="btn-lotofacil-conf" class="btn-loteria-grid" style="background:#7b1fa2" onclick="setLoteriaConferencia('Lotofacil')">LOTOFÁCIL</button>
+              <button id="btn-supersete-conf" class="btn-loteria-grid" style="background:linear-gradient(180deg, #c6ff00, #93c100); color:black;" onclick="setLoteriaConferencia('SuperSete')">SUPER SETE</button>
+          </div>
+
+          <div class="busca-concurso-container">
+              <span>Buscar concurso</span>
+              <input type="number" id="input-busca-concurso" onchange="buscarConcursoEspecifico()" onkeyup="if(event.key === 'Enter') buscarConcursoEspecifico()" placeholder="Nº">
+              <span class="nav-concurso disabled" id="btn-ant-concurso" onclick="navegarConcurso(-1)">&lt; Anterior</span>
+              <span class="nav-concurso disabled" id="btn-prox-concurso" onclick="navegarConcurso(1)">Próximo &gt;</span>
+          </div>
+
+          <div id="info-api" class="info-api">Buscando resultado oficial...</div>
+
+          <div id="painel-premium" class="painel-premium">
+              <div id="bolinhas-container" class="bolinhas-container"></div>
+              <div class="premio-detalhes">
+                  <div id="label-premio-texto" class="premio-texto"></div>
+                  <div id="valor-estimado" class="premio-valor">R$ --</div>
+              </div>
+          </div>
+
+          <p style="font-weight: bold; margin-bottom: 5px; font-size: 13px; text-align: left; color: #555;">Cole seus jogos ou digite os números:</p>
+          <textarea id="textarea-jogos" class="textarea-jogos" placeholder="Ex: 01 02 03 04 05 06 | Trevos: 01 02 | Time: Flamengo"></textarea>
+
+          <button class="btn btn-conf" style="margin-top:5px; margin-bottom:0;" onclick="executarConferencia()">REALIZAR CONFERÊNCIA</button>
+      </div>
+  </div>
+
+  <!-- Modal Premiação -->
+  <div id="modal-premiacao" class="modal-overlay" style="z-index: 2000;">
+      <div class="popup-premiacao">
+          <div class="popup-icone">🏆</div>
+          <div class="popup-titulo">Parabéns!</div>
+          <div id="popup-texto" class="popup-texto">Você tem jogos premiados!</div>
+          <button class="btn-fechar-popup" onclick="fecharModal('modal-premiacao')">VER RESULTADOS</button>
+      </div>
+  </div>
+
+  <!-- Modal Múltiplo -->
+  <div id="modal-multiplo" class="modal-overlay">
+      <div class="modal-box">
+          <span class="fechar-modal" onclick="fecharModal('modal-multiplo')">&times;</span>
+          <h2 style="margin-top: 0px; color:#1a1a1a; font-size: 22px;">Gerador Múltiplo</h2>
+          <div id="lista-multipla" style="text-align: left; max-height: 50vh; overflow-y: auto; margin-bottom: 15px; border: 1px solid #eee; border-radius: 8px; padding: 5px;"></div>
+          <button class="btn btn-multiplo" style="margin-top:5px; margin-bottom:0;" onclick="executarGeradorMultiplo()">GERAR JOGOS COMBINADOS</button>
+      </div>
+  </div>
+
+  <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+      import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+          apiKey: "AIzaSyBkjtBMGNSQ9WMJajgGHDar-vY5xnClzR0",
+          authDomain: "ia-andrade-loterias.firebaseapp.com",
+          projectId: "ia-andrade-loterias",
+          storageBucket: "ia-andrade-loterias.firebasestorage.app",
+          messagingSenderId: "558801870322",
+          appId: "1:558801870322:web:9271c9147f3c7a8f709f6b"
+      };
+
+      const MASTER_EMAIL = "rss.andrade@gmail.com"; 
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const provider = new GoogleAuthProvider();
+
+      const appOverlay = document.getElementById('app-overlay');
+      const telaLogin = document.getElementById('tela-login');
+      const telaPendente = document.getElementById('tela-pendente');
+      const telaPrincipal = document.getElementById('tela-principal');
+      const btnAdmin = document.getElementById('btn-painel-admin');
+
+      function registrarAcesso(user) {
+          if (!sessionStorage.getItem('sessao_notificada_' + user.uid)) {
+              sessionStorage.setItem('sessao_notificada_' + user.uid, 'true');
+              const userRef = doc(db, "usuarios", user.uid);
+              updateDoc(userRef, { ultimoAcesso: new Date().toLocaleString('pt-BR') }).catch(e => console.log(e));
+          }
+      }
+
+      onAuthStateChanged(auth, async (user) => {
+          if (user) {
+              document.getElementById('user-nome').innerText = user.displayName;
+              document.getElementById('user-email').innerText = user.email;
+              document.getElementById('user-foto').src = user.photoURL;
+
+              const userRef = doc(db, "usuarios", user.uid);
+              const userSnap = await getDoc(userRef);
+
+              if (user.email === MASTER_EMAIL) {
+                  if (!userSnap.exists()) await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'master' });
+                  btnAdmin.style.display = 'block';
+                  mostrarAppPrincipal();
+                  registrarAcesso(user);
+              } else {
+                  if (userSnap.exists()) {
+                      if (userSnap.data().status === 'liberado') { mostrarAppPrincipal(); registrarAcesso(user); } 
+                      else { mostrarTelaPendente(); }
+                  } else {
+                      await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'pendente' });
+                      mostrarTelaPendente();
+                  }
+              }
+          } else {
+              mostrarTelaLogin();
+          }
+      });
+
+      function mostrarAppPrincipal() { appOverlay.style.display = 'none'; telaPrincipal.style.filter = 'none'; telaPrincipal.style.pointerEvents = 'auto'; telaPrincipal.style.userSelect = 'auto'; }
+      function mostrarTelaPendente() { appOverlay.style.display = 'flex'; telaLogin.style.display = 'none'; telaPendente.style.display = 'block'; telaPrincipal.style.filter = 'blur(6px)'; telaPrincipal.style.pointerEvents = 'none'; }
+      function mostrarTelaLogin() { appOverlay.style.display = 'flex'; telaLogin.style.display = 'block'; telaPendente.style.display = 'none'; telaPrincipal.style.filter = 'blur(6px)'; telaPrincipal.style.pointerEvents = 'none'; }
+
+      document.getElementById('btn-fazer-login').addEventListener('click', () => { signInWithPopup(auth, provider).catch(error => alert("Erro ao fazer login: " + error.message)); });
+      const logoutFunc = () => signOut(auth);
+      document.getElementById('btn-logout-app').addEventListener('click', logoutFunc);
+      document.getElementById('btn-logout-pendente').addEventListener('click', logoutFunc);
+
+      window.abrirAdminModal = async function() {
+          document.getElementById('modal-admin').style.display = 'flex';
+          const listaDiv = document.getElementById('lista-usuarios-admin');
+          listaDiv.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Carregando usuários...</div>';
+          try {
+              const querySnapshot = await getDocs(collection(db, "usuarios"));
+              let html = '';
+              querySnapshot.forEach((docSnap) => {
+                  let u = docSnap.data();
+                  if(u.email !== MASTER_EMAIL) {
+                      let isLiberado = u.status === 'liberado';
+                      let corBtn = isLiberado ? '#e53935' : '#209869';
+                      html += `<div class="admin-item"><div><span class="admin-item-nome">${u.nome}</span><span class="admin-item-dados">${u.email}</span><span class="badge-status ${isLiberado ? 'status-liberado' : 'status-pendente'}">${u.status.toUpperCase()}</span></div><button class="btn-toggle-status" style="background-color: ${corBtn};" onclick="mudarStatusUsuario('${docSnap.id}', '${isLiberado ? 'pendente' : 'liberado'}')">${isLiberado ? 'Bloquear' : 'Liberar'}</button></div>`;
+                  }
+              });
+              listaDiv.innerHTML = html || '<div style="text-align: center; color: #888; padding: 20px;">Nenhum usuário cadastrado ainda.</div>';
+          } catch(e) { listaDiv.innerHTML = '<div style="color:red; text-align:center;">Erro ao carregar banco de dados.</div>'; }
+      };
+
+      window.mudarStatusUsuario = async function(uid, novoStatus) {
+          try { await updateDoc(doc(db, "usuarios", uid), { status: novoStatus }); abrirAdminModal(); } 
+          catch(e) { alert("Erro ao atualizar status."); }
+      };
+  </script>
+
+  <!-- LÓGICA PRINCIPAL (LOTERIAS) -->
   <script>
-    // ==========================================
-    // 1. CONFIGURAÇÃO DA NUVEM (FIREBASE)
-    // ==========================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyC7frAlzt3M5PvPOsvPgNoB1dVhN18-ywY",
-      authDomain: "meu-treino-f3de4.firebaseapp.com",
-      databaseURL: "https://meu-treino-f3de4-default-rtdb.firebaseio.com",
-      projectId: "meu-treino-f3de4",
-      storageBucket: "meu-treino-f3de4.firebasestorage.app",
-      messagingSenderId: "1053749503001",
-      appId: "1:1053749503001:web:124f4b425cbec242c53688"
-    };
-
-    // 🔴 INSIRA SEU E-MAIL MASTER REAL DO GOOGLE AQUI:
-    const MASTER_EMAIL = "seu-email-master@gmail.com";
-
-    let db, auth;
-    let isCloudEnabled = false;
-    let isCloudLoaded = false;
-    let isMasterUser = false;
-    let currentUser = null;
-
-    try {
-      firebase.initializeApp(firebaseConfig);
-      db = firebase.database();
-      auth = firebase.auth();
-      isCloudEnabled = true;
-      updateCloudStatus(true);
-    } catch (e) {
-      console.log("Erro no Firebase.", e);
-      updateCloudStatus(false);
-    }
-
-    function updateCloudStatus(online) {
-      const indicator = document.getElementById('cloud-indicator');
-      const text = document.getElementById('cloud-text');
-      if (online) {
-        indicator.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]";
-        text.innerText = "Sincronizado na Nuvem";
-        text.className = "text-green-700";
-      } else {
-        indicator.className = "w-2 h-2 rounded-full bg-slate-400";
-        text.innerText = "Nuvem Desativada (Salvo Local)";
-        text.className = "text-slate-500";
-      }
-    }
-
-    if (auth) {
-      auth.onAuthStateChanged((user) => {
-        currentUser = user;
-        if (user) {
-          const userEmail = (user.email || "").toLowerCase();
-          const userName = user.displayName || userEmail.split('@')[0];
-          
-          if (user.photoURL) {
-            document.getElementById('user-avatar').src = user.photoURL;
+      // LIMPEZA GERAL DE CACHE NO FECHAMENTO OU RECARREGAMENTO DO APP
+      window.addEventListener('beforeunload', () => {
+          sessionStorage.clear();
+          if ('caches' in window) {
+              caches.keys().then(names => {
+                  for (let name of names) caches.delete(name);
+              });
           }
+      });
 
-          isMasterUser = (userEmail === MASTER_EMAIL.toLowerCase());
+      const configLoterias = {
+          'MegaSena': { idGen: 'btn-mega-modal', id: 'btn-mega-conf', endp: 'megasena', cor: '#209869', txt: 'white', nome: 'Mega-Sena', max: 60, minReq: 6, precoBase: 6.00 },
+          'Quina': { idGen: 'btn-quina-modal', id: 'btn-quina-conf', endp: 'quina', cor: '#4a148c', txt: 'white', nome: 'Quina', max: 80, minReq: 5, precoBase: 3.00 },
+          'Milionaria': { idGen: 'btn-milionaria-modal', id: 'btn-milionaria-conf', endp: 'maismilionaria', cor: '#311b92', txt: 'white', nome: '+Milionária', max: 50, minReq: 6, precoBase: 6.00 },
+          'Lotomania': { idGen: 'btn-lotomania-modal', id: 'btn-lotomania-conf', endp: 'lotomania', cor: '#ef6c00', txt: 'white', nome: 'Lotomania', max: 100, minReq: 50, precoBase: 3.00 },
+          'Timemania': { idGen: 'btn-timemania-modal', id: 'btn-timemania-conf', endp: 'timemania', cor: '#fbc02d', txt: 'black', nome: 'Timemania', max: 80, minReq: 10, precoBase: 3.50 },
+          'DuplaSena': { idGen: 'btn-dupla-modal', id: 'btn-dupla-conf', endp: 'duplasena', cor: '#c62828', txt: 'white', nome: 'Dupla Sena', max: 50, minReq: 6, precoBase: 3.00 },
+          'Lotofacil': { idGen: 'btn-lotofacil-modal', id: 'btn-lotofacil-conf', endp: 'lotofacil', cor: '#7b1fa2', txt: 'white', nome: 'Lotofácil', max: 25, minReq: 15, precoBase: 3.50 },
+          'SuperSete': { idGen: 'btn-supersete-modal', id: 'btn-supersete-conf', endp: 'supersete', cor: '#93c100', txt: 'black', nome: 'Super Sete', max: 10, minReq: 7, precoBase: 2.50 },
+          'DiaDeSorte': { endp: 'diadesorte', cor: '#cb852b', txt: 'white', nome: 'Dia de Sorte' }
+      };
 
-          document.getElementById('auth-btn-text').innerText = `Sair (${userName})`;
-          document.getElementById('auth-btn').className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100 text-green-800 hover:bg-green-200 text-xs font-bold border border-green-300 transition-all shadow-sm cursor-pointer";
+      const precos = {
+          'MegaSena': {6: 6.00, 7: 42.00, 8: 168.00, 9: 504.00, 10: 1260.00, 11: 2772.00, 12: 5544.00, 13: 10296.00, 14: 18018.00, 15: 30030.00, 16: 48048.00, 17: 74256.00, 18: 111384.00, 19: 162792.00, 20: 232560.00}, 
+          'Lotofacil': {15: 3.50, 16: 56.00, 17: 476.00, 18: 2856.00, 19: 13566.00, 20: 54264.00}, 
+          'Quina': {5: 3.00, 6: 18.00, 7: 63.00, 8: 168.00, 9: 378.00, 10: 756.00, 11: 1386.00, 12: 2376.00, 13: 3861.00, 14: 6006.00, 15: 9009.00}, 
+          'DuplaSena': {6: 3.00, 7: 21.00, 8: 84.00, 9: 252.00, 10: 630.00, 11: 1386.00, 12: 2772.00, 13: 5148.00, 14: 9009.00, 15: 15015.00}
+      };
 
-          if (!appData.athletes[userName]) {
-            appData.athletes[userName] = {
-              email: userEmail,
-              approved: isMasterUser ? true : false,
-              level: "Iniciante",
-              bio: { dob: "", gender: "", height: "", weight: "" },
-              calendar: {},
-              monthlyExercises: {}
-            };
-            saveData(userName);
-          } else if (!appData.athletes[userName].email) {
-            appData.athletes[userName].email = userEmail;
-            saveData(userName);
+      const timesTimemania = ["ABC/RN", "América/MG", "América/RJ", "América/RN", "Americano/RJ", "Atlético/GO", "Atlético/MG", "Atlético/PR", "Avaí/SC", "Bahia/BA", "Bangu/RJ", "Barueri/SP", "Botafogo/PB", "Botafogo/RJ", "Bragantino/SP", "Brasiliense/DF", "Ceará/CE", "Corinthians/SP", "Coritiba/PR", "CRB/AL", "Criciúma/SC", "Cruzeiro/MG", "CSA/AL", "Desportiva/ES", "Figueirense/SC", "Flamengo/RJ", "Fluminense/RJ", "Fortaleza/CE", "Gama/DF", "Goiás/GO", "Grêmio/RS", "Guarani/SP", "Inter Limeira/SP", "Internacional/RS", "Ipatinga/MG", "Ituano/SP", "Ji-Paraná/RO", "Joinville/SC", "Juventus/SP", "Londrina/PR", "Marília/SP", "Mixto/MT", "Moto Clube/MA", "Nacional/AM", "Náutico/PE", "Olaria/RJ", "Operário/MS", "Palmeiras/SP", "Paraná/PR", "Paulista/SP", "Paysandu/PA", "Ponte Preta/SP", "Portuguesa/SP", "Remo/PA", "Rio Branco/AC", "Rio Branco/ES", "River/PI", "Roraima/RR", "Sampaio Corrêa/MA", "Santa Cruz/PE", "Santo André/SP", "Santos/SP", "São Caetano/SP", "São Paulo/SP", "São Raimundo/AM", "Sergipe/SE", "Sport/PE", "Treze/PB", "Tuna Luso/PA", "Tupi/MG", "União Barbarense/SP", "União São João/SP", "Vasco da Gama/RJ", "Vila Nova/GO", "Villa Nova/MG", "Vitória/BA", "Vitória/ES", "XV de Piracicaba/SP", "Ypiranga/AP", "Palmas/TO"];
+
+      let textoParaWhatsApp = ""; let textoParaCopiar = ""; 
+      let loteriaSelecionadaModal = 'MegaSena'; let loteriaSelecionadaConf = 'MegaSena';
+      let numerosEscolhidosArray = []; let trevosEscolhidosArray = []; 
+      let concursoCarregado = null; let ultimoConcursoDisponivel = null;
+      let dezenasSorteadasConferencia = []; let trevosSorteadosConferencia = []; let timeCoracaoSorteado = "";
+
+      function regerarAnimado() {
+          let btn = document.getElementById('btn-regerar'); let textoOriginal = btn.innerHTML;
+          btn.innerHTML = "⏳ Misturando..."; btn.style.opacity = "0.7";
+          setTimeout(() => { executarCombinacoes(); btn.innerHTML = textoOriginal; btn.style.opacity = "1"; }, 300);
+      }
+
+      function pegarDezenasAleatorias(arrayOrigem, qtd) {
+          let arr = [...arrayOrigem];
+          for (let i = arr.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+          return arr.slice(0, qtd).sort((a,b) => a-b);
+      }
+
+      function recolherVisor() { document.getElementById('select-loteria-res').value = ""; document.getElementById('visor-conteudo').style.display = 'none'; document.getElementById('visor-loading').style.display = 'block'; }
+
+      async function buscarDadosLoteria(tipo, concursoNum = null) {
+          let conf = configLoterias[tipo];
+          try {
+              let res = await fetch(concursoNum ? `https://loteriascaixa-api.herokuapp.com/api/${conf.endp}/${concursoNum}` : `https://loteriascaixa-api.herokuapp.com/api/${conf.endp}/latest`);
+              if(res.ok) { let data = await res.json(); return { concurso: data.concurso || data.numero, data: data.data || data.dataApuracao, dezenas: data.dezenas || data.listaDezenas, trevos: data.trevos || data.listaTrevosSorteados, mesSorte: data.mesSorte || data.nomeMesSorte, timeCoracao: data.timeCoracao || data.nomeTimeCoracao, dataProximoConcurso: data.dataProximoConcurso, valorEstimadoProximoConcurso: data.valorEstimadoProximoConcurso, acumulou: data.acumulou, premiacoes: (data.premiacoes || data.listaRateioPremio || []).map(p => ({descricao: p.descricaoFaixa || p.descricao, ganhadores: p.numeroGanhadores || p.ganhadores || 0, premio: p.valorPremio || p.premio || 0})) }; }
+          } catch(e) {}
+          let resCaixa = await fetch(concursoNum ? `https://corsproxy.io/?https://servicebus.caixa.gov.br/portaldeloterias/api/${conf.endp}/${concursoNum}` : `https://corsproxy.io/?https://servicebus.caixa.gov.br/portaldeloterias/api/${conf.endp}`);
+          let dataC = await resCaixa.json();
+          return { concurso: dataC.numero || dataC.concurso, data: dataC.dataApuracao || dataC.data, dezenas: dataC.listaDezenas || dataC.dezenas, trevos: dataC.listaTrevosSorteados || dataC.trevos, mesSorte: dataC.nomeMesSorte || dataC.mesSorte, timeCoracao: dataC.nomeTimeCoracao || dataC.timeCoracao, dataProximoConcurso: dataC.dataProximoConcurso, valorEstimadoProximoConcurso: dataC.valorEstimadoProximoConcurso, acumulou: dataC.acumulado !== undefined ? dataC.acumulado : dataC.acumulou, premiacoes: (dataC.listaRateioPremio || dataC.premiacoes || []).map(p => ({descricao: p.descricaoFaixa || p.descricao, ganhadores: p.numeroGanhadores || p.ganhadores || 0, premio: p.valorPremio || p.premio || 0})) };
+      }
+
+      async function carregarVisorResultado(tipo) {
+          if(!tipo) return;
+          document.getElementById('visor-loading').style.display = 'block'; document.getElementById('visor-conteudo').style.display = 'none';
+          try {
+              let conf = configLoterias[tipo]; let data = await buscarDadosLoteria(tipo);
+              document.getElementById('visor-titulo').innerText = conf.nome; document.getElementById('visor-titulo').style.color = conf.cor;
+              document.getElementById('visor-info').innerHTML = `Resultado Concurso <b>${data.concurso}</b> (${data.data})`;
+              let contBolas = document.getElementById('visor-bolinhas'); contBolas.innerHTML = '';
+              if(data.dezenas) data.dezenas.forEach(d => {
+                  let b = document.createElement('div'); b.className = 'bolinha-res'; b.style.backgroundColor = conf.cor; b.style.color = conf.txt; b.innerText = d; contBolas.appendChild(b);
+              });
+              document.getElementById('visor-data-prox').innerText = data.dataProximoConcurso || 'A definir';
+              document.getElementById('visor-valor-prox').innerText = data.valorEstimadoProximoConcurso ? data.valorEstimadoProximoConcurso.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : 'Apurando...';
+              
+              let list = document.getElementById('visor-lista-premios'); list.innerHTML = '';
+              data.premiacoes.forEach(p => {
+                  let li = document.createElement('li'); li.className = 'item-premiacao';
+                  let ganho = p.ganhadores === 0 ? `<span class="ganhadores-texto">Acumulou!</span>` : `<span class="ganhadores-texto">${p.ganhadores} aposta(s) &bull; <strong>${p.premio.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</strong></span>`;
+                  li.innerHTML = `<span class="acertos-texto">${p.descricao}</span>${ganho}`; list.appendChild(li);
+              });
+              document.getElementById('visor-loading').style.display = 'none'; document.getElementById('visor-conteudo').style.display = 'block';
+          } catch(e) { document.getElementById('visor-loading').innerText = "⚠️ Erro ao buscar resultado. Tente novamente."; }
+      }
+
+      function gerarNumeros(max, qtd, offset = 1) {
+          let nums = [];
+          while(nums.length < qtd) { let n = Math.floor(Math.random() * max) + offset; if(!nums.includes(n)) nums.push(n); }
+          return nums.sort((a,b) => a-b);
+      }
+
+      function calcularCombinacoesPossiveis(n, k) {
+          if (k > n) return 0; if (k === 0 || k === n) return 1;
+          let r = 1; for (let i = 1; i <= k; i++) r = r * (n - i + 1) / i;
+          return Math.round(r);
+      }
+
+      function gerarCombinacoes(arr, k) {
+          if (k > arr.length || k <= 0) return []; if (k === arr.length) return [arr]; if (k === 1) return arr.map(n => [n]);
+          let combs = [];
+          for (let i = 0; i < arr.length - k + 1; i++) {
+              let head = arr.slice(i, i + 1); let tailcombs = gerarCombinacoes(arr.slice(i + 1), k - 1);
+              for (let j = 0; j < tailcombs.length; j++) combs.push(head.concat(tailcombs[j]));
           }
-
-          refreshUI();
-        } else {
-          isMasterUser = false;
-          document.getElementById('user-avatar').src = "minha-foto.jpg";
-          document.getElementById('auth-btn-text').innerText = "Entrar com Google";
-          document.getElementById('auth-btn').className = "flex items-center gap-2 px-4 py-2 rounded-full bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold border border-slate-300 transition-all shadow-sm cursor-pointer";
-
-          document.getElementById('logged-out-card').classList.remove('hidden');
-          document.getElementById('pending-card').classList.add('hidden');
-          document.getElementById('main-content').classList.add('hidden');
-          document.getElementById('controls-bar').classList.add('hidden');
-          document.getElementById('master-pending-box').classList.add('hidden');
-        }
-      });
-    }
-
-    window.handleGoogleAuth = function() {
-      if (!currentUser) {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).catch((error) => {
-          alert("Erro ao realizar login com o Google: " + error.message);
-          console.error(error);
-        });
-      } else {
-        auth.signOut().then(() => {
-          alert("Desconectado com sucesso.");
-        });
-      }
-    };
-
-    function refreshUI() {
-      if (!currentUser) return;
-
-      const userName = currentUser.displayName || (currentUser.email || "").split('@')[0];
-      const loggedOutCard = document.getElementById('logged-out-card');
-      const pendingCard = document.getElementById('pending-card');
-      const mainContent = document.getElementById('main-content');
-      const controlsBar = document.getElementById('controls-bar');
-
-      Object.keys(appData.athletes).forEach(name => {
-        if (appData.athletes[name].approved === undefined) {
-          appData.athletes[name].approved = true;
-        }
-      });
-
-      const currentAthleteData = appData.athletes[userName];
-
-      if (!isMasterUser && currentAthleteData && !currentAthleteData.approved) {
-        loggedOutCard.classList.add('hidden');
-        pendingCard.classList.remove('hidden');
-        mainContent.classList.add('hidden');
-        controlsBar.classList.add('hidden');
-        document.getElementById('master-pending-box').classList.add('hidden');
-        return;
+          return combs;
       }
 
-      loggedOutCard.classList.add('hidden');
-      pendingCard.classList.add('hidden');
-      mainContent.classList.remove('hidden');
-      controlsBar.classList.remove('hidden');
-
-      if (isMasterUser) {
-        document.getElementById('add-athlete-btn').classList.remove('hidden');
-        document.getElementById('delete-athlete-btn').classList.remove('hidden');
-      } else {
-        appData.currentAthlete = userName;
-        document.getElementById('add-athlete-btn').classList.add('hidden');
-        document.getElementById('delete-athlete-btn').classList.add('hidden');
-      }
-
-      initAthleteSelector();
-      renderMasterPendingList();
-      renderAll();
-    }
-
-    function renderMasterPendingList() {
-      const box = document.getElementById('master-pending-box');
-      const list = document.getElementById('pending-list');
-      list.innerHTML = '';
-
-      if (!isMasterUser) return box.classList.add('hidden');
-
-      const pendingUsers = Object.keys(appData.athletes).filter(
-        name => appData.athletes[name].approved === false
-      );
-
-      if (pendingUsers.length === 0) return box.classList.add('hidden');
-
-      box.classList.remove('hidden');
-
-      pendingUsers.forEach(userName => {
-        const userEmail = appData.athletes[userName].email || "Sem e-mail cadastrado";
-        const row = document.createElement('div');
-        row.className = "flex flex-col md:flex-row md:items-center justify-between bg-white p-3 rounded-lg border border-amber-200 text-xs shadow-sm gap-3";
-        row.innerHTML = `
-          <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-            <div class="font-bold text-slate-800 text-sm">👤 ${userName}</div>
-            <div class="text-[10px] sm:text-xs font-medium text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded w-fit">✉️ ${userEmail}</div>
-            <div class="text-slate-400 font-normal text-[10px] sm:text-xs italic">(Aguardando aprovação)</div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="approveAthlete('${userName}')" class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white font-bold rounded shadow transition cursor-pointer">Aprovar ✅</button>
-            <button onclick="rejectAthlete('${userName}')" class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white font-bold rounded shadow transition cursor-pointer">Recusar 🗑️</button>
-          </div>
-        `;
-        list.appendChild(row);
-      });
-    }
-
-    window.approveAthlete = function(userName) {
-      if (!isMasterUser) return;
-      if (appData.athletes[userName]) {
-        appData.athletes[userName].approved = true;
-        saveData(userName);
-        refreshUI();
-        alert(`✅ Perfil de "${userName}" aprovado com sucesso!`);
-      }
-    };
-
-    window.rejectAthlete = function(userName) {
-      if (!isMasterUser) return;
-      if (confirm(`Deseja recusar e excluir o cadastro de "${userName}"?`)) {
-        delete appData.athletes[userName];
-        localStorage.setItem('treino_data', JSON.stringify(appData));
-        if (isCloudEnabled) db.ref(`meu_treino_app/athletes/${userName}`).remove();
-        refreshUI();
-        alert(`🗑️ Perfil de "${userName}" excluído.`);
-      }
-    };
-
-    // ==========================================
-    // 2. DADOS DO APLICATIVO E ÍCONES DINÂMICOS
-    // ==========================================
-    const levels = ["Iniciante", "Básico", "Básico II", "Intermediário", "Avançado", "Avançado II"];
-    const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    const statusList = ["", "A", "B", "C", "S", "D", "X", "F"];
-
-    let appData = JSON.parse(localStorage.getItem('treino_data')) || {};
-    if (!appData.athletes) { appData.athletes = {}; }
-
-    let currentYear = new Date().getFullYear();
-    if(currentYear < 2026) currentYear = 2026; 
-    let currentExerciseMonth = new Date().getMonth(); 
-    let currentFilter = 'ALL'; 
-
-    const exercisesList = [
-      { category: "Abdômen", color: "border-sky-500 bg-sky-50 text-sky-900", icon: "https://img.icons8.com/color/96/sit-ups.png", inputHighlight: "bg-sky-100 border-2 border-sky-500 text-sky-900 shadow-inner", items: ["Carrinho", "Supra chão", "Banco com peso (lat. / front.)", "Infra corda", "Oblíquo Calcanhar", "Prancha Lateral", "Oblíquo lateral (banco)", "Ponte", "Crunch na bola suíça", "Abdominal cruzado", "Infra Canivete", "Infra Banco", "Bicicleta", "Supra Encolhimento", "Prancha Alta"] },
-      { category: "Membros Inferiores (Pernas)", color: "border-amber-500 bg-amber-50 text-amber-900", icon: "https://img.icons8.com/color/96/squats.png", inputHighlight: "bg-amber-100 border-2 border-amber-500 text-amber-900 shadow-inner", items: ["Extensão", "Agachamento sumô com halteres", "Agachamento parede com bola", "Afundo", "Gluteo Cross", "Gluteo agachamento com elastico", "Adução com Elastico", "Posterior com bola", "Gêmeos Maquina", "Leg Horizontal", "Leg 45º (Sumo)", "Glúteo Máquina", "Flexor Vertical (maq.)", "Panturrilha", "Stiff Barra", "Agachamento parede", "Tibial Barrinha", "Posterior (Pulley)"] },
-      { category: "Peitorais", color: "border-blue-500 bg-blue-50 text-blue-900", icon: "https://img.icons8.com/color/96/pushups.png", inputHighlight: "bg-blue-100 border-2 border-blue-500 text-blue-900 shadow-inner", items: ["Supino Declinado", "Cross Over", "Fly Declinado", "Flexão de Braço", "Crucifixo Reto", "Crucifixo Inclinado", "Supino Reto", "Supino Inclinado", "Peck-Deck", "Fly Reto", "Fly Inclinado", "Abdomen Infra", "Abdomen Infra Corda"] },
-      { category: "Dorsais (Costas)", color: "border-indigo-500 bg-indigo-50 text-indigo-900", icon: "https://img.icons8.com/color/96/pullups.png", inputHighlight: "bg-indigo-100 border-2 border-indigo-500 text-indigo-900 shadow-inner", items: ["Pulley Costas", "Pulley Frente", "Remada Articulada", "Remada Baixa", "Pullover", "Remada baixa aberta", "Pulldown", "Remada Uni Lateral", "Remada Cavalinho", "Barra Livre", "Barra Smith", "Peck Dorsal", "Remada Aberta"] },
-      { category: "Braços (Tríceps, Bíceps, Antebraço)", color: "border-emerald-500 bg-emerald-50 text-emerald-900", icon: "https://img.icons8.com/color/96/flex-biceps.png", inputHighlight: "bg-emerald-100 border-2 border-emerald-500 text-emerald-900 shadow-inner", items: ["Tríceps Testa", "Tríceps Francês Unilateral c/ halteres", "Tríceps Pulley", "Tríceps Corda", "Tríceps Banco", "Tríceps Coice Unil. Cross", "Tríceps Supinado com Halter", "Tríceps Paralela", "Bíceps Rosca com Martelo", "Bíceps Rosca Direta", "Bíceps Rosca Concentrada", "Bíceps Rosca Alternada", "Bíceps Rosca invertida", "Bíceps Rosca 90º Cross", "Bíceps Rosca Scott", "Bíceps Cross Alto", "Antebraço Rosca Inversa c/ barra", "Antebraço Rosca Punho", "Antebraço Rosca Punho Inversa"] },
-      { category: "Ombros & Trapézio", color: "border-yellow-500 bg-yellow-50 text-yellow-900", icon: "https://img.icons8.com/color/96/deadlift.png", inputHighlight: "bg-yellow-100 border-2 border-yellow-500 text-yellow-900 shadow-inner", items: ["Elevação Lateral", "Elevação Frontal", "Desenvolvimento", "Desenvolvimento Frontal", "Desenvolvimento Dorsal", "Arnold", "Manguito Rotacional", "Push Press", "Manguito Interno Halter", "Crucifixo Invertido Halter", "Remada Alta (Trapézio)", "Encolhimento com Barra (Trapézio)"] }
-    ];
-
-    function getExerciseIcon(exName, defaultCatIcon) {
-      const n = exName.toLowerCase();
-      if (n.includes('supino')) return 'https://img.icons8.com/color/96/bench-press-with-dumbbells.png';
-      if (n.includes('flexão') || n.includes('flexao') || n.includes('tríceps') || n.includes('triceps')) return 'https://img.icons8.com/color/96/pushups.png';
-      if (n.includes('prancha') || n.includes('ponte')) return 'https://img.icons8.com/color/96/plank.png';
-      if (n.includes('bicicleta')) return 'https://img.icons8.com/color/96/cycling.png';
-      if (n.includes('carrinho')) return 'https://img.icons8.com/color/96/treadmill.png';
-      if (n.includes('remada') || n.includes('cavalinho')) return 'https://img.icons8.com/color/96/rowing.png';
-      if (n.includes('stiff')) return 'https://img.icons8.com/color/96/deadlift.png';
-      if (n.includes('desenvolvimento') || n.includes('arnold') || n.includes('press')) return 'https://img.icons8.com/color/96/weightlifting.png';
-      if (n.includes('rosca') || n.includes('bíceps') || n.includes('biceps')) return 'https://img.icons8.com/color/96/flex-biceps.png';
-      if (n.includes('barra') || n.includes('pulley') || n.includes('pulldown')) return 'https://img.icons8.com/color/96/pullups.png';
-      if (n.includes('agachamento') || n.includes('afundo') || n.includes('leg')) return 'https://img.icons8.com/color/96/squats.png';
-      if (n.includes('elevação') || n.includes('crucifixo') || n.includes('fly') || n.includes('manguito') || n.includes('encolhimento') || n.includes('antebraço')) return 'https://img.icons8.com/color/96/dumbbell.png';
-      return defaultCatIcon;
-    }
-
-    // ==========================================
-    // 3. DICIONÁRIO DE GIFS (HOSPEDAGEM DIRETA)
-    // ==========================================
-    // Cole aqui os links de GIFs (do Giphy, Tenor, Pinterest, ou seu próprio servidor)
-    // O nome escrito aqui DEVE ser idêntico ao nome do exercício na lista.
-    const gifDatabase = {
-      "Supino Reto": "https://media1.tenor.com/m/o6o0N204nYEAAAAC/barbell-bench-press.gif",
-      "Flexão de Braço": "https://media1.tenor.com/m/9ZikNtvn0kUAAAAd/push-up.gif",
-      "Agachamento sumô com halteres": "https://media1.tenor.com/m/dK5rE3_YwR0AAAAd/squat-squats.gif", // Exemplo generico de agachamento
-      "Prancha Alta": "https://media1.tenor.com/m/b_VOnx3B88AAAAC/plank.gif"
-    };
-
-    // CONTROLES DO MODAL (JANELA DE VÍDEO IN-APP)
-    window.openGifModal = function(exName) {
-      const modal = document.getElementById('gif-modal');
-      const title = document.getElementById('modal-title');
-      const content = document.getElementById('modal-content');
-      
-      title.innerText = exName;
-      
-      if (gifDatabase[exName]) {
-        // Se o GIF estiver cadastrado, mostra ele dentro do app
-        content.innerHTML = `<img src="${gifDatabase[exName]}" class="w-full h-auto rounded-lg shadow-md border border-slate-200">`;
-      } else {
-        // Se não tiver GIF, mostra mensagem de erro chique e dá a opção de YouTube
-        const youtubeSearchUrl = `https://www.youtube.com/results?search_query=como+fazer+exercício+${encodeURIComponent(exName)}+musculação`;
-        content.innerHTML = `
-          <div class="space-y-4 text-center">
-            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-3xl">📭</div>
-            <p class="text-sm text-slate-500">GIF ainda não cadastrado no sistema para este exercício.</p>
-            <a href="${youtubeSearchUrl}" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl transition-all shadow-md">
-              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-              Ver no YouTube
-            </a>
-          </div>
-        `;
-      }
-      
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-
-    window.closeGifModal = function() {
-      const modal = document.getElementById('gif-modal');
-      modal.classList.remove('flex');
-      modal.classList.add('hidden');
-    }
-
-
-    function canEditCurrentAthlete() {
-      if (!currentUser) return false;
-      if (isMasterUser) return true;
-      const userName = currentUser.displayName || (currentUser.email || "").split('@')[0];
-      return appData.currentAthlete === userName;
-    }
-
-    function saveData(specificAthlete = null) {
-      localStorage.setItem('treino_data', JSON.stringify(appData));
-      if (isCloudEnabled && isCloudLoaded) {
-        const athleteToSave = specificAthlete || appData.currentAthlete;
-        if (athleteToSave && appData.athletes[athleteToSave]) {
-          db.ref(`meu_treino_app/athletes/${athleteToSave}`).set(appData.athletes[athleteToSave]);
-        }
-      }
-    }
-
-    function loadCloudData() {
-      if (isCloudEnabled) {
-        db.ref('meu_treino_app').on('value', (snapshot) => {
-          const cloudData = snapshot.val();
-          if (cloudData && cloudData.athletes) {
-            appData.athletes = cloudData.athletes;
-          }
-          isCloudLoaded = true;
-          initYearSelector();
-          initExerciseMonthSelector();
-
-          if (currentUser) {
-            const activeTag = document.activeElement ? document.activeElement.tagName : '';
-            if (activeTag === 'INPUT' || activeTag === 'SELECT') {
-              return; 
-            }
-            refreshUI();
-          }
-        });
-      } else {
-        isCloudLoaded = true;
-        initYearSelector();
-        initExerciseMonthSelector();
-      }
-    }
-
-    window.copyPreviousMonth = function() {
-      if (!canEditCurrentAthlete()) return;
-      
-      let prevMonth = currentExerciseMonth - 1;
-      let prevYear = currentYear;
-      
-      if (prevMonth < 0) {
-        prevMonth = 11;
-        prevYear--;
-      }
-
-      const currentAthleteData = appData.athletes[appData.currentAthlete];
-      const prevMonthKey = `${prevYear}-${prevMonth}`;
-      const currMonthKey = `${currentYear}-${currentExerciseMonth}`;
-
-      let hasData = false;
-      if (currentAthleteData.monthlyExercises && currentAthleteData.monthlyExercises[prevMonthKey]) {
-        if (Object.keys(currentAthleteData.monthlyExercises[prevMonthKey]).length > 0) hasData = true;
-      }
-
-      if (!hasData) {
-        alert(`Nenhum treino preenchido foi encontrado em ${months[prevMonth]}/${prevYear} para poder copiar.`);
-        return;
-      }
-
-      const msg = `Deseja copiar todos os treinos de ${months[prevMonth]}/${prevYear} para ${months[currentExerciseMonth]}/${currentYear}?\n\n⚠️ Atenção: Isso irá apagar e substituir o que estiver preenchido no mês atual.`;
-      if (confirm(msg)) {
-        if (!currentAthleteData.monthlyExercises) currentAthleteData.monthlyExercises = {};
-        
-        currentAthleteData.monthlyExercises[currMonthKey] = JSON.parse(JSON.stringify(currentAthleteData.monthlyExercises[prevMonthKey]));
-        
-        saveData();
-        renderExercises();
-        alert("✅ Mês copiado com sucesso!");
-      }
-    };
-
-    function renderAll() {
-      const approvedKeys = Object.keys(appData.athletes).filter(
-        name => appData.athletes[name].approved !== false
-      );
-
-      if (!appData.currentAthlete || !appData.athletes[appData.currentAthlete]) {
-        if (approvedKeys.length > 0) {
-          appData.currentAthlete = approvedKeys[0];
-        }
-      }
-
-      if (!appData.currentAthlete || !appData.athletes[appData.currentAthlete]) return;
-
-      const currentAthleteData = appData.athletes[appData.currentAthlete];
-      if(!currentAthleteData.calendar) currentAthleteData.calendar = {};
-      if(!currentAthleteData.monthlyExercises) currentAthleteData.monthlyExercises = {};
-      if(!currentAthleteData.bio) currentAthleteData.bio = { dob: "", gender: "", height: "", weight: "" };
-
-      document.getElementById('calendar-athlete-name').innerText = appData.currentAthlete;
-      document.getElementById('exercise-athlete-name').innerText = appData.currentAthlete;
-
-      const emailBadge = document.getElementById('current-athlete-email');
-      if (currentAthleteData.email && currentAthleteData.email !== "") {
-        emailBadge.innerText = `✉️ ${currentAthleteData.email}`;
-        emailBadge.classList.remove('hidden');
-        emailBadge.classList.add('flex');
-      } else {
-        emailBadge.classList.add('hidden');
-        emailBadge.classList.remove('flex');
-      }
-
-      const copyBtn = document.getElementById('btn-copy-month');
-      if (copyBtn) {
-        copyBtn.style.display = canEditCurrentAthlete() ? '' : 'none';
-      }
-
-      renderBio();
-      renderLevels();
-      renderCalendar();
-      renderExercises();
-    }
-
-    function renderBio() {
-      const athlete = appData.athletes[appData.currentAthlete];
-      if (!athlete) return;
-      const bio = athlete.bio || { dob: "", gender: "", height: "", weight: "" };
-
-      document.getElementById('bio-dob').value = bio.dob || "";
-      document.getElementById('bio-gender').value = bio.gender || "";
-      document.getElementById('bio-height').value = bio.height || "";
-      document.getElementById('bio-weight').value = bio.weight || "";
-
-      const ageSpan = document.getElementById('bio-age');
-      if (bio.dob) {
-        const today = new Date();
-        const birthDate = new Date(bio.dob);
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
-        ageSpan.innerText = `(${age} anos)`;
-      } else {
-        ageSpan.innerText = "";
-      }
-
-      const canEdit = canEditCurrentAthlete();
-      document.getElementById('bio-dob').disabled = !canEdit;
-      document.getElementById('bio-gender').disabled = !canEdit;
-      document.getElementById('bio-height').disabled = !canEdit;
-      document.getElementById('bio-weight').disabled = !canEdit;
-    }
-
-    window.updateBioData = function() {
-      if (!canEditCurrentAthlete()) return;
-      const athlete = appData.athletes[appData.currentAthlete];
-      if (!athlete.bio) athlete.bio = {};
-
-      athlete.bio.dob = document.getElementById('bio-dob').value;
-      athlete.bio.gender = document.getElementById('bio-gender').value;
-      athlete.bio.height = document.getElementById('bio-height').value;
-      athlete.bio.weight = document.getElementById('bio-weight').value;
-
-      saveData();
-      renderBio();
-
-      const status = document.getElementById('bio-status');
-      status.classList.remove('hidden');
-      setTimeout(() => status.classList.add('hidden'), 2000);
-    };
-
-    function initAthleteSelector() {
-      const select = document.getElementById('athlete-selector');
-      select.innerHTML = '';
-
-      if (currentUser && isMasterUser) {
-        Object.keys(appData.athletes).forEach(athleteName => {
-          if (appData.athletes[athleteName].approved !== false) {
-            let opt = document.createElement('option');
-            opt.value = athleteName;
-            opt.innerText = athleteName;
-            if (athleteName === appData.currentAthlete) opt.selected = true;
-            select.appendChild(opt);
-          }
-        });
-        select.disabled = false;
-      } else if (currentUser) {
-        const userName = currentUser.displayName || (currentUser.email || "").split('@')[0];
-        let opt = document.createElement('option');
-        opt.value = userName;
-        opt.innerText = userName;
-        select.appendChild(opt);
-        select.disabled = true;
-        appData.currentAthlete = userName;
-      }
-    }
-
-    window.changeAthlete = function() {
-      appData.currentAthlete = document.getElementById('athlete-selector').value;
-      renderAll();
-    };
-
-    window.addNewAthlete = function() {
-      if (!isMasterUser) return;
-      let name = prompt("Digite o nome do novo Perfil:");
-      if (name && name.trim() !== "") {
-        name = name.trim();
-        if (appData.athletes[name]) {
-          alert("Este perfil já existe!");
-          return;
-        }
-        appData.athletes[name] = {
-          email: "",
-          approved: true,
-          level: "Iniciante",
-          bio: { dob: "", gender: "", height: "", weight: "" },
-          calendar: {},
-          monthlyExercises: {}
-        };
-        appData.currentAthlete = name;
-        saveData(name);
-        initAthleteSelector();
-        renderAll();
-        alert(`✅ Perfil ${name} criado com sucesso!`);
-      }
-    };
-
-    window.deleteCurrentAthlete = function() {
-      if (!isMasterUser) return;
-      const keys = Object.keys(appData.athletes);
-      if (keys.length <= 1) {
-        alert("Não é possível excluir o último perfil restante!");
-        return;
-      }
-      const current = appData.currentAthlete;
-      if (confirm(`Tem certeza que deseja excluir permanentemente o perfil "${current}"?`)) {
-        delete appData.athletes[current];
-        appData.currentAthlete = Object.keys(appData.athletes)[0];
-        
-        localStorage.setItem('treino_data', JSON.stringify(appData));
-        if (isCloudEnabled) db.ref(`meu_treino_app/athletes/${current}`).remove();
-        
-        initAthleteSelector();
-        renderAll();
-        alert(`🗑️ Perfil "${current}" excluído com sucesso.`);
-      }
-    };
-
-    function initYearSelector() {
-      const select = document.getElementById('year-selector');
-      select.innerHTML = '';
-      for (let y = 2024; y <= 2030; y++) {
-        let opt = document.createElement('option');
-        opt.value = y;
-        opt.innerText = y;
-        if (y === currentYear) opt.selected = true;
-        select.appendChild(opt);
-      }
-    }
-
-    function initExerciseMonthSelector() {
-      const select = document.getElementById('exercise-month-selector');
-      select.innerHTML = '';
-      months.forEach((m, idx) => {
-        let opt = document.createElement('option');
-        opt.value = idx;
-        opt.innerText = m;
-        if (idx === currentExerciseMonth) opt.selected = true;
-        select.appendChild(opt);
-      });
-    }
-
-    window.changeYear = function() {
-      currentYear = parseInt(document.getElementById('year-selector').value);
-      const currentAthleteData = appData.athletes[appData.currentAthlete];
-      if(currentAthleteData && !currentAthleteData.calendar[currentYear]) currentAthleteData.calendar[currentYear] = {};
-      renderCalendar();
-      renderExercises();
-    }
-
-    window.changeExerciseMonth = function() {
-      currentExerciseMonth = parseInt(document.getElementById('exercise-month-selector').value);
-      renderExercises();
-    }
-
-    window.applyFilter = function(type) {
-      currentFilter = type;
-      
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
-        btn.classList.add('bg-white', 'text-slate-500', 'hover:bg-slate-200');
-      });
-
-      const activeBtn = document.getElementById(`btn-filter-${type}`);
-      if(activeBtn) {
-        activeBtn.classList.remove('bg-white', 'text-slate-500', 'hover:bg-slate-200');
-        activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
-      }
-      renderExercises();
-    };
-
-    function getDaysInMonth(monthIndex, year) {
-      return new Date(year, monthIndex + 1, 0).getDate();
-    }
-
-    function renderLevels() {
-      const container = document.getElementById('level-container');
-      container.innerHTML = '';
-      const currentAthleteData = appData.athletes[appData.currentAthlete];
-      if (!currentAthleteData) return;
-      const canEdit = canEditCurrentAthlete();
-
-      levels.forEach(lvl => {
-        const btn = document.createElement('button');
-        btn.className = `px-2.5 py-1 text-xs font-semibold rounded-md border transition-all ${
-          currentAthleteData.level === lvl ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100'
-        }`;
-        btn.innerText = lvl;
-        
-        if (!canEdit) {
-          btn.disabled = true;
-          btn.classList.add('opacity-75', 'cursor-not-allowed');
-        } else {
-          btn.onclick = () => {
-            currentAthleteData.level = lvl;
-            saveData();
-            renderLevels();
-          };
-        }
-        container.appendChild(btn);
-      });
-    }
-
-    function renderCalendar() {
-      const grid = document.getElementById('calendar-grid');
-      grid.innerHTML = '';
-      
-      const currentAthleteData = appData.athletes[appData.currentAthlete];
-      if (!currentAthleteData) return;
-      if (!currentAthleteData.calendar) currentAthleteData.calendar = {};
-      if (!currentAthleteData.calendar[currentYear]) currentAthleteData.calendar[currentYear] = {};
-      const canEdit = canEditCurrentAthlete();
-
-      months.forEach((month, mIdx) => {
-        const row = document.createElement('div');
-        row.className = 'grid grid-cols-[90px_repeat(31,1fr)] gap-1 items-center';
-        row.innerHTML = `<div class="font-bold text-slate-700 pl-2 text-left">${month}</div>`;
-
-        const maxDays = getDaysInMonth(mIdx, currentYear);
-
-        for(let day = 1; day <= 31; day++) {
-          const key = `${mIdx}-${day}`;
-          let cellVal = currentAthleteData.calendar[currentYear][key] || '';
-          const cell = document.createElement('button');
-          
-          if (day > maxDays) {
-            cell.className = 'h-7 border border-slate-200 rounded text-center font-bold flex items-center justify-center status-n text-[10px]';
-            cell.innerText = 'N';
-          } else {
-            cell.className = `h-7 border border-slate-200 rounded text-center font-bold flex items-center justify-center transition-all text-[11px] ${getStatusClass(cellVal)}`;
-            cell.innerText = cellVal;
-
-            if (!canEdit) {
-              cell.classList.add('cursor-default');
-            } else {
-              cell.classList.add('cursor-pointer');
-              cell.onclick = () => {
-                let nextIdx = (statusList.indexOf(cellVal) + 1) % statusList.length;
-                cellVal = statusList[nextIdx];
-                currentAthleteData.calendar[currentYear][key] = cellVal;
-                saveData();
-                
-                cell.innerText = cellVal;
-                cell.className = `h-7 border border-slate-200 rounded text-center font-bold flex items-center justify-center cursor-pointer transition-all text-[11px] ${getStatusClass(cellVal)}`;
+      function renderizarGridNumeros(maxDezenas, corTema) {
+          let grid = document.getElementById('grid-numeros-modal');
+          grid.innerHTML = ''; numerosEscolhidosArray = []; atualizarContadorGrid();
+          for(let i = 1; i <= maxDezenas; i++) {
+              let btn = document.createElement('div'); btn.className = 'num-btn';
+              let val = i; let lbl = i.toString().padStart(2, '0');
+              if (loteriaSelecionadaModal === 'Lotomania' && i === 100) { val = 0; lbl = '00'; }
+              if (loteriaSelecionadaModal === 'SuperSete') { val = i - 1; lbl = val.toString(); }
+              
+              btn.innerText = lbl;
+              btn.onclick = function() {
+                  let index = numerosEscolhidosArray.indexOf(val);
+                  if (index > -1) { numerosEscolhidosArray.splice(index, 1); btn.classList.remove('ativo'); btn.style.background = '#fff'; } 
+                  else { numerosEscolhidosArray.push(val); btn.classList.add('ativo'); btn.style.background = corTema; }
+                  atualizarContadorGrid();
               };
-            }
+              grid.appendChild(btn);
           }
-          row.appendChild(cell);
-        }
-        grid.appendChild(row);
-      });
-    }
-
-    function getStatusClass(val) {
-      if (['A', 'B', 'C'].includes(val)) return 'status-active';
-      if (['S', 'D'].includes(val)) return 'status-weekend';
-      if (val === 'X') return 'status-x';
-      if (val === 'F') return 'bg-red-200 text-red-800';
-      return 'bg-white hover:bg-slate-50';
-    }
-
-    let exerciseTypingTimer;
-
-    window.handleExerciseInput = function(exName, field, inputElement, highlightClass) {
-      if (!canEditCurrentAthlete()) return;
-      
-      const currentAthleteData = appData.athletes[appData.currentAthlete];
-      const monthKey = `${currentYear}-${currentExerciseMonth}`;
-      if (!currentAthleteData.monthlyExercises) currentAthleteData.monthlyExercises = {};
-      if (!currentAthleteData.monthlyExercises[monthKey]) currentAthleteData.monthlyExercises[monthKey] = {};
-      if (!currentAthleteData.monthlyExercises[monthKey][exName]) {
-        currentAthleteData.monthlyExercises[monthKey][exName] = { treino: "", ordem: "", serie: "", rep: "", pausa: "" };
-      }
-      
-      const value = inputElement.value;
-      currentAthleteData.monthlyExercises[monthKey][exName][field] = value;
-      
-      localStorage.setItem('treino_data', JSON.stringify(appData));
-
-      const baseClasses = "w-full text-center text-xs font-bold rounded outline-none transition-colors duration-300 h-8";
-      if (value.trim() !== "") {
-        inputElement.className = `${baseClasses}${highlightClass} uppercase`;
-      } else {
-        inputElement.className = `${baseClasses} bg-white border border-slate-300 text-slate-700 uppercase`;
       }
 
-      clearTimeout(exerciseTypingTimer);
-      exerciseTypingTimer = setTimeout(() => {
-        if (isCloudEnabled && isCloudLoaded) {
-          db.ref(`meu_treino_app/athletes/${appData.currentAthlete}`).set(appData.athletes[appData.currentAthlete]);
-        }
-      }, 1000);
-    };
+      function atualizarContadorGrid() {
+          let c = document.getElementById('contador-num'); c.innerText = numerosEscolhidosArray.length;
+          c.style.color = (numerosEscolhidosArray.length >= configLoterias[loteriaSelecionadaModal].minReq) ? '#209869' : '#e53935'; 
+      }
 
-    function renderExercises() {
-      const container = document.getElementById('categories-container');
-      container.innerHTML = '';
-      
-      const currentAthleteData = appData.athletes[appData.currentAthlete];
-      if (!currentAthleteData) return;
-      const monthKey = `${currentYear}-${currentExerciseMonth}`;
-      if (!currentAthleteData.monthlyExercises) currentAthleteData.monthlyExercises = {};
-      const monthData = currentAthleteData.monthlyExercises[monthKey] || {};
-      const canEdit = canEditCurrentAthlete();
+      function limparGridModal() {
+          numerosEscolhidosArray = []; trevosEscolhidosArray = [];
+          document.querySelectorAll('#grid-numeros-modal .num-btn, #grid-trevos-modal .num-btn').forEach(b => { b.classList.remove('ativo'); b.style.background = '#fff'; });
+          document.getElementById('input-time-coracao').value = ''; atualizarContadorGrid();
+          let cT = document.getElementById('contador-trevos'); if(cT) { cT.innerText = '0'; cT.style.color = '#e53935'; }
+      }
 
-      exercisesList.forEach(cat => {
-        let filteredItems = cat.items.filter(exName => {
-          const exData = monthData[exName] || {};
-          const treinoAssinalado = (exData.treino || "").toUpperCase();
+      function sortearTimeModal() { document.getElementById('input-time-coracao').value = timesTimemania[Math.floor(Math.random() * timesTimemania.length)]; }
+
+      function selecionarAleatorioModal() {
+          let conf = configLoterias[loteriaSelecionadaModal];
+          let qtd = parseInt(document.getElementById('qtd-aleatoria').value, 10);
+          if (isNaN(qtd) || qtd < conf.minReq || qtd > conf.max) { alert(`Insira uma qtd entre ${conf.minReq} e ${conf.max}.`); return; }
+          limparGridModal(); 
           
-          const hasAnyData = (exData.treino && exData.treino.trim() !== "") || 
-                             (exData.ordem && exData.ordem.trim() !== "") || 
-                             (exData.serie && exData.serie.trim() !== "") || 
-                             (exData.rep && exData.rep.trim() !== "") || 
-                             (exData.pausa && exData.pausa.trim() !== "");
-
-          if (currentFilter === 'ALL') {
-            return true;
-          } else if (currentFilter === 'PREFILLED') {
-            return hasAnyData;
-          } else {
-            return treinoAssinalado.includes(currentFilter);
+          while(numerosEscolhidosArray.length < qtd) {
+              let n = Math.floor(Math.random() * conf.max) + (loteriaSelecionadaModal === 'Lotomania' ? 0 : 1);
+              if (loteriaSelecionadaModal === 'SuperSete') n = Math.floor(Math.random() * 10);
+              if(!numerosEscolhidosArray.includes(n)) numerosEscolhidosArray.push(n);
           }
-        });
-
-        if (filteredItems.length === 0) return;
-
-        const card = document.createElement('div');
-        card.className = `bg-white rounded-xl shadow-md border overflow-hidden`;
-        
-        const baseInputClass = "w-full text-center text-xs font-bold rounded outline-none transition-colors duration-300 h-8";
-        const emptyClass = "bg-white border border-slate-300 text-slate-700";
-
-        let tableRows = filteredItems.map(exName => {
-          const exData = monthData[exName] || { treino: "", ordem: "", serie: "", rep: "", pausa: "" };
-
-          const disabledAttr = !canEdit ? 'disabled' : '';
-          const disabledStyle = !canEdit ? 'bg-slate-50 text-slate-500 cursor-not-allowed' : '';
           
-          const specificIcon = getExerciseIcon(exName, cat.icon);
-
-          return `
-          <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors group">
-            <td class="p-2 text-center w-12 sm:w-16">
-              <input type="text" ${disabledAttr} value="${exData.treino \vert{}\vert{} ''}" oninput="handleExerciseInput('${exName}', 'treino', this, '${cat.inputHighlight}')" class="${baseInputClass} ${exData.treino ? cat.inputHighlight : emptyClass} ${disabledStyle} uppercase">
-            </td>
-            <td class="p-2 text-center w-12 sm:w-16">
-              <input type="text" ${disabledAttr} value="${exData.ordem \vert{}\vert{} ''}" oninput="handleExerciseInput('${exName}', 'ordem', this, '${cat.inputHighlight}')" class="${baseInputClass} ${exData.ordem ? cat.inputHighlight : emptyClass} ${disabledStyle} uppercase">
-            </td>
-            
-            <!-- ÁREA DA FOTO E NOME DO EXERCÍCIO (VISUAL DE APP E MODAL) -->
-            <td class="p-3 flex items-center gap-3 relative min-w-[200px]">
-              <button type="button" onclick="openGifModal('${exName}')" title="Ver animação: ${exName}" 
-                 class="relative block w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 cursor-pointer overflow-hidden rounded-xl border-2 border-transparent hover:border-red-400 shadow-sm transition-all group/img focus:outline-none">
-                
-                <img src="${specificIcon}" onerror="this.src='${cat.icon}'" alt="Ícone ${exName}" class="w-full h-full object-contain bg-white p-1 group-hover/img:brightness-75 transition-all">
-                
-                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 bg-black/20">
-                  <svg class="w-7 h-7 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </div>
-              </button>
-              <span class="font-extrabold text-slate-800 text-[13px] sm:text-[15px] leading-tight tracking-tight">${exName}</span>
-            </td>
-
-            <td class="p-2 w-12 sm:w-16">
-              <input type="text" ${disabledAttr} value="${exData.serie \vert{}\vert{} ''}" oninput="handleExerciseInput('${exName}', 'serie', this, '${cat.inputHighlight}')" class="${baseInputClass} ${exData.serie ? cat.inputHighlight : emptyClass} ${disabledStyle} uppercase">
-            </td>
-            <td class="p-2 w-12 sm:w-16">
-              <input type="text" ${disabledAttr} value="${exData.rep \vert{}\vert{} ''}" oninput="handleExerciseInput('${exName}', 'rep', this, '${cat.inputHighlight}')" class="${baseInputClass} ${exData.rep ? cat.inputHighlight : emptyClass} ${disabledStyle} uppercase">
-            </td>
-            <td class="p-2 w-14 sm:w-20">
-              <input type="text" ${disabledAttr} value="${exData.pausa \vert{}\vert{} ''}" oninput="handleExerciseInput('${exName}', 'pausa', this, '${cat.inputHighlight}')" class="${baseInputClass} ${exData.pausa ? cat.inputHighlight : emptyClass} ${disabledStyle} uppercase">
-            </td>
-          </tr>
-        `}).join('');
-
-        card.innerHTML = `
-          <div class="p-3 border-b ${cat.color} font-bold text-sm sm:text-base flex justify-between items-center">
-            <span>${cat.category}</span>
-          </div>
-          <div class="overflow-x-auto scrollbar-hide">
-            <table class="w-full text-left border-collapse min-w-[400px]">
-              <thead>
-                <tr class="bg-slate-50 text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 border-b border-slate-200">
-                  <th class="p-2 text-center font-semibold">Treino</th>
-                  <th class="p-2 text-center font-semibold">Ord.</th>
-                  <th class="p-3 font-semibold text-slate-500">Exercício <span class="lowercase font-normal text-[9px]">(Clique na foto)</span></th>
-                  <th class="p-2 text-center font-semibold">Sér.</th>
-                  <th class="p-2 text-center font-semibold">Rep.</th>
-                  <th class="p-2 text-center font-semibold">Pausa</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100 text-xs">${tableRows}</tbody>
-            </table>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    window.shareWhatsApp = function() {
-      const currentAthleteData = appData.athletes[appData.currentAthlete];
-      if (!currentAthleteData) return;
-      
-      const monthKey = `${currentYear}-${currentExerciseMonth}`;
-      const monthData = currentAthleteData.monthlyExercises[monthKey] || {};
-      const monthName = months[currentExerciseMonth];
-
-      let text = `🏋️‍♂️ *Treino de ${appData.currentAthlete} - ${monthName}/${currentYear}*\n`;
-      text += `Nível: ${currentAthleteData.level}\n`;
-      
-      if (currentFilter !== 'ALL') {
-        text += `Filtro Ativo: *Treino ${currentFilter}*\n`;
-      }
-      text += `\n`;
-
-      let hasExercisesToShare = false;
-
-      exercisesList.forEach(cat => {
-        let filteredItems = cat.items.filter(exName => {
-          if (currentFilter === 'ALL') return true; 
-          const exData = monthData[exName] || {};
-          const treinoAssinalado = (exData.treino || "").toUpperCase();
-          return treinoAssinalado.includes(currentFilter);
-        });
-
-        let categoryHasValidData = false;
-        let categoryText = `*${cat.category}*\n`;
-
-        filteredItems.forEach(exName => {
-          const exData = monthData[exName] || {};
-          if (exData.treino || exData.serie || exData.rep) {
-            categoryHasValidData = true;
-            hasExercisesToShare = true;
-            
-            const treinoStr = exData.treino ? `[${exData.treino.toUpperCase()}]` : `[-]`;
-            const ordemStr = exData.ordem ? `Ord ${exData.ordem}:` : `-`;
-            const serieStr = exData.serie || `-`;
-            const repStr = exData.rep || `-`;
-            const pausaStr = exData.pausa ? ` (${exData.pausa})` : ``;
-
-            categoryText += `${treinoStr} ${ordemStr} ${exName} | ${serieStr}x${repStr}${pausaStr}\n`;
+          let botoes = document.getElementById('grid-numeros-modal').getElementsByClassName('num-btn');
+          for (let i = 0; i < botoes.length; i++) {
+              let nBtn = i + 1;
+              if (loteriaSelecionadaModal === 'Lotomania' && nBtn === 100) nBtn = 0;
+              if (loteriaSelecionadaModal === 'SuperSete') nBtn = i;
+              if (numerosEscolhidosArray.includes(nBtn)) { botoes[i].classList.add('ativo'); botoes[i].style.background = conf.cor; }
           }
-        });
-
-        if (categoryHasValidData) {
-          text += categoryText + `\n`;
-        }
-      });
-
-      if (!hasExercisesToShare) {
-        alert("Nenhum exercício com dados preenchidos foi encontrado na tela atual para compartilhar.");
-        return;
+          atualizarContadorGrid();
       }
 
-      const encodedText = encodeURIComponent(text.trim());
-      window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
-    };
+      function abrirModal() { document.getElementById('modal-combinacoes').style.display = 'flex'; setLoteriaModal('MegaSena'); }
+      function fecharModal(idModal) { document.getElementById(idModal).style.display = 'none'; }
 
-    // Iniciar tudo 
-    loadCloudData();
+      function setLoteriaModal(tipo) {
+          loteriaSelecionadaModal = tipo; let conf = configLoterias[tipo];
+          for (let k in configLoterias) if(document.getElementById(configLoterias[k].idGen)) document.getElementById(configLoterias[k].idGen).classList.remove('ativa');
+          document.getElementById(conf.idGen).classList.add('ativa');
+          renderizarGridNumeros(conf.max, conf.cor); document.getElementById('qtd-aleatoria').value = '';
+          
+          document.getElementById('container-trevos-modal').style.display = (tipo === 'Milionaria') ? 'block' : 'none';
+          document.getElementById('container-time-modal').style.display = (tipo === 'Timemania') ? 'block' : 'none';
+      }
 
+      function executarCombinacoes() {
+          let tipo = loteriaSelecionadaModal; let conf = configLoterias[tipo];
+          let numerosEscolhidos = [...numerosEscolhidosArray].sort((a,b) => a-b);
+          if (numerosEscolhidos.length < conf.minReq) { alert(`Selecione ao menos ${conf.minReq} dezenas.`); return; }
+          
+          let arrayJogosFinal = []; let time = null; let isAleat = false;
+          if (tipo === 'Timemania') { time = document.getElementById('input-time-coracao').value.trim(); if(!time) isAleat = true; }
+          
+          let lim = parseInt(document.getElementById('input-limite-cartoes').value, 10); let hasLimit = !isNaN(lim) && lim > 0;
+          
+          let totalComb = calcularCombinacoesPossiveis(numerosEscolhidos.length, conf.minReq);
+          if (totalComb > 50000 && !hasLimit) { alert(`Vai gerar ${totalComb.toLocaleString()} cartões. Insira um limite no Filtro Inteligente!`); return; }
+          
+          let combs = gerarCombinacoes(numerosEscolhidos, conf.minReq);
+          arrayJogosFinal = combs.map(nums => {
+              return { numeros: nums, trevos: null, time: isAleat ? timesTimemania[Math.floor(Math.random() * timesTimemania.length)] : time };
+          });
+
+          if (hasLimit && lim < arrayJogosFinal.length) {
+              let step = arrayJogosFinal.length / lim; let melhores = [];
+              let off = Math.floor(Math.random() * step);
+              for (let j = 0; j < lim; j++) { let idx = Math.floor(j * step) + off; melhores.push(arrayJogosFinal[Math.min(idx, arrayJogosFinal.length - 1)]); }
+              arrayJogosFinal = melhores;
+          }
+
+          exibirResultados(arrayJogosFinal, tipo, conf.precoBase, `Combinações: ${conf.nome}`, true);
+          fecharModal('modal-combinacoes'); 
+      }
+
+      window.abrirModalMultiplo = function() {
+          document.getElementById('modal-multiplo').style.display = 'flex';
+          let lista = document.getElementById('lista-multipla'); lista.innerHTML = '';
+          for (const key in configLoterias) {
+              if (key === 'DiaDeSorte') continue;
+              let conf = configLoterias[key];
+              lista.innerHTML += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0;"><div><div style="font-weight: bold; color: ${conf.cor}; font-size: 16px;">${conf.nome}</div></div><div><input type="number" id="qtd-mult-${key}" min="0" max="100" value="0" style="width: 50px; padding: 8px; text-align: center; border: 2px solid #ccc; border-radius: 8px; outline: none;"></div></div>`;
+          }
+      };
+
+      window.executarGeradorMultiplo = function() {
+          let jogosGerados = []; let custoTotal = 0;
+          for (const key in configLoterias) {
+              if (key === 'DiaDeSorte') continue;
+              let input = document.getElementById(`qtd-mult-${key}`);
+              if(input && parseInt(input.value) > 0) {
+                  let conf = configLoterias[key];
+                  for(let i = 0; i < parseInt(input.value); i++) {
+                      let nums = (key === 'SuperSete') ? Array.from({length: 7}, () => Math.floor(Math.random() * 10)) : gerarNumeros(conf.max, conf.minReq, key === 'Lotomania' ? 0 : 1);
+                      jogosGerados.push({ loteriaKey: key, loteriaNome: conf.nome, cor: conf.cor, numeros: nums, trevos: null, time: key==='Timemania' ? timesTimemania[Math.floor(Math.random() * timesTimemania.length)] : null, preco: conf.precoBase });
+                      custoTotal += conf.precoBase;
+                  }
+              }
+          }
+          if(jogosGerados.length === 0) return alert("Selecione pelo menos uma.");
+          exibirResultadosMultiplos(jogosGerados, custoTotal, "Múltiplas Loterias"); fecharModal('modal-multiplo');
+      };
+
+      window.exibirResultadosMultiplos = function(arrayJogos, custoTotal, titulo) {
+          let html = ""; textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`; textoParaCopiar = ""; 
+          let grupos = {}; arrayJogos.forEach(j => { if(!grupos[j.loteriaNome]) grupos[j.loteriaNome] = []; grupos[j.loteriaNome].push(j); });
+
+          for (const nom in grupos) {
+              let js = grupos[nom]; let c = js[0].cor;
+              html += `<h4 style="margin: 20px 0 10px 0; color: ${c}; border-bottom: 2px solid ${c}; padding-bottom: 5px; text-align: left;">${nom.toUpperCase()}</h4>`;
+              textoParaWhatsApp += `\n*${nom.toUpperCase()}*\n`; textoParaCopiar += `\n[ ${nom.toUpperCase()} ]\n`;
+
+              for(let i = 0; i < js.length; i++) {
+                  let jogo = js[i];
+                  let nf = jogo.numeros.map(n => jogo.loteriaNome === 'Super Sete' ? n.toString() : n.toString().padStart(2, '0')).join(' - ');
+                  let lHtml = `<div class="linha-jogo"><span style="color:#555; font-weight:bold; width: 55px; display:inline-block;">Jogo ${i+1}:</span> <span class="numero">${nf}</span>`;
+                  let lTxt = `Jogo ${i+1}: ${nf}`;
+                  if (jogo.time) { lHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Time: <span style="color:#b71c1c;">${jogo.time.toUpperCase()}</span></span>`; lTxt += ` | Time: ${jogo.time.toUpperCase()}`; }
+                  html += lHtml + `</div>`; textoParaWhatsApp += `*${lTxt}*\n`; textoParaCopiar += `${lTxt}\n`;
+              }
+          }
+          let tot = "R$ " + custoTotal.toFixed(2).replace('.', ',');
+          document.getElementById('titulo-res').innerText = titulo; document.getElementById('conteudo-res').innerHTML = html;
+          document.getElementById('total-cartoes').innerText = arrayJogos.length; document.getElementById('total-geral').innerText = tot;
+          document.getElementById('btn-regerar').style.display = 'none'; document.querySelector('.app-container').style.display = 'none'; document.getElementById('tela-resultado').style.display = 'block';
+      };
+
+      function abrirModalConferencia() { document.getElementById('modal-conferencia').style.display = 'flex'; setLoteriaConferencia('MegaSena'); document.getElementById('textarea-jogos').value = ''; }
+
+      function setLoteriaConferencia(tipo) {
+          loteriaSelecionadaConf = tipo;
+          for (const key in configLoterias) if(document.getElementById(configLoterias[key].id)) document.getElementById(configLoterias[key].id).classList.remove('ativa');
+          document.getElementById(configLoterias[tipo].id).classList.add('ativa');
+          
+          document.getElementById('info-api').innerText = "Buscando dados do concurso..."; document.getElementById('painel-premium').style.display = 'none';
+          buscarDadosLoteria(tipo).then(d => processarDadosAPI(d, true)).catch(e => document.getElementById('info-api').innerText = "⚠️ Falha ao buscar concurso.");
+      }
+
+      function processarDadosAPI(data, isLatest) {
+          let conf = configLoterias[loteriaSelecionadaConf];
+          if (isLatest) ultimoConcursoDisponivel = data.concurso;
+          concursoCarregado = data.concurso;
+          dezenasSorteadasConferencia = data.dezenas.map(n => parseInt(n, 10));
+          timeCoracaoSorteado = data.timeCoracao || "";
+
+          document.getElementById('input-busca-concurso').value = concursoCarregado;
+          document.getElementById('info-api').innerHTML = `✔️ Concurso: ${data.concurso} (${data.data})`;
+
+          let cBolas = document.getElementById('bolinhas-container'); cBolas.innerHTML = '';
+          data.dezenas.forEach(d => {
+              let b = document.createElement('div'); b.className = 'bolinha-oficial'; b.style.backgroundColor = conf.cor; b.style.color = conf.txt;
+              b.innerText = loteriaSelecionadaConf === 'SuperSete' ? parseInt(d,10).toString() : d;
+              if(data.dezenas.length > 10) { b.style.width = '32px'; b.style.height = '32px'; b.style.fontSize = '14px'; }
+              cBolas.appendChild(b);
+          });
+          document.getElementById('valor-estimado').innerText = isLatest && data.valorEstimadoProximoConcurso ? data.valorEstimadoProximoConcurso.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : "Apurado";
+          document.getElementById('painel-premium').style.display = 'block';
+      }
+
+      async function buscarConcursoEspecifico() {
+          let num = parseInt(document.getElementById('input-busca-concurso').value, 10);
+          if(isNaN(num) || num < 1 || num === concursoCarregado) return;
+          buscarDadosLoteria(loteriaSelecionadaConf, num).then(d => processarDadosAPI(d, false)).catch(e => {});
+      }
+      function navegarConcurso(dir) { if(!concursoCarregado) return; document.getElementById('input-busca-concurso').value = concursoCarregado + dir; buscarConcursoEspecifico(); }
+
+      function executarConferencia() {
+          let textareaJogos = document.getElementById('textarea-jogos').value;
+          if(dezenasSorteadasConferencia.length === 0) return alert("Aguarde o carregamento do concurso.");
+          if(!textareaJogos.trim()) return alert("Insira ou cole seus jogos.");
+          fecharModal('modal-conferencia');
+
+          let linhas = textareaJogos.split('\n'); let conf = configLoterias[loteriaSelecionadaConf];
+          let totalJogosPremiados = 0; let contagemPremios = {}; let jogosAvaliados = []; 
+
+          // Header especial dezenas sorteadas
+          let fmtSorteadas = (n) => loteriaSelecionadaConf === 'SuperSete' ? n.toString() : n.toString().padStart(2, '0');
+          let bolasHtml = dezenasSorteadasConferencia.map(d => `<div class="bolinha-res" style="background-color:${conf.cor}; color:${conf.txt}; width: 32px; height: 32px; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.25);">${fmtSorteadas(d)}</div>`).join('');
+
+          for(let i = 0; i < linhas.length; i++) {
+              let linha = linhas[i].trim(); if(linha === "") continue;
+              let partes = linha.replace(/Jogo \d+:/gi, '').split('|');
+              let numerosJogo = partes[0].match(/\d+/g); let timeJogo = "";
+              for (let p = 1; p < partes.length; p++) if (partes[p].toUpperCase().includes('TIME:')) timeJogo = partes[p].toUpperCase().split('TIME:')[1].trim();
+              if(!numerosJogo) continue;
+
+              let acertos = 0; let linhaHtml = `<div class="linha-jogo">Jogo ${i+1}: `;
+              
+              for (let col = 0; col < numerosJogo.length; col++) {
+                  let n = numerosJogo[col]; let numInt = parseInt(n, 10);
+                  
+                  if (loteriaSelecionadaConf === 'SuperSete') {
+                      // Super sete necessita acerto posicional (coluna x coluna)
+                      if (dezenasSorteadasConferencia[col] === numInt) { linhaHtml += `<span class="numero-acerto" style="background-color:${conf.cor}; color:${conf.txt}">${n}</span>`; acertos++; } 
+                      else { linhaHtml += `<span class="numero">${n}</span>`; }
+                  } else {
+                      if(dezenasSorteadasConferencia.includes(numInt)) { linhaHtml += `<span class="numero-acerto" style="background-color:${conf.cor}; color:${conf.txt}">${n.padStart(2, '0')}</span>`; acertos++; } 
+                      else { linhaHtml += `<span class="numero">${n.padStart(2, '0')}</span>`; }
+                  }
+              }
+
+              let premiado = false; let textoBadge = `Acertos: ${acertos}`;
+              if (loteriaSelecionadaConf === 'MegaSena' && acertos >= 4) { premiado = true; }
+              else if (loteriaSelecionadaConf === 'Quina' && acertos >= 2) { premiado = true; }
+              else if (loteriaSelecionadaConf === 'Lotofacil' && acertos >= 11) { premiado = true; }
+              else if (loteriaSelecionadaConf === 'Lotomania' && (acertos >= 15 || acertos === 0)) { premiado = true; }
+              else if (loteriaSelecionadaConf === 'DuplaSena' && acertos >= 3) { premiado = true; }
+              else if (loteriaSelecionadaConf === 'SuperSete' && acertos >= 3) { premiado = true; textoBadge = `${acertos} ACERTOS!`; }
+              else if (loteriaSelecionadaConf === 'Timemania' && acertos >= 3) { premiado = true; }
+
+              if (premiado) { totalJogosPremiados++; contagemPremios[textoBadge] = (contagemPremios[textoBadge] || 0) + 1; }
+              linhaHtml += `<span class="badge-acertos ${premiado ? 'badge-premiado' : ''}" style="margin-left: auto;">${textoBadge}</span></div>`;
+              jogosAvaliados.push({ peso: acertos, html: linhaHtml });
+          }
+
+          jogosAvaliados.sort((a, b) => b.peso - a.peso);
+          
+          let cabecalhoSorteadas = `
+              <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 12px; border: 2px dashed ${conf.cor}; text-align: center;">
+                  <div style="font-size: 14px; color: #475569; font-weight: bold; margin-bottom: 8px;">Dezenas Sorteadas (Concurso ${concursoCarregado})</div>
+                  <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">${bolasHtml}</div>
+                  <div style="font-size: 15px; color: #1e293b; font-weight: bold; background: #e2e8f0; padding: 6px 12px; border-radius: 8px; display: inline-block; border: 1px solid #cbd5e1;">
+                      Jogos Checados: <span style="color: #b71c1c; font-size: 16px;">${jogosAvaliados.length}</span>
+                  </div>
+              </div>
+          `;
+
+          document.getElementById('titulo-res').innerText = `Conferência: ${conf.nome}`;
+          document.getElementById('conteudo-res').innerHTML = cabecalhoSorteadas + jogosAvaliados.map(j => j.html).join('');
+          document.getElementById('btn-regerar').style.display = 'none';
+          document.querySelector('.app-container').style.display = 'none'; document.getElementById('tela-resultado').style.display = 'block';
+
+          if (totalJogosPremiados > 0) {
+              let msg = `Detectamos <b>${totalJogosPremiados}</b> jogo(s) premiado(s)!<br><br>`;
+              for (let t in contagemPremios) msg += `<span style="color:#209869; font-weight:bold; font-size:18px;">${contagemPremios[t]}x ${t}</span><br>`;
+              document.getElementById('popup-texto').innerHTML = msg; document.getElementById('modal-premiacao').style.display = 'flex';
+          }
+      }
+
+      function exibirResultados(arrayJogos, tipo, precoBase, titulo, podeRegerar = false) {
+          let html = "", soma = 0; textoParaWhatsApp = `🍀 *IA - Inteligência do Andrade* 🍀\n\n🎯 *${titulo}*\n\n`; textoParaCopiar = ""; 
+          for(let i = 0; i < arrayJogos.length; i++) {
+              let jogo = arrayJogos[i];
+              let nf = jogo.numeros.map(n => tipo === 'SuperSete' ? n.toString() : n.toString().padStart(2, '0')).join(' - ');
+              let lHtml = `<div class="linha-jogo">Jogo ${i+1}: <span class="numero">${nf}</span>`; let lTxt = `Jogo ${i+1}: ${nf}`;
+              if (jogo.time) { lHtml += `<span style="color:#888; font-weight:bold; margin-left: 5px;">| Time: <span style="color:#b71c1c;">${jogo.time.toUpperCase()}</span></span>`; lTxt += ` | Time: ${jogo.time.toUpperCase()}`; }
+              html += lHtml + `</div>`; textoParaWhatsApp += `*${lTxt}*\n`; textoParaCopiar += `${lTxt}\n`; soma += precoBase;
+          }
+          let tot = "R$ " + soma.toFixed(2).replace('.', ',');
+          document.getElementById('titulo-res').innerText = titulo; document.getElementById('conteudo-res').innerHTML = html;
+          document.getElementById('total-cartoes').innerText = arrayJogos.length; document.getElementById('total-geral').innerText = tot;
+          document.getElementById('btn-regerar').style.display = podeRegerar ? 'block' : 'none';
+          document.querySelector('.app-container').style.display = 'none'; document.getElementById('tela-resultado').style.display = 'block';
+      }
+
+      function copiarJogos() { navigator.clipboard.writeText(textoParaCopiar); let btn = document.getElementById('btn-copiar'); let t = btn.innerText; btn.innerText = "✅ Copiados!"; setTimeout(() => btn.innerText = t, 2000); }
+
+      function iniciar(tipo, max, minQtd, maxQtd) {
+          let qtdJogos = prompt(`Quantos jogos de ${configLoterias[tipo].nome} deseja gerar?`, "5"); if (!qtdJogos) return;
+          let qtdNum = minQtd;
+          if (tipo !== 'Lotomania' && tipo !== 'SuperSete') { qtdNum = prompt(`Quantas dezenas por jogo? (${minQtd} a ${maxQtd})`, minQtd); if (!qtdNum) return; }
+          
+          let arrayJogos = [];
+          for(let i = 0; i < qtdJogos; i++) {
+              let nums = [];
+              if (tipo === 'SuperSete') {
+                  for(let c = 0; c < 7; c++) nums.push(Math.floor(Math.random() * 10));
+              } else {
+                  nums = gerarNumeros(max, parseInt(qtdNum), tipo === 'Lotomania' ? 0 : 1);
+              }
+              arrayJogos.push({ numeros: nums, trevos: null, time: tipo === 'Timemania' ? timesTimemania[Math.floor(Math.random() * timesTimemania.length)] : null });
+          }
+          exibirResultados(arrayJogos, tipo, precos[tipo] && precos[tipo][qtdNum] ? precos[tipo][qtdNum] : configLoterias[tipo].precoBase, `Automático ${configLoterias[tipo].nome}`, false);
+      }
+
+      function enviarWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(textoParaWhatsApp)}`, '_blank'); }
+      function abrirCaixa() { window.open('https://www.loteriasonline.caixa.gov.br/', '_blank'); }
+      function voltar() { document.querySelector('.app-container').style.display = 'flex'; document.getElementById('tela-resultado').style.display = 'none'; }
+
+      let deferredPrompt; const installBtn = document.getElementById('btn-install');
+      window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'block'; });
+      installBtn.addEventListener('click', async () => { if (deferredPrompt !== null) { deferredPrompt.prompt(); await deferredPrompt.userChoice; installBtn.style.display = 'none'; deferredPrompt = null; } });
+      if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Erro:', err)); }); }
   </script>
 </body>
 </html>
