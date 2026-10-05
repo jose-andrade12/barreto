@@ -564,7 +564,8 @@
 
   <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-      import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+      // IMPORT ALTERADO PARA REDIRECT
+      import { getAuth, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
       import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -588,11 +589,15 @@
       const telaPrincipal = document.getElementById('tela-principal');
       const btnAdmin = document.getElementById('btn-painel-admin');
 
-      function registrarAcesso(user) {
+      async function registrarAcesso(user) {
           if (!sessionStorage.getItem('sessao_notificada_' + user.uid)) {
               sessionStorage.setItem('sessao_notificada_' + user.uid, 'true');
               const userRef = doc(db, "usuarios", user.uid);
-              updateDoc(userRef, { ultimoAcesso: new Date().toLocaleString('pt-BR') }).catch(e => console.log(e));
+              try {
+                  await updateDoc(userRef, { ultimoAcesso: new Date().toLocaleString('pt-BR') });
+              } catch(e) {
+                  console.error("Erro ao registrar acesso no banco de dados:", e);
+              }
           }
       }
 
@@ -603,21 +608,29 @@
               document.getElementById('user-foto').src = user.photoURL;
 
               const userRef = doc(db, "usuarios", user.uid);
-              const userSnap = await getDoc(userRef);
+              
+              // TRY/CATCH ADICIONADO PARA PREVENIR FALHAS SILENCIOSAS
+              try {
+                  const userSnap = await getDoc(userRef);
 
-              if (user.email === MASTER_EMAIL) {
-                  if (!userSnap.exists()) await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'master' });
-                  btnAdmin.style.display = 'block';
-                  mostrarAppPrincipal();
-                  registrarAcesso(user);
-              } else {
-                  if (userSnap.exists()) {
-                      if (userSnap.data().status === 'liberado') { mostrarAppPrincipal(); registrarAcesso(user); } 
-                      else { mostrarTelaPendente(); }
+                  if (user.email === MASTER_EMAIL) {
+                      if (!userSnap.exists()) await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'master' });
+                      btnAdmin.style.display = 'block';
+                      mostrarAppPrincipal();
+                      registrarAcesso(user);
                   } else {
-                      await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'pendente' });
-                      mostrarTelaPendente();
+                      if (userSnap.exists()) {
+                          if (userSnap.data().status === 'liberado') { mostrarAppPrincipal(); registrarAcesso(user); } 
+                          else { mostrarTelaPendente(); }
+                      } else {
+                          await setDoc(userRef, { nome: user.displayName, email: user.email, status: 'pendente' });
+                          mostrarTelaPendente();
+                      }
                   }
+              } catch (error) {
+                  console.error("Erro ao consultar Firestore:", error);
+                  alert("Erro de comunicação com o banco de dados. Verifique as Regras do Firestore.");
+                  signOut(auth);
               }
           } else {
               mostrarTelaLogin();
@@ -628,7 +641,11 @@
       function mostrarTelaPendente() { appOverlay.style.display = 'flex'; telaLogin.style.display = 'none'; telaPendente.style.display = 'block'; telaPrincipal.style.filter = 'blur(6px)'; telaPrincipal.style.pointerEvents = 'none'; }
       function mostrarTelaLogin() { appOverlay.style.display = 'flex'; telaLogin.style.display = 'block'; telaPendente.style.display = 'none'; telaPrincipal.style.filter = 'blur(6px)'; telaPrincipal.style.pointerEvents = 'none'; }
 
-      document.getElementById('btn-fazer-login').addEventListener('click', () => { signInWithPopup(auth, provider).catch(error => alert("Erro ao fazer login: " + error.message)); });
+      // ALTERADO PARA REDIRECT: Resolve bugs no login móvel em PWA e iFrames
+      document.getElementById('btn-fazer-login').addEventListener('click', () => { 
+          signInWithRedirect(auth, provider).catch(error => alert("Erro ao fazer login: " + error.message)); 
+      });
+      
       const logoutFunc = () => signOut(auth);
       document.getElementById('btn-logout-app').addEventListener('click', logoutFunc);
       document.getElementById('btn-logout-pendente').addEventListener('click', logoutFunc);
@@ -653,8 +670,12 @@
       };
 
       window.mudarStatusUsuario = async function(uid, novoStatus) {
-          try { await updateDoc(doc(db, "usuarios", uid), { status: novoStatus }); abrirAdminModal(); } 
-          catch(e) { alert("Erro ao atualizar status."); }
+          try { 
+              await updateDoc(doc(db, "usuarios", uid), { status: novoStatus }); 
+              abrirAdminModal(); 
+          } catch(e) { 
+              alert("Erro ao atualizar status. Permissões insuficientes."); 
+          }
       };
   </script>
 
@@ -966,7 +987,6 @@
           let linhas = textareaJogos.split('\n'); let conf = configLoterias[loteriaSelecionadaConf];
           let totalJogosPremiados = 0; let contagemPremios = {}; let jogosAvaliados = []; 
 
-          // Header especial dezenas sorteadas
           let fmtSorteadas = (n) => loteriaSelecionadaConf === 'SuperSete' ? n.toString() : n.toString().padStart(2, '0');
           let bolasHtml = dezenasSorteadasConferencia.map(d => `<div class="bolinha-res" style="background-color:${conf.cor}; color:${conf.txt}; width: 32px; height: 32px; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.25);">${fmtSorteadas(d)}</div>`).join('');
 
@@ -983,7 +1003,6 @@
                   let n = numerosJogo[col]; let numInt = parseInt(n, 10);
                   
                   if (loteriaSelecionadaConf === 'SuperSete') {
-                      // Super sete necessita acerto posicional (coluna x coluna)
                       if (dezenasSorteadasConferencia[col] === numInt) { linhaHtml += `<span class="numero-acerto" style="background-color:${conf.cor}; color:${conf.txt}">${n}</span>`; acertos++; } 
                       else { linhaHtml += `<span class="numero">${n}</span>`; }
                   } else {
