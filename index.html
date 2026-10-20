@@ -208,7 +208,7 @@
       @keyframes pulsarChamativa { 0% { box-shadow: 0 2px 10px rgba(251, 192, 45, 0.2); transform: scale(1); } 100% { box-shadow: 0 5px 20px rgba(251, 192, 45, 0.6); transform: scale(1.02); border-color: #f57f17; } }
 
       .auth-container { background: white; padding: 40px; border-radius: 20px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 90%; max-width: 400px; margin: 0 auto; box-sizing: border-box; }
-      .btn-google { background: #4285F4; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+      .btn-google { background: #4285F4; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.3s; }
       .btn-google:hover { background: #357AE8; }
       .btn-google img { width: 24px; background: white; border-radius: 50%; padding: 2px; }
 
@@ -243,7 +243,7 @@
           <p style="font-size: 14px; color: #666; margin-bottom: 25px;">Faça login com sua conta Google para liberar o uso do sistema.</p>
           <button id="btn-fazer-login" class="btn-google">
               <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Google">
-              Entrar com o Google
+              <span>Entrar com o Google</span>
           </button>
       </div>
 
@@ -564,8 +564,8 @@
 
   <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-      // IMPORT ALTERADO PARA REDIRECT
-      import { getAuth, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+      // IMPORT ALTERADO PARA POPUP (CORREÇÃO DE SILENT FAIL)
+      import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
       import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -609,7 +609,6 @@
 
               const userRef = doc(db, "usuarios", user.uid);
               
-              // TRY/CATCH ADICIONADO PARA PREVENIR FALHAS SILENCIOSAS
               try {
                   const userSnap = await getDoc(userRef);
 
@@ -641,9 +640,23 @@
       function mostrarTelaPendente() { appOverlay.style.display = 'flex'; telaLogin.style.display = 'none'; telaPendente.style.display = 'block'; telaPrincipal.style.filter = 'blur(6px)'; telaPrincipal.style.pointerEvents = 'none'; }
       function mostrarTelaLogin() { appOverlay.style.display = 'flex'; telaLogin.style.display = 'block'; telaPendente.style.display = 'none'; telaPrincipal.style.filter = 'blur(6px)'; telaPrincipal.style.pointerEvents = 'none'; }
 
-      // ALTERADO PARA REDIRECT: Resolve bugs no login móvel em PWA e iFrames
-      document.getElementById('btn-fazer-login').addEventListener('click', () => { 
-          signInWithRedirect(auth, provider).catch(error => alert("Erro ao fazer login: " + error.message)); 
+      // ALTERADO PARA POPUP: Resolve travamentos silenciosos em mobile, iFrames e PWA
+      document.getElementById('btn-fazer-login').addEventListener('click', async () => { 
+          const btn = document.getElementById('btn-fazer-login');
+          const span = btn.querySelector('span');
+          const textoOriginal = span.innerText;
+          
+          span.innerText = "⏳ Aguardando Google...";
+          btn.style.opacity = "0.8";
+          
+          try {
+              await signInWithPopup(auth, provider);
+              // Se der certo, o onAuthStateChanged assume a partir daqui e a tela some
+          } catch(error) {
+              alert("Erro ao fazer login: " + error.message);
+              span.innerText = textoOriginal;
+              btn.style.opacity = "1";
+          }
       });
       
       const logoutFunc = () => signOut(auth);
